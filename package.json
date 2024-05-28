@@ -1,16 +1,35 @@
 {
-  "name": "virtual-grid",
+  "name": "@virtual-grid/root",
+  "author": {
+    "name": "vicentelyrio",
+    "email": "vicentelyrio@gmail.com"
+  },
+  "repository": "https://github.com/vicentelyrio/virtual-grid",
+  "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "postinstall": "manypkg check",
+    "dev": "turbo run dev --continue --concurrency=100%",
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint -- --fix",
+    "test": "turbo run test",
+    "test:watch": "turbo run test:watch",
+    "repo:check": "manypkg check",
+    "repo:fix": "manypkg fix",
+    "purge": "manypkg exec rm -rf node_modules/ && rm -rf node_modules/",
+    "clean": "turbo run clean",
+    "cs": "changeset",
+    "cs:add": "changeset add",
+    "cs:version": "changeset version",
+    "cs:status": "changeset status",
+    "cs:publish": "changeset publish",
+    "cs:release": "yarn cs:version && yarn cs:publish"
   },
-  "devDependencies": {
+  "dependencies": {
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
-    "prettier": "^3.2.5",
     "turbo": "latest"
   },
   "engines": {
@@ -20,5 +39,8 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "manypkg": {
+    "defaultBranch": "main"
+  }
 }
