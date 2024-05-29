@@ -1,0 +1,19 @@
+{
+  "name": "@virtual-grid/lib",
+  "author": {
+    "name": "vicentelyrio",
+    "email": "vicentelyrio@gmail.com"
+  },
+  "repository": "https://github.com/vicentelyrio/virtual-grid",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "turbo run dev --continue --concurrency=100%",
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint -- --fix",
+    "test": "turbo run test",
+    "test:watch": "turbo run test:watch"
+  }
+}
