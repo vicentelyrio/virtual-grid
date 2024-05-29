@@ -28,8 +28,6 @@
     "cs:release": "yarn cs:version && yarn cs:publish"
   },
   "dependencies": {
-    "@repo/eslint-config": "*",
-    "@repo/typescript-config": "*",
     "turbo": "latest"
   },
   "engines": {
