@@ -8,6 +8,7 @@
   "files": [
     "dist"
   ],
+  "repository": "https://github.com/vicentelyrio/virtual-grid/tree/main/packages/lib",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -24,17 +25,13 @@
     "@types/node": "^20.12.12",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
-    "@typescript-eslint/eslint-plugin": "^7.2.0",
-    "@typescript-eslint/parser": "^7.2.0",
+    "@virtual-grid/eslint-config": "workspace:*",
+    "@virtual-grid/typescript-config": "workspace:*",
     "@vitejs/plugin-react": "^4.2.1",
     "eslint": "^8.57.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.6",
     "react": "^18.2.0",
-    "react-cosmos": "^6.1.1",
-    "react-cosmos-plugin-vite": "^6.1.1",
     "react-dom": "^18.2.0",
-    "typescript": "^5.2.2",
+    "typescript": "^5.3.3",
     "vite": "^5.2.0",
     "vite-plugin-dts": "^3.9.1"
   }

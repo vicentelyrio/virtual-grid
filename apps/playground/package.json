@@ -1,0 +1,29 @@
+{
+  "name": "@virtual-grid/playground",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "repository": "https://github.com/vicentelyrio/virtual-grid/tree/main/apps/playground",
+  "scripts": {
+    "dev": "vite --clearScreen false",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint \"src/**/*.ts\""
+  },
+  "dependencies": {
+    "@virtual-grid/lib": "workspace:*",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "@types/react": "^18.2.66",
+    "@types/react-dom": "^18.2.22",
+    "@virtual-grid/eslint-config": "workspace:*",
+    "@virtual-grid/typescript-config": "workspace:*",
+    "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^8.57.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.2.0"
+  }
+}

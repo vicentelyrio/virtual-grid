@@ -1,0 +1,10 @@
+{
+  "name": "@virtual-grid/typescript-config",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "repository": "https://github.com/vicentelyrio/virtual-grid/tree/main/packages/config-typescript",
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -28,6 +28,9 @@
     "cs:release": "yarn cs:version && yarn cs:publish"
   },
   "dependencies": {
+    "@manypkg/cli": "^0.21.4",
+    "@virtual-grid/eslint-config": "workspace:*",
+    "eslint": "^8.57.0",
     "turbo": "latest"
   },
   "engines": {
