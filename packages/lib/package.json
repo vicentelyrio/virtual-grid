@@ -10,8 +10,8 @@
   ],
   "repository": "https://github.com/vicentelyrio/virtual-grid/tree/main/packages/lib",
   "scripts": {
-    "dev": "vite",
     "build": "tsc && vite build",
+    "dev": "vite build --watch",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "cosmos": "cosmos",
     "prepublishOnly": "npm run build",
@@ -33,6 +33,7 @@
     "react-dom": "^18.2.0",
     "typescript": "^5.3.3",
     "vite": "^5.2.0",
-    "vite-plugin-dts": "^3.9.1"
+    "vite-plugin-dts": "^3.9.1",
+    "vite-plugin-tsc-watch": "^3.0.1"
   }
 }
