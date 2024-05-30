@@ -5,9 +5,8 @@
   "type": "module",
   "repository": "https://github.com/vicentelyrio/virtual-grid/tree/main/apps/playground",
   "scripts": {
-    "dev": "vite --clearScreen false",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
+    "dev": "cosmos",
+    "build": "cosmos export",
     "lint": "eslint \"src/**/*.ts\""
   },
   "dependencies": {
@@ -23,6 +22,8 @@
     "@virtual-grid/typescript-config": "workspace:*",
     "@vitejs/plugin-react": "^4.2.1",
     "eslint": "^8.57.0",
+    "react-cosmos": "^6.1.1",
+    "react-cosmos-plugin-vite": "^6.1.1",
     "typescript": "^5.3.3",
     "vite": "^5.2.0"
   }
