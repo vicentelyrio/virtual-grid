@@ -1,8 +1,8 @@
 import { getRect } from './getRect'
 
 export type GetBoundsProps = {
-  gridElement: HTMLElement
-  scrollElement: HTMLElement
+  gridElement: HTMLElement | null
+  scrollElement: HTMLElement | null
 }
 
 export type GetBoundsReturnType = {

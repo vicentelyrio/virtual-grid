@@ -4,7 +4,15 @@ export type GetRectReturnType = {
   isWindow: boolean
 }
 
-export function getRect(el: HTMLElement | Window): GetRectReturnType {
+export function getRect(el: HTMLElement | Window | null): GetRectReturnType {
+  if (!el) {
+    return {
+      height: 0,
+      width: 0,
+      isWindow: false
+    }
+  }
+
   if (el === window) {
     return {
       height: el.innerHeight,
@@ -12,14 +20,12 @@ export function getRect(el: HTMLElement | Window): GetRectReturnType {
       isWindow: true,
     }
   }
-  else {
-    const { width, height } = (el as HTMLElement).getBoundingClientRect()
+  const { width, height } = (el as HTMLElement).getBoundingClientRect()
 
-    return {
-      height,
-      width,
-      isWindow: false,
-    }
+  return {
+    height,
+    width,
+    isWindow: false,
   }
 }
 

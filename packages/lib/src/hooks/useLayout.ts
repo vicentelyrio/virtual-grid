@@ -6,8 +6,8 @@ import { getBounds } from '../utils/getBounds'
 import { GetLayoutReturnType, getLayout } from '../utils/getLayout'
 
 export type UseLayoutProps = {
-  gridElement: HTMLElement
-  scrollElement: HTMLElement
+  gridElement: HTMLElement | null
+  scrollElement: HTMLElement | null
   gap: number
   padding: number[]
   total: number

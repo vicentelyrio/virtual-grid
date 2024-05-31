@@ -1,12 +1,10 @@
-import { useMemo } from 'react'
-import { mapDataList } from '../utils/mapDataList'
+import { ReactNode, useMemo } from 'react'
 import { computeGrid } from '../utils/computeGridProps'
 import { GetLayoutReturnType } from '../utils/getLayout'
 
-export type UseContentProps = {
-  data: unknown[]
-  itemElement: HTMLElement
-  indexKey: string
+export type UseContentProps<T> = {
+  data: T[]
+  itemElement: ReactNode
   gap: number
   layout: GetLayoutReturnType
   page: number
@@ -14,24 +12,30 @@ export type UseContentProps = {
   diff: number
 }
 
-export type UseContentReturnType = {
-  childrens: unknown[]
+export type UseContentReturnType<T> = {
+  childrens: T[]
   styles: unknown
 }
 
-export function useContent({
+export function useContent<T>({
   data,
   itemElement,
-  indexKey,
   gap,
   layout,
   page,
   padding,
   diff,
-}: UseContentProps): UseContentReturnType {
+}: UseContentProps<T>): UseContentReturnType<T> {
   const { childrens, styles } = useMemo(() => {
-    const { width, paddingTop, paddingLeft, paddingRight, paddingBottom, start, end } =
-      computeGrid({ layout, page, padding, diff, gap })
+    const {
+      width,
+      paddingTop,
+      paddingLeft,
+      paddingRight,
+      paddingBottom,
+      start,
+      end
+    } = computeGrid({ layout, page, padding, diff, gap })
 
     const styles = {
       width,
@@ -42,10 +46,10 @@ export function useContent({
     }
 
     return {
-      childrens: data.slice(start, end).map(mapDataList(itemElement, indexKey)),
+      childrens: data.slice(start, end),
       styles,
     }
-  }, [data, itemElement, indexKey, diff, layout, padding, page, gap])
+  }, [data, itemElement, diff, layout, padding, page, gap])
 
   return {
     childrens,

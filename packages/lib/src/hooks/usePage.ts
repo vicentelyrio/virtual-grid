@@ -5,7 +5,7 @@ import { computeScroll } from '../utils/computeScroll'
 import { GetPageReturnType, getPage } from '../utils/getPage'
 
 export type UsePageProps = {
-  scrollElement: HTMLElement
+  scrollElement: HTMLElement | null
   layout: GetLayoutReturnType
   gap: number
   padding: number[]
@@ -52,7 +52,7 @@ export function usePage({
       })
     }
 
-    scrollElement.scroll({ ...props, behavior: 'smooth' })
+    scrollElement?.scroll({ ...props, behavior: 'smooth' })
   }, [
     horizontal,
     itemHeight,

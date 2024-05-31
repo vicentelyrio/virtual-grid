@@ -3,7 +3,7 @@ import { GetPageSizesReturnType, getPageSizes } from "./getPageSizes"
 import { getScrollProps } from "./getScrollProps"
 
 export type GetPageProps = {
-  scrollElement: HTMLElement
+  scrollElement: HTMLElement | null
   layout: GetLayoutReturnType
   gap: number
 }
@@ -16,7 +16,7 @@ export function getPage({
   gap
 }: GetPageProps): GetPageReturnType {
   try {
-    const { scrollTop, scrollLeft } = getScrollProps({ scrollElement })
+    const { scrollTop = 0, scrollLeft = 0 } = getScrollProps({ scrollElement })
 
     if (!layout) return {} as GetPageReturnType
 

@@ -1,16 +1,17 @@
 export type GetScrollPropsProps = {
-  scrollElement: HTMLElement
+  scrollElement: HTMLElement | null
 }
 
 export function getScrollProps({ scrollElement }: GetScrollPropsProps) {
-  if (scrollElement as Window === window) {
+  if (scrollElement as unknown as Window === window) {
+    const { scrollY, scrollX } = (scrollElement as unknown as Window) ?? {}
     return {
-      scrollTop: scrollElement?.scrollY,
-      scrollLeft: scrollElement?.scrollX,
+      scrollTop: scrollY,
+      scrollLeft: scrollX,
     }
   }
 
-  const { scrollTop, scrollLeft } = scrollElement
+  const { scrollTop, scrollLeft } = scrollElement ?? {}
 
   return {
     scrollTop,

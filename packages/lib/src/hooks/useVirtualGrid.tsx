@@ -2,31 +2,29 @@ import { useLayout } from './useLayout'
 import { usePage } from './usePage'
 import { useContent } from './useContent'
 
-import { ReactNode } from 'react'
+import { ReactElement } from 'react'
 
-export type UseVirtualGridProps = {
-  diff: number
-  padding: number[]
-  gap: number,
-  data: unknown[],
-  indexKey: number
-  horizontal: boolean
-  itemElement: ReactNode
-  gridElement: HTMLElement
-  scrollElement: HTMLElement
+export type UseVirtualGridProps<T> = {
+  data: T[],
+  itemElement: ReactElement
+  gridElement: HTMLElement | null
+  scrollElement: HTMLElement | null
+  diff?: number
+  padding?: number[]
+  gap?: number,
+  horizontal?: boolean
 }
 
-export const useVirtualGrid = ({
+export function useVirtualGrid<T>({
   data,
   itemElement,
   gridElement,
   scrollElement,
   diff = 1,
   padding = [0, 0, 0, 0],
-  gap,
-  indexKey,
+  gap = 20,
   horizontal = false,
-}: UseVirtualGridProps) => {
+}: UseVirtualGridProps<T>) {
   const total = data?.length ?? 0
 
   const { resizing, layout } = useLayout({
@@ -48,7 +46,6 @@ export const useVirtualGrid = ({
   const { childrens, styles } = useContent({
     data,
     itemElement,
-    indexKey,
     layout,
     page,
     padding,

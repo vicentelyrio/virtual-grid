@@ -1,4 +1,4 @@
-import { type ReactNode, useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { useVirtualGrid } from '@virtual-grid/lib'
 
 import './style.css'
@@ -10,31 +10,37 @@ export type DemoProps = {
 }
 
 export function Demo({ items, virtualize, horizontal }: DemoProps) {
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const gridRef = useRef<HTMLDivElement>(null)
+
   const data = useMemo(() => (
     Array(items).fill(true).map((_, index) => index)
   ), [items])
 
-  const { childrens } = useVirtualGrid({
+  const { childrens, ...rest } = useVirtualGrid<number>({
     gap: 20,
     padding: [20, 20, 20, 20],
     data,
     horizontal,
     itemElement: <Card />,
-    gridElement: <Grid horizontal={horizontal} />
+    gridElement: gridRef.current,
+    scrollElement: scrollRef.current,
   })
 
-  if (virtualize) return childrens
+  console.log(rest)
 
   return (
-    <Grid horizontal={horizontal}>
-      {data.map((index) => (
-        <Card index={index} key={index} />
-      ))}
-    </Grid>
+    <div className="scroll" ref={scrollRef}>
+      <div className={horizontal ? 'grid horizontal' : 'grid'} ref={gridRef}>
+        {(virtualize ? childrens : data).map((index) => (
+          <Card index={index} key={index} />
+        ))}
+      </div>
+    </div>
   )
 }
 
-function Card({ index }: { index: number }) {
+function Card({ index = 0 }: { index?: number }) {
   return (
     <div className="card">
       {index + 1}
@@ -42,10 +48,3 @@ function Card({ index }: { index: number }) {
   )
 }
 
-function Grid({ horizontal, children }: { horizontal: boolean, children: ReactNode }) {
-  return (
-    <div className={horizontal ? 'grid horizontal' : 'grid'}>
-      {children}
-    </div>
-  )
-}
