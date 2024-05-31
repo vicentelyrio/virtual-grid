@@ -1228,6 +1228,8 @@ __metadata:
     eslint: "npm:^8.57.0"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
+    react-fast-compare: "npm:^3.2.2"
+    ts-debounce: "npm:^4.0.0"
     typescript: "npm:^5.3.3"
     vite: "npm:^5.2.0"
     vite-plugin-dts: "npm:^3.9.1"
@@ -4238,6 +4240,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-fast-compare@npm:^3.2.2":
+  version: 3.2.2
+  resolution: "react-fast-compare@npm:3.2.2"
+  checksum: 10c0/0bbd2f3eb41ab2ff7380daaa55105db698d965c396df73e6874831dbafec8c4b5b08ba36ff09df01526caa3c61595247e3269558c284e37646241cba2b90a367
+  languageName: node
+  linkType: hard
+
 "react-is@npm:18.2.0":
   version: 18.2.0
   resolution: "react-is@npm:18.2.0"
@@ -4902,6 +4911,13 @@ __metadata:
   peerDependencies:
     typescript: ">=4.2.0"
   checksum: 10c0/f54a0ba9ed56ce66baea90a3fa087a484002e807f28a8ccb2d070c75e76bde64bd0f6dce98b3802834156306050871b67eec325cb4e918015a360a3f0868c77c
+  languageName: node
+  linkType: hard
+
+"ts-debounce@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "ts-debounce@npm:4.0.0"
+  checksum: 10c0/1dfac630127d6982b4ad5114a12bd3e8febfd7a34615e6bf388eaf3a5c355f9ab2ef688688bb7e789bc9f0cabfd82e0a6b363efc451ee626b5722919f7f567cd
   languageName: node
   linkType: hard
 

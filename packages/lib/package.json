@@ -35,5 +35,9 @@
     "vite": "^5.2.0",
     "vite-plugin-dts": "^3.9.1",
     "vite-plugin-tsc-watch": "^3.0.1"
+  },
+  "dependencies": {
+    "react-fast-compare": "^3.2.2",
+    "ts-debounce": "^4.0.0"
   }
 }

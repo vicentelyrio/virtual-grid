@@ -1,4 +1,4 @@
-type ComputeSizeProps = {
+export type ComputeSizeProps = {
   total: number
   itemsPerPage: number
   itemSize: number

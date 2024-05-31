@@ -14,16 +14,16 @@ export function Demo({ items, virtualize, horizontal }: DemoProps) {
     Array(items).fill(true).map((_, index) => index)
   ), [items])
 
-  const { content } = useVirtualGrid({
+  const { childrens } = useVirtualGrid({
     gap: 20,
-    padding: 20,
+    padding: [20, 20, 20, 20],
     data,
     horizontal,
     itemElement: <Card />,
     gridElement: <Grid horizontal={horizontal} />
   })
 
-  if (virtualize) return content
+  if (virtualize) return childrens
 
   return (
     <Grid horizontal={horizontal}>
@@ -42,7 +42,7 @@ function Card({ index }: { index: number }) {
   )
 }
 
-function Grid({ horizontal, children }: { data: unknow[], children: ReactNode }) {
+function Grid({ horizontal, children }: { horizontal: boolean, children: ReactNode }) {
   return (
     <div className={horizontal ? 'grid horizontal' : 'grid'}>
       {children}

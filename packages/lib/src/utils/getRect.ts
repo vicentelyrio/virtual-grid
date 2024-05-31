@@ -1,4 +1,4 @@
-type GetRectReturnType = {
+export type GetRectReturnType = {
   height: number
   width: number
   isWindow: boolean
