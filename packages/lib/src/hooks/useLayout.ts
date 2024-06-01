@@ -3,7 +3,8 @@ import { debounce } from 'ts-debounce'
 import isEqual from 'react-fast-compare'
 
 import { getBounds } from '../utils/getBounds'
-import { GetLayoutReturnType, getLayout } from '../utils/getLayout'
+import { getLayout } from '../utils/getLayout'
+import { Layout } from '../types'
 
 export type UseLayoutProps = {
   gridElement: HTMLElement | null
@@ -15,7 +16,7 @@ export type UseLayoutProps = {
 }
 
 export type UseLayoutReturnType = {
-  layout: GetLayoutReturnType
+  layout: Layout
   resizing: boolean
 }
 
@@ -27,12 +28,14 @@ export function useLayout({
   total,
   horizontal
 }: UseLayoutProps): UseLayoutReturnType {
-  const [layout, setLayout] = useState<GetLayoutReturnType | null>(null)
+  const [layout, setLayout] = useState<Layout | null>(null)
   const [resizing, setResizing] = useState(false)
 
   // Recalculate screen
   const calculateLayout = useCallback(() => {
     const newBounds = getBounds({ scrollElement, gridElement })
+
+    console.log(newBounds, scrollElement, gridElement)
 
     const newLayout = getLayout({
       gridElement,

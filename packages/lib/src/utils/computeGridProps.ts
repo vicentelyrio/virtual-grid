@@ -4,7 +4,7 @@ export type ComputeGridProps = {
   layout: GetLayoutReturnType
   page: number
   padding: number[]
-  diff: number
+  offScreenPages: number
   gap: number
 }
 
@@ -24,7 +24,7 @@ export function computeGrid({
   layout,
   page,
   padding,
-  diff,
+  offScreenPages,
   gap
 }: ComputeGridProps): ComputeGridReturnType {
   if (!layout || !page) {
@@ -44,8 +44,8 @@ export function computeGrid({
     gridWidth,
   } = layout
 
-  const minBoundary = Math.max(0, page - diff)
-  const maxBoundary = Math.min(pages, page + 1 + diff)
+  const minBoundary = Math.max(0, page - offScreenPages)
+  const maxBoundary = Math.min(pages, page + 1 + offScreenPages)
 
   const itemW = itemWidth + gap
   const itemH = itemHeight + gap

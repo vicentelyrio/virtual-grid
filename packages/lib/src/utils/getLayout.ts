@@ -84,8 +84,8 @@ export function getLayout({
       : Math.ceil(rows / rowsOnViewport)
 
     return {
-      scrollWidth: bounds?.width,
-      scrollHeight: bounds?.height,
+      scrollWidth: bounds?.width ?? 0,
+      scrollHeight: bounds?.height ?? 0,
       rowsOnViewport,
       rows,
       columnsOnViewport,

@@ -1,4 +1,4 @@
-import { ReactNode, useMemo } from 'react'
+import { CSSProperties, ReactNode, useMemo } from 'react'
 import { computeGrid } from '../utils/computeGridProps'
 import { GetLayoutReturnType } from '../utils/getLayout'
 
@@ -9,12 +9,12 @@ export type UseContentProps<T> = {
   layout: GetLayoutReturnType
   page: number
   padding: number[]
-  diff: number
+  offScreenPages: number
 }
 
 export type UseContentReturnType<T> = {
   childrens: T[]
-  styles: unknown
+  styles: CSSProperties
 }
 
 export function useContent<T>({
@@ -24,7 +24,7 @@ export function useContent<T>({
   layout,
   page,
   padding,
-  diff,
+  offScreenPages,
 }: UseContentProps<T>): UseContentReturnType<T> {
   const { childrens, styles } = useMemo(() => {
     const {
@@ -35,7 +35,7 @@ export function useContent<T>({
       paddingBottom,
       start,
       end
-    } = computeGrid({ layout, page, padding, diff, gap })
+    } = computeGrid({ layout, page, padding, offScreenPages, gap })
 
     const styles = {
       width,
@@ -49,7 +49,7 @@ export function useContent<T>({
       childrens: data.slice(start, end),
       styles,
     }
-  }, [data, itemElement, diff, layout, padding, page, gap])
+  }, [data, itemElement, offScreenPages, layout, padding, page, gap])
 
   return {
     childrens,

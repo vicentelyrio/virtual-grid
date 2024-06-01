@@ -1,30 +1,20 @@
 import { useLayout } from './useLayout'
-import { usePage } from './usePage'
-import { useContent } from './useContent'
+// import { usePage } from './usePage'
+// import { useContent } from './useContent'
 
-import { ReactElement } from 'react'
-
-export type UseVirtualGridProps<T> = {
-  data: T[],
-  itemElement: ReactElement
-  gridElement: HTMLElement | null
-  scrollElement: HTMLElement | null
-  diff?: number
-  padding?: number[]
-  gap?: number,
-  horizontal?: boolean
-}
+import { VirtualGrid, VirtualGridProps } from '../types'
+import { useCallback, useState } from 'react'
 
 export function useVirtualGrid<T>({
   data,
-  itemElement,
+  // itemElement,
   gridElement,
   scrollElement,
-  diff = 1,
+  // offScreenPages = 1,
   padding = [0, 0, 0, 0],
   gap = 20,
   horizontal = false,
-}: UseVirtualGridProps<T>) {
+}: VirtualGridProps<T>): Partial<VirtualGrid<T>> {
   const total = data?.length ?? 0
 
   const { resizing, layout } = useLayout({
@@ -36,35 +26,42 @@ export function useVirtualGrid<T>({
     horizontal,
   })
 
-  const { page, pageRange, scrolling, onScrollTo } = usePage({
-    gap,
-    scrollElement,
-    layout,
-    padding,
-  })
-
-  const { childrens, styles } = useContent({
-    data,
-    itemElement,
-    layout,
-    page,
-    padding,
-    diff,
-    gap,
-  })
-
+  // const { page, pageRange, scrolling, onScrollTo } = usePage({
+  //   gap,
+  //   scrollElement,
+  //   layout,
+  //   padding,
+  // })
+  //
+  // const { childrens, styles } = useContent({
+  //   data,
+  //   itemElement,
+  //   layout,
+  //   page,
+  //   padding,
+  //   offScreenPages,
+  //   gap,
+  // })
+  //
   return {
     ...layout,
-    childrens,
-    styles,
-    gridElement,
-    scrollElement,
-    page,
-    pageRange,
+    childrens: data,
+    styles: {},
+    // page,
+    // pageRange,
+    // onScrollTo,
+    // scrolling,
     resizing,
-    scrolling,
-    onScrollTo,
-    mounting: !childrens || !layout || !page,
+    // mounting: !childrens || !layout || !page,
   }
 }
 
+export function useNode() {
+  const [node, setNode] = useState<HTMLElement | null>(null)
+  const ref = useCallback((node: HTMLElement) => {
+    if (node !== null) {
+      setNode(node)
+    }
+  }, [])
+  return [node, ref]
+}
