@@ -1,8 +1,7 @@
-import { CSSProperties, ReactElement } from 'react'
+import { CSSProperties } from 'react'
 
 export type VirtualGridProps<T> = {
   data: T[],
-  itemElement: ReactElement
   gridElement: HTMLElement | null
   scrollElement: HTMLElement | null
   offScreenPages?: number

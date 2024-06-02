@@ -1,28 +1,28 @@
 import { useCallback, useEffect, useState } from 'react'
-import { debounce } from 'ts-debounce'
-import { GetLayoutReturnType } from '../utils/getLayout'
 import { computeScroll } from '../utils/computeScroll'
 import { GetPageReturnType, getPage } from '../utils/getPage'
+import { Layout } from '../types'
 
 export type UsePageProps = {
   scrollElement: HTMLElement | null
-  layout: GetLayoutReturnType
+  layout: Layout
   gap: number
   padding: number[]
+  horizontal: boolean
 }
 
 export function usePage({
   scrollElement,
   layout,
   gap,
-  padding
+  padding,
+  horizontal,
 }: UsePageProps) {
   const [page, setPage] = useState<GetPageReturnType>({ index: 1, page: 1, pageRange: [0, 0] })
   const [scrolling, setScrolling] = useState(false)
   const {
     itemHeight = 0,
     itemWidth = 0,
-    horizontal,
     itemsPerPage = 0
   } = layout || {}
 
@@ -66,11 +66,9 @@ export function usePage({
   // Scroll handler
   const handleScroll = useCallback(() => {
     setScrolling(true)
-    debounce(() => {
-      setPage(getPage({ scrollElement, layout, gap }))
-      setScrolling(false)
-    })
-  }, [scrollElement, debounce, layout, gap])
+    setPage(getPage({ scrollElement, layout, gap }))
+    setScrolling(false)
+  }, [scrollElement, layout, gap])
 
   useEffect(() => {
     if (!scrollElement) return

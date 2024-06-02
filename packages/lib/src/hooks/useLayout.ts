@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react'
-import { debounce } from 'ts-debounce'
 import isEqual from 'react-fast-compare'
 
 import { getBounds } from '../utils/getBounds'
@@ -28,14 +27,12 @@ export function useLayout({
   total,
   horizontal
 }: UseLayoutProps): UseLayoutReturnType {
-  const [layout, setLayout] = useState<Layout | null>(null)
+  const [layout, setLayout] = useState<Layout>({} as Layout)
   const [resizing, setResizing] = useState(false)
 
   // Recalculate screen
   const calculateLayout = useCallback(() => {
     const newBounds = getBounds({ scrollElement, gridElement })
-
-    console.log(newBounds, scrollElement, gridElement)
 
     const newLayout = getLayout({
       gridElement,
@@ -46,18 +43,17 @@ export function useLayout({
       total,
     })
 
-    if (!isEqual(newLayout, layout)) setLayout(newLayout)
-  }, [gap, gridElement, horizontal, padding, scroll, total, layout])
+    if (!isEqual(newLayout, layout)) {
+      setLayout(newLayout)
+    }
+  }, [gap, gridElement, horizontal, padding, scrollElement, total, layout])
 
   // Resize event control
   const handleResize = useCallback(() => {
     setResizing(true)
-
-    debounce(() => {
-      calculateLayout()
-      setResizing(false)
-    })
-  }, [debounce, calculateLayout])
+    calculateLayout()
+    setResizing(false)
+  }, [calculateLayout])
 
   // Resize event handler
   useEffect(() => {
@@ -65,15 +61,10 @@ export function useLayout({
 
     window?.addEventListener('resize', handleResize)
 
+    calculateLayout()
+
     return () => window?.removeEventListener('resize', handleResize)
   }, [handleResize, gridElement, scrollElement])
-
-  // Initial Layout setup
-  useEffect(() => {
-    if (!gridElement || !scrollElement) return
-
-    debounce(calculateLayout)
-  }, [debounce, gridElement, scrollElement, layout, calculateLayout])
 
   return {
     resizing,

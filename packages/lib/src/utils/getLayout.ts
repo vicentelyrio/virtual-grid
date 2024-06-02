@@ -1,3 +1,4 @@
+import { Layout } from '../types'
 import { calculateGridSize } from './calculateGridSize'
 import { getRect } from './getRect'
 
@@ -15,25 +16,6 @@ export type GetLayoutProps = {
   horizontal: boolean
 }
 
-export type GetLayoutReturnType = null | {
-  scrollWidth: number
-  scrollHeight: number
-  rowsOnViewport: number
-  rows: number
-  columnsOnViewport: number
-  columns: number
-  total: number
-  pages: number
-  itemsPerRow: number
-  itemsPerColumn: number
-  itemsPerPage: number
-  itemHeight: number
-  itemWidth: number
-  gridHeight: number
-  gridWidth: number
-  horizontal: boolean
-}
-
 export function getLayout({
   gridElement,
   total,
@@ -41,13 +23,13 @@ export function getLayout({
   gap,
   padding,
   horizontal,
-}: GetLayoutProps): GetLayoutReturnType {
+}: GetLayoutProps): Layout {
   try {
     const { width, height } = getRect(gridElement)
 
     const firstItem = gridElement?.children?.item(0)
 
-    if (!firstItem) return null
+    if (!firstItem) return {} as Layout
 
     const item = getRect(firstItem as HTMLElement)
     const itemHeight = item.height ?? 0
@@ -99,11 +81,9 @@ export function getLayout({
       itemWidth,
       gridHeight,
       gridWidth,
-      horizontal,
     }
   } catch (e) {
-    console.error('Layout creation error: ', e)
-    return null
+    return {} as Layout
   }
 }
 

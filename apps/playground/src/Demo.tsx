@@ -17,12 +17,11 @@ export function Demo({ items, virtualize, horizontal }: DemoProps) {
     Array(items).fill(true).map((_, index) => index)
   ), [items])
 
-  const { childrens, styles } = useVirtualGrid<number>({
+  const { childrens = [], styles } = useVirtualGrid<number>({
     gap: 20,
     padding: [20, 20, 20, 20],
     data,
     horizontal,
-    itemElement: <Card />,
     gridElement: gridRef.current,
     scrollElement: scrollRef.current,
   })
@@ -30,7 +29,7 @@ export function Demo({ items, virtualize, horizontal }: DemoProps) {
   return (
     <div className="scroll" ref={scrollRef}>
       <div
-        style={styles}
+        style={virtualize ? styles : {}}
         className={horizontal ? 'grid horizontal' : 'grid'}
         ref={gridRef}>
         {(virtualize ? childrens : data).map((index: number) => (

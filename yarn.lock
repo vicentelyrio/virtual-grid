@@ -1225,11 +1225,11 @@ __metadata:
     "@virtual-grid/eslint-config": "workspace:*"
     "@virtual-grid/typescript-config": "workspace:*"
     "@vitejs/plugin-react": "npm:^4.2.1"
+    debounce: "npm:^2.1.0"
     eslint: "npm:^8.57.0"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     react-fast-compare: "npm:^3.2.2"
-    ts-debounce: "npm:^4.0.0"
     typescript: "npm:^5.3.3"
     vite: "npm:^5.2.0"
     vite-plugin-dts: "npm:^3.9.1"
@@ -1890,6 +1890,13 @@ __metadata:
   version: 1.0.2
   resolution: "de-indent@npm:1.0.2"
   checksum: 10c0/7058ce58abd6dfc123dd204e36be3797abd419b59482a634605420f47ae97639d0c183ec5d1b904f308a01033f473673897afc2bd59bc620ebf1658763ef4291
+  languageName: node
+  linkType: hard
+
+"debounce@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "debounce@npm:2.1.0"
+  checksum: 10c0/15ef40fc5c402053ca5ab1b2c23cf25eb8f2f3246977793846561b0c87321cbb627075897f69bbcffa5a5a7d07c161c9ba0bfcb4a80ee6898844c5b11bf1a76e
   languageName: node
   linkType: hard
 
@@ -4911,13 +4918,6 @@ __metadata:
   peerDependencies:
     typescript: ">=4.2.0"
   checksum: 10c0/f54a0ba9ed56ce66baea90a3fa087a484002e807f28a8ccb2d070c75e76bde64bd0f6dce98b3802834156306050871b67eec325cb4e918015a360a3f0868c77c
-  languageName: node
-  linkType: hard
-
-"ts-debounce@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "ts-debounce@npm:4.0.0"
-  checksum: 10c0/1dfac630127d6982b4ad5114a12bd3e8febfd7a34615e6bf388eaf3a5c355f9ab2ef688688bb7e789bc9f0cabfd82e0a6b363efc451ee626b5722919f7f567cd
   languageName: node
   linkType: hard
 
