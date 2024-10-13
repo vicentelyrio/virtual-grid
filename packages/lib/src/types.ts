@@ -11,7 +11,7 @@ export type VirtualGridProps<T> = {
 }
 
 export type VirtualGrid<T> = Layout & {
-  childrens: T[]
+  items: T[]
   styles: CSSProperties
   page: number
   pageRange: number[]
@@ -25,6 +25,7 @@ export type Layout = {
   scrollWidth: number
   scrollHeight: number
   rows: number
+  horizontal: boolean
   rowsOnViewport: number
   columns: number
   columnsOnViewport: number

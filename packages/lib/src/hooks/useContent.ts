@@ -12,7 +12,7 @@ export type UseContentProps<T> = {
 }
 
 export type UseContentReturnType<T> = {
-  childrens: T[]
+  items: T[]
   styles: CSSProperties
 }
 
@@ -24,7 +24,7 @@ export function useContent<T>({
   padding,
   offScreenPages,
 }: UseContentProps<T>): UseContentReturnType<T> {
-  const { childrens, styles } = useMemo(() => {
+  const { items, styles } = useMemo(() => {
     const {
       width,
       paddingTop,
@@ -44,13 +44,13 @@ export function useContent<T>({
     }
 
     return {
-      childrens: data.slice(start, end),
+      items: data.slice(start, end),
       styles,
     }
   }, [data, offScreenPages, layout, padding, page, gap])
 
   return {
-    childrens,
+    items,
     styles,
   }
 }

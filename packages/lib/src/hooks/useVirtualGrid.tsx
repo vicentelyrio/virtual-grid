@@ -32,7 +32,7 @@ export function useVirtualGrid<T>({
     padding,
   })
 
-  const { childrens, styles } = useContent({
+  const { items, styles } = useContent({
     data,
     layout,
     page,
@@ -43,13 +43,13 @@ export function useVirtualGrid<T>({
 
   return {
     ...layout,
-    childrens,
+    items,
     styles,
     page,
     pageRange,
     onScrollTo,
     scrolling,
     resizing,
-    mounting: !childrens || !layout || !page,
+    mounting: !items || !layout || !page,
   }
 }
