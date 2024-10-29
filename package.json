@@ -31,7 +31,7 @@
     "@manypkg/cli": "^0.21.4",
     "@virtual-grid/eslint-config": "workspace:*",
     "eslint": "^8.57.0",
-    "turbo": "latest"
+    "turbo": "^2.2.3"
   },
   "engines": {
     "node": ">=18"
