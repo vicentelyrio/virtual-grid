@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { useLayout } from './useLayout'
 import { usePage } from './usePage'
 import { useContent } from './useContent'
@@ -6,13 +7,17 @@ import { VirtualGrid, VirtualGridProps } from '../types'
 
 export function useVirtualGrid<T>({
   data,
-  gridElement,
-  scrollElement,
   offScreenPages = 1,
   padding = [0, 0, 0, 0],
   gap = 20,
   horizontal = false,
 }: VirtualGridProps<T>): Partial<VirtualGrid<T>> {
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const gridRef = useRef<HTMLDivElement>(null)
+
+  const gridElement = gridRef.current
+  const scrollElement = scrollRef.current
+
   const total = data?.length ?? 0
 
   const { resizing, layout } = useLayout({
@@ -43,6 +48,8 @@ export function useVirtualGrid<T>({
 
   return {
     ...layout,
+    gridRef,
+    scrollRef,
     items,
     styles,
     page,

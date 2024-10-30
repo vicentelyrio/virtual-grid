@@ -81,6 +81,7 @@ export function getLayout({
       itemWidth,
       gridHeight,
       gridWidth,
+      horizontal
     }
   } catch (e) {
     return {} as Layout

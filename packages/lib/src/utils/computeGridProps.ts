@@ -1,7 +1,7 @@
-import { GetLayoutReturnType } from './getLayout'
+import { Layout } from '../types'
 
 export type ComputeGridProps = {
-  layout: GetLayoutReturnType
+  layout: Layout
   page: number
   padding: number[]
   offScreenPages: number

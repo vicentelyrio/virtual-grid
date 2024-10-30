@@ -1,9 +1,7 @@
-import { CSSProperties } from 'react'
+import { CSSProperties, RefObject } from 'react'
 
 export type VirtualGridProps<T> = {
   data: T[],
-  gridElement: HTMLElement | null
-  scrollElement: HTMLElement | null
   offScreenPages?: number
   padding?: number[]
   gap?: number,
@@ -19,6 +17,8 @@ export type VirtualGrid<T> = Layout & {
   scrolling: boolean
   resizing: boolean
   mounting: boolean
+  gridRef: RefObject<HTMLDivElement>
+  scrollRef: RefObject<HTMLDivElement>
 }
 
 export type Layout = {
