@@ -6,7 +6,8 @@
   "repository": "https://github.com/vicentelyrio/virtual-grid/tree/main/apps/playground",
   "scripts": {
     "dev": "cosmos",
-    "build": "cosmos export",
+    "build": "cosmos-export",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint \"src/**/*.ts\""
   },
   "dependencies": {
