@@ -1,0 +1,18 @@
+{
+  "name": "@virtual-grid/eslint-config",
+  "version": "0.0.0",
+  "main": "index.cjs",
+  "repository": "https://github.com/vicentelyrio/virtual-grid/tree/main/packages/eslint-config",
+  "license": "MIT",
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.2.0",
+    "@typescript-eslint/parser": "^7.2.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.6"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -7,9 +7,10 @@ export type DemoProps = {
   count: number
   virtualize: boolean
   horizontal: boolean
+  offScreenPages: number
 }
 
-export function Demo({ count, virtualize, horizontal }: DemoProps) {
+export function Demo({ count, virtualize, horizontal, offScreenPages }: DemoProps) {
   const data = useMemo(() => (
     Array(count).fill(true).map((_, index) => index)
   ), [count])
@@ -24,6 +25,7 @@ export function Demo({ count, virtualize, horizontal }: DemoProps) {
     padding: [20, 20, 20, 20],
     data,
     horizontal,
+    offScreenPages,
   })
 
   return (

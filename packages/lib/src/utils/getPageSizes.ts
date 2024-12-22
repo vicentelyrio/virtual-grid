@@ -6,6 +6,7 @@ export type GetPageSizesProps = {
   itemSize: number
   itemsOnPage: number
   gap: number
+  total: number
 }
 
 export type GetPageSizesReturnType = {
@@ -19,13 +20,17 @@ export function getPageSizes({
   scrollSize,
   itemSize,
   itemsOnPage,
+  total,
   gap
 }: GetPageSizesProps): GetPageSizesReturnType {
   const screenCenter = screenStart + scrollSize / 2
   const screenEnd = screenStart + scrollSize
 
-  const start = roundTo(screenStart / (itemSize + gap), 1)
-  const end = roundTo(screenEnd / (itemSize + gap), 1)
+  const start = Math.floor(screenStart / (itemSize + gap))  // Use floor for start
+  const end = Math.min(
+    Math.ceil(screenEnd / (itemSize + gap)),
+    Math.ceil(total / itemsOnPage)
+  )
   const index = roundTo(screenCenter / (itemSize + gap), 1)
   const page = roundTo(end / itemsOnPage, 0)
 
