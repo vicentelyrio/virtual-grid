@@ -8,9 +8,10 @@ export type DemoProps = {
   virtualize: boolean
   horizontal: boolean
   offScreenPages: number
+  images: boolean
 }
 
-export function Demo({ count, virtualize, horizontal, offScreenPages }: DemoProps) {
+export function Demo({ count, virtualize, horizontal, offScreenPages, images }: DemoProps) {
   const data = useMemo(() => (
     Array(count).fill(true).map((_, index) => index)
   ), [count])
@@ -35,17 +36,17 @@ export function Demo({ count, virtualize, horizontal, offScreenPages }: DemoProp
         className={horizontal ? 'grid horizontal' : 'grid'}
         ref={gridRef}>
         {(virtualize ? items : data).map((index: number) => (
-          <Card index={index} key={index} />
+          <Card index={index} key={index} src={images ? `https://robohash.org/${index}` : undefined} />
         ))}
       </div>
     </div>
   )
 }
 
-function Card({ index = 0 }: { index?: number }) {
+function Card({ index = 0, src }: { index?: number, src?: string }) {
   return (
     <div className="card">
-      {index + 1}
+      {src ? <img src={src} alt={`${index + 1}`} /> : index + 1}
     </div>
   )
 }
