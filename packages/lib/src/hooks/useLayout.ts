@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import isEqual from 'react-fast-compare'
 
 import { getBounds } from '../utils/getBounds'
@@ -29,13 +29,14 @@ export function useLayout({
 }: UseLayoutProps): UseLayoutReturnType {
   const [layout, setLayout] = useState<Layout>({} as Layout)
   const [resizing, setResizing] = useState(false)
+  const resizeObserverRef = useRef<ResizeObserver | null>(null)
+  const rafRef = useRef<number | null>(null)
 
-  // Recalculate screen
   const calculateLayout = useCallback(() => {
     const newBounds = getBounds({ scrollElement, gridElement })
-
     const newLayout = getLayout({
       gridElement,
+      scrollElement,
       horizontal,
       gap,
       padding,
@@ -48,23 +49,40 @@ export function useLayout({
     }
   }, [gap, gridElement, horizontal, padding, scrollElement, total, layout])
 
-  // Resize event control
   const handleResize = useCallback(() => {
     setResizing(true)
-    calculateLayout()
-    setResizing(false)
+
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current)
+      setResizing(false)
+    }
+
+    rafRef.current = requestAnimationFrame(() => {
+      calculateLayout()
+      rafRef.current = null
+      setResizing(false)
+    })
   }, [calculateLayout])
 
-  // Resize event handler
   useEffect(() => {
     if (!gridElement || !scrollElement) return
 
-    window?.addEventListener('resize', handleResize)
+    resizeObserverRef.current = new ResizeObserver(handleResize)
+
+    resizeObserverRef.current.observe(scrollElement)
 
     calculateLayout()
 
-    return () => window?.removeEventListener('resize', handleResize)
-  }, [handleResize, gridElement, scrollElement])
+    return () => {
+      if (resizeObserverRef.current) {
+        resizeObserverRef.current.disconnect()
+      }
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current)
+        setResizing(false)
+      }
+    }
+  }, [handleResize, gridElement, scrollElement, calculateLayout])
 
   return {
     resizing,

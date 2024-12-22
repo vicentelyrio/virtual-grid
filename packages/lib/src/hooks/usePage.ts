@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { computeScroll } from '../utils/computeScroll'
 import { GetPageReturnType, getPage } from '../utils/getPage'
 import { Layout } from '../types'
@@ -18,70 +18,117 @@ export function usePage({
   padding,
   horizontal,
 }: UsePageProps) {
-  const [page, setPage] = useState<GetPageReturnType>({ index: 1, page: 1, pageRange: [0, 0] })
+  const [page, setPage] = useState<GetPageReturnType>({
+    index: 1,
+    page: 1,
+    pageRange: [0, 0]
+  })
   const [scrolling, setScrolling] = useState(false)
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const rafRef = useRef<number | null>(null)
+  const lastScrollPosition = useRef<number>(0)
+
   const {
     itemHeight = 0,
     itemWidth = 0,
     itemsPerPage = 0
   } = layout || {}
 
-  // Scroll To Card
-  const onScrollTo = useCallback((index: number) => {
-    const props = { left: 0, top: 0 }
+  const computeScrollPosition = useCallback(
+    (index: number) => {
+      const size = horizontal ? itemWidth : itemHeight
+      const paddingStart = horizontal ? padding[2] : padding[0]
 
-    if (horizontal) {
-      Object.assign(props, {
-        left: computeScroll({
-          index,
-          gap,
-          itemsPerPage,
-          itemSize: itemWidth,
-          padding: padding[2],
-        }),
+      return computeScroll({
+        index,
+        gap,
+        itemsPerPage,
+        itemSize: size,
+        padding: paddingStart,
       })
-    } else {
-      Object.assign(props, {
-        top: computeScroll({
-          index,
-          gap,
-          itemsPerPage,
-          itemSize: itemHeight,
-          padding: padding[0],
-        }),
-      })
+    },
+    [horizontal, itemHeight, itemWidth, gap, itemsPerPage, padding]
+  )
+
+  const onScrollTo = useCallback(
+    (index: number, behavior: ScrollBehavior = 'smooth') => {
+      if (!scrollElement) return
+
+      const scrollPosition = computeScrollPosition(index)
+      const scrollOptions: ScrollToOptions = {
+        behavior,
+        [horizontal ? 'left' : 'top']: scrollPosition,
+        [horizontal ? 'top' : 'left']: 0
+      }
+
+      scrollElement.scroll(scrollOptions)
+    },
+    [scrollElement, horizontal, computeScrollPosition]
+  )
+
+  const handleScroll = useCallback(() => {
+    if (!scrollElement || !layout) return
+
+    // Clear existing timeouts
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current)
+    }
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current)
     }
 
-    scrollElement?.scroll({ ...props, behavior: 'smooth' })
-  }, [
-    horizontal,
-    itemHeight,
-    itemWidth,
-    scrollElement,
-    gap,
-    padding,
-    itemsPerPage
-  ])
+    // Get current scroll position
+    const currentPosition = horizontal
+      ? scrollElement.scrollLeft
+      : scrollElement.scrollTop
 
-  // Scroll handler
-  const handleScroll = useCallback(() => {
-    setScrolling(true)
-    setPage(getPage({ scrollElement, layout, gap }))
-    setScrolling(false)
-  }, [scrollElement, layout, gap])
+    // Check if scroll position changed significantly
+    const scrollDelta = Math.abs(currentPosition - lastScrollPosition.current)
+    if (scrollDelta < 1) return
+
+    lastScrollPosition.current = currentPosition
+
+    // Set scrolling state
+    if (!scrolling) {
+      setScrolling(true)
+    }
+
+    // Update page calculation in next frame
+    rafRef.current = requestAnimationFrame(() => {
+      setPage(getPage({ scrollElement, layout, gap }))
+      rafRef.current = null
+
+      // Reset scrolling state after scroll ends
+      scrollTimeoutRef.current = setTimeout(() => {
+        setScrolling(false)
+        scrollTimeoutRef.current = null
+      }, 150)
+    })
+  }, [scrollElement, layout, gap, horizontal, scrolling])
 
   useEffect(() => {
     if (!scrollElement) return
 
-    scrollElement.addEventListener('scroll', handleScroll)
+    scrollElement.addEventListener('scroll', handleScroll, { passive: true })
 
-    return () => scrollElement.removeEventListener('scroll', handleScroll)
+    return () => {
+      scrollElement.removeEventListener('scroll', handleScroll)
+
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current)
+      }
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current)
+      }
+    }
   }, [handleScroll, scrollElement])
 
-  // Initial Setup
   useEffect(() => {
-    if (!page && !!layout) {
-      setPage(getPage({ scrollElement, layout, gap }))
+    if (!page && layout) {
+      rafRef.current = requestAnimationFrame(() => {
+        setPage(getPage({ scrollElement, layout, gap }))
+        rafRef.current = null
+      })
     }
   }, [layout, scrollElement, page, gap])
 
@@ -91,4 +138,3 @@ export function usePage({
     onScrollTo,
   }
 }
-

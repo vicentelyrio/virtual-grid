@@ -44,7 +44,7 @@ export function computeGrid({
     gridWidth,
   } = layout
 
-  const minBoundary = Math.max(0, page - offScreenPages)
+  const minBoundary = Math.max(0, page - offScreenPages - 1)
   const maxBoundary = Math.min(pages, page + 1 + offScreenPages)
 
   const itemW = itemWidth + gap

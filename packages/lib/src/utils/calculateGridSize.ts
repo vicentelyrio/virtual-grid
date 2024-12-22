@@ -31,27 +31,34 @@ export function calculateGridSize({
   gap,
 }: CalculateGridSizeProps): CalculateGridSizeReturnType {
   if (horizontal) {
+    const adjustedWidth = computeSize({
+      total,
+      itemsPerPage: itemsPerColumn,
+      itemSize: itemWidth,
+      gap,
+      padding: padding[1] + padding[3],
+    })
+
+    const finalWidth = Math.max(adjustedWidth, width)
+
     return {
       height,
-      width: computeSize({
-        total,
-        itemsPerPage: itemsPerColumn,
-        itemSize: itemWidth,
-        gap,
-        padding: padding[1] + padding[3],
-      }),
+      width: finalWidth
     }
   }
 
+  const adjustedHeight = computeSize({
+    total,
+    itemsPerPage: itemsPerRow,
+    itemSize: itemHeight,
+    gap,
+    padding: padding[0] + padding[2],
+  })
+
+  const finalHeight = Math.max(adjustedHeight, height)
+
   return {
     width,
-    height: computeSize({
-      total,
-      itemsPerPage: itemsPerRow,
-      itemSize: itemHeight,
-      gap,
-      padding: padding[0] + padding[2],
-    }),
+    height: finalHeight
   }
 }
-

@@ -44,7 +44,7 @@ export function useContent<T>({
     }
 
     return {
-      items: data.slice(start, end),
+      items: (isNaN(start) || isNaN(end)) ? data : data?.slice(start, end),
       styles,
     }
   }, [data, offScreenPages, layout, padding, page, gap])

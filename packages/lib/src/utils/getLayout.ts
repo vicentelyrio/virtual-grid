@@ -9,6 +9,7 @@ export type Bounds = {
 
 export type GetLayoutProps = {
   gridElement: HTMLElement | null
+  scrollElement: HTMLElement | null
   total: number
   bounds: Bounds
   gap: number
@@ -18,6 +19,7 @@ export type GetLayoutProps = {
 
 export function getLayout({
   gridElement,
+  scrollElement,
   total,
   bounds,
   gap,
@@ -25,7 +27,7 @@ export function getLayout({
   horizontal,
 }: GetLayoutProps): Layout {
   try {
-    const { width, height } = getRect(gridElement)
+    const { width, height } = getRect(scrollElement)
 
     const firstItem = gridElement?.children?.item(0)
 
@@ -35,11 +37,14 @@ export function getLayout({
     const itemHeight = item.height ?? 0
     const itemWidth = item.width ?? 0
 
+    const containerWidth = width - (padding[1] - padding[3] + gap)
+    const containerHeight = height - (padding[0] - padding[2] + gap)
+
+    const itemsPerRow = Math.max(Math.floor(containerWidth / (itemWidth + gap)), 1)
+    const itemsPerColumn = Math.max(Math.floor(containerHeight / (itemHeight + gap)), 1)
+
     const rowsOnViewport = Math.max(Math.floor(bounds?.height / itemHeight) || 1, 1)
     const columnsOnViewport = Math.max(Math.floor(bounds?.width / itemWidth) || 1, 1)
-
-    const itemsPerRow = Math.max(Math.round(width / itemWidth) || 1, 1)
-    const itemsPerColumn = Math.max(Math.round(height / itemHeight) || 1, 1)
 
     const itemsPerPage = horizontal
       ? columnsOnViewport * itemsPerColumn
