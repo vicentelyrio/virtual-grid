@@ -1,0 +1,11 @@
+{
+  "extends": "@virtual-grid/typescript-config/next.json",
+  "exclude": [
+    "node_modules"
+  ],
+  "compilerOptions": {
+    "allowJs": true,
+    "incremental": true,
+    "jsx": "preserve"
+  }
+}

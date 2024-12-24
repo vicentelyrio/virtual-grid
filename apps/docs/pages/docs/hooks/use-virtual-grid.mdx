@@ -1,0 +1,58 @@
+# useVirtualGrid
+
+The main hook for implementing grid virtualization. It handles the core virtualization logic and returns everything needed to render a virtual grid.
+
+## Usage
+
+```tsx
+import { useVirtualGrid } from '@virtual-grid/lib'
+
+function MyGrid({ items }) {
+  const { 
+    virtualItems, 
+    containerProps,
+    scrollTo,
+    scrollToItem 
+  } = useVirtualGrid({
+    items,
+    itemHeight: 50,
+    overscan: 5
+  })
+
+  return (
+    <div {...containerProps}>
+      {virtualItems.map(virtualItem => (
+        <div 
+          key={virtualItem.index}
+          style={{
+            height: virtualItem.size,
+            transform: `translateY(${virtualItem.start}px)`
+          }}
+        >
+          {items[virtualItem.index].content}
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+## Options
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| items | T[] | Yes | The array of items to virtualize |
+| itemHeight | number | Yes | Height of each item in pixels |
+| overscan | number | No | Number of items to render outside the visible area |
+| onScroll | (scrollOffset: number) => void | No | Callback fired on scroll |
+| initialScrollOffset | number | No | Initial scroll position |
+
+## Returns
+
+| Property | Type | Description |
+|----------|------|-------------|
+| virtualItems | VirtualItem[] | Array of items to render |
+| containerProps | HTMLProps | Props to spread on container element |
+| scrollTo | (offset: number) => void | Function to scroll to a specific offset |
+| scrollToItem | (index: number) => void | Function to scroll to a specific item |
+| isScrolling | boolean | Whether the grid is currently scrolling |

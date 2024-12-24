@@ -1,0 +1,43 @@
+# Core Concepts
+
+Virtual Grid is built on several core concepts that enable efficient grid virtualization while maintaining flexibility and ease of use.
+
+## Virtualization
+
+At its core, Virtual Grid implements virtualization to efficiently render large lists of items. Instead of rendering every item in your dataset, it only renders the items that are currently visible in the viewport, plus a small overscan area.
+
+### How it Works
+
+1. The library calculates which items should be visible based on:
+   - The current scroll position
+   - The viewport size
+   - Item dimensions
+   - Overscan configuration
+
+2. Only these calculated items are rendered, with appropriate positioning to maintain the illusion of a complete list
+
+3. As the user scrolls, the list of visible items is updated efficiently
+
+## Hook-based Architecture
+
+Virtual Grid follows a hook-based architecture similar to libraries like react-table. This approach provides several benefits:
+
+1. **Flexibility**: You control the rendering and can integrate with any UI framework
+2. **Composability**: Combine hooks to build complex functionality
+3. **Separation of Concerns**: Clear separation between logic and presentation
+
+## Layout Management
+
+The library handles complex layout calculations efficiently:
+
+1. **Position Calculation**: Determines each item's position in the virtual space
+2. **Size Management**: Handles both fixed and variable size items
+3. **Viewport Updates**: Efficiently updates visible items during scrolling
+
+## Performance Optimizations
+
+Virtual Grid includes several built-in performance optimizations:
+
+1. **Memoization**: Key calculations are memoized to prevent unnecessary re-renders
+2. **Web Worker Support**: Optional support for offloading heavy calculations
+3. **Batched Updates**: Changes to the virtual list are batched for better performance

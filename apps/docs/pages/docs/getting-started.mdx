@@ -1,0 +1,59 @@
+# Getting Started
+
+## Installation
+
+Install @virtual-grid/lib and its peer dependencies:
+
+```bash
+# Using npm
+npm install @virtual-grid/lib
+
+# Using yarn
+yarn add @virtual-grid/lib
+
+# Using pnpm
+pnpm add @virtual-grid/lib
+```
+
+## Quick Start
+
+Here's a basic example of how to use Virtual Grid:
+
+```tsx
+import { useVirtualGrid } from '@virtual-grid/lib'
+
+function MyGrid({ items }) {
+  const { virtualItems, containerProps } = useVirtualGrid({
+    items,
+    itemHeight: 50,
+    overscan: 5
+  })
+
+  return (
+    <div {...containerProps}>
+      {virtualItems.map(virtualItem => (
+        <div 
+          key={virtualItem.index}
+          style={{
+            height: virtualItem.size,
+            transform: `translateY(${virtualItem.start}px)`
+          }}
+        >
+          {items[virtualItem.index].content}
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+## Core Concepts
+
+Virtual Grid is built around a few core concepts:
+
+1. **Virtualization** - Only render items that are visible in the viewport
+2. **Hook-based API** - Flexible and composable hooks for different use cases
+3. **Layout Management** - Efficient calculation and updates of item positions
+4. **Performance Optimizations** - Built-in memoization and optional Web Worker support
+
+Check out the [Core Concepts](/docs/core-concepts) section to learn more.

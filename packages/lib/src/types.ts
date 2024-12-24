@@ -17,8 +17,8 @@ export type VirtualGrid<T> = Layout & {
   scrolling: boolean
   resizing: boolean
   mounting: boolean
-  gridRef: RefObject<HTMLDivElement>
-  scrollRef: RefObject<HTMLDivElement>
+  gridRef: RefObject<HTMLDivElement | null>
+  scrollRef: RefObject<HTMLDivElement | null>
 }
 
 export type Layout = {
