@@ -8,19 +8,6 @@ export type VirtualGridProps<T> = {
   horizontal?: boolean
 }
 
-export type VirtualGrid<T> = Layout & {
-  items: T[]
-  styles: CSSProperties
-  page: number
-  pageRange: number[]
-  onScrollTo: (page: number) => void
-  scrolling: boolean
-  resizing: boolean
-  mounting: boolean
-  gridRef: RefObject<HTMLDivElement | null>
-  scrollRef: RefObject<HTMLDivElement | null>
-}
-
 export type Layout = {
   scrollWidth: number
   scrollHeight: number
@@ -39,3 +26,17 @@ export type Layout = {
   gridHeight: number
   gridWidth: number
 }
+
+export type VirtualGrid<T> = Layout & {
+  items: T[]
+  styles: CSSProperties
+  page: number
+  pageRange: number[]
+  onScrollTo: (page: number) => void
+  scrolling: boolean
+  resizing: boolean
+  mounting: boolean
+  gridRef: RefObject<HTMLDivElement | null>
+  scrollRef: RefObject<HTMLDivElement | null>
+}
+

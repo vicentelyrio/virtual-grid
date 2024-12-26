@@ -8,12 +8,4 @@ export default {
     'title': 'Documentation',
     'type': 'page'
   },
-  // 'examples': {
-  //   'title': 'Examples',
-  //   'type': 'page'
-  // },
-  // 'api': {
-  //   'title': 'API Reference',
-  //   'type': 'page'
-  // }
 }

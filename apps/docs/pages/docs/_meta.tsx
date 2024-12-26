@@ -1,9 +1,5 @@
 export default {
   'getting-started': 'Getting Started',
-  'core-concepts': 'Core Concepts',
-  'hooks': {
-    'title': 'Hooks ↗',
-    'type': 'page',
-    'href': '/docs/hooks/use-virtual-grid'
-  },
+  'demo': 'Demo',
+  'how-it-works': 'How it Works',
 }

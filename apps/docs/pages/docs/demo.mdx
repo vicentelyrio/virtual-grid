@@ -1,0 +1,23 @@
+# Demo
+
+Here's a basic example of how to use Virtual Grid:
+
+```tsx
+import { useVirtualGrid } from '@virtual-grid/lib'
+
+function MyGrid({ data }) {
+  const { items, styles, gridRef, scrollRef } = useVirtualGrid<number>({ data })
+
+  return (
+    <div className="scroll" ref={scrollRef}>
+      <div className="grid" ref={gridRef} style={styles}>
+        {items.map((index: number) => (
+          <div className="card" key={index}>
+            {index + 1}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+```
