@@ -1,11 +1,17 @@
 export default {
-  'index': {
-    'title': 'Home',
-    'type': 'page',
-    'display': 'hidden'
+  index: {
+    title: 'Home',
+    theme: {
+      footer: true,
+      breadcrumb: false,
+      sidebar: false,
+      toc: false,
+      pagination: false,
+      layout: 'raw',
+    }
   },
-  'docs': {
-    'title': 'Documentation',
-    'type': 'page'
+  docs: {
+    title: 'Documentation',
+    type: 'page'
   },
 }

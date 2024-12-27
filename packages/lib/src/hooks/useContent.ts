@@ -41,6 +41,7 @@ export function useContent<T>({
       paddingRight: `${paddingRight ?? 0}px`,
       paddingBottom: `${paddingBottom ?? 0}px`,
       paddingLeft: `${paddingLeft ?? 0}px`,
+      gap: `${gap ?? 0}px`,
     }
 
     return {
