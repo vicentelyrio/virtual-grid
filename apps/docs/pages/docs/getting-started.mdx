@@ -47,36 +47,42 @@ export type VirtualGridProps<T> = {
 Props that are returned by the `useVirtualGrid` hook:
 
 ```tsx
-export type Layout = {
+export type VirtualGrid<T> = {
+  gridRef: RefObject<HTMLDivElement | null>
+  gridHeight: number
+  gridWidth: number
+
+  scrollRef: RefObject<HTMLDivElement | null>
   scrollWidth: number
   scrollHeight: number
-  rows: number
-  horizontal: boolean
-  rowsOnViewport: number
-  columns: number
-  columnsOnViewport: number
-  total: number
-  pages: number
+
+  items: T[]
+  styles: CSSProperties
+
+  itemHeight: number
+  itemWidth: number
+
   itemsPerRow: number
   itemsPerColumn: number
   itemsPerPage: number
-  itemHeight: number
-  itemWidth: number
-  gridHeight: number
-  gridWidth: number
-}
 
-export type VirtualGrid<T> = Layout & {
-  items: T[]
-  styles: CSSProperties
+  rows: number
+  rowsOnViewport: number
+
+  columns: number
+  columnsOnViewport: number
+
+  total: number
+  pages: number
   page: number
   pageRange: number[]
+
   onScrollTo: (page: number) => void
+
+  horizontal: boolean
   scrolling: boolean
   resizing: boolean
   mounting: boolean
-  gridRef: RefObject<HTMLDivElement | null>
-  scrollRef: RefObject<HTMLDivElement | null>
 }
 ```
 

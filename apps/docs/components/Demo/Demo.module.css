@@ -1,0 +1,19 @@
+.container {
+  width: 100%;
+  position: relative;
+}
+
+.scroll {
+  max-height: 80vh;
+  overflow-y: scroll;
+}
+
+.scrollHorizontal {
+  width: 100%;
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+
+.footer {
+  color: #666;
+}

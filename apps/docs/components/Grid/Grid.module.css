@@ -1,0 +1,51 @@
+.grid {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-auto-rows: 270px;
+  align-content: start;
+  gap: 20px;
+  padding: 20px;
+}
+
+.gridHorizontal {
+  grid-template-rows: repeat(auto-fit, minmax(250px, 1fr));
+  grid-auto-flow: column;
+  grid-auto-columns: 270px;
+  height: 100%;
+}
+
+/* CARD */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.card {
+  background: #191919;
+  border-radius: 6px;
+  font-size: 30px;
+  white-space: nowrap;
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  opacity: 0;
+  animation: fadeIn 1s ease-in forwards;
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cardLabel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 22px;
+  padding: 8px;
+}
