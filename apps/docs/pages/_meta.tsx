@@ -2,7 +2,7 @@ export default {
   index: {
     title: 'Home',
     theme: {
-      footer: true,
+      footer: false,
       breadcrumb: false,
       sidebar: false,
       toc: false,

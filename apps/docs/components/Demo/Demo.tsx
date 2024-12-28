@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import { useMemo, useState } from 'react'
 import { useVirtualGrid } from '@virtual-grid/lib'
 
@@ -15,6 +14,7 @@ export function Demo() {
     offScreenPages: 1,
     horizontal: false,
     virtualize: true,
+    animation: 0,
   })
 
   const {
@@ -24,6 +24,7 @@ export function Demo() {
     offScreenPages,
     horizontal,
     virtualize,
+    animation,
   } = controls
 
   const data = useMemo(() => (
@@ -50,19 +51,16 @@ export function Demo() {
         setControls={setControls}
       />
 
-      <div
-        className={clsx([classes.scroll, horizontal && classes.scrollHorizontal])}
-        ref={scrollRef}>
-        <Grid
-          data={virtualize ? items : data}
-          styles={virtualize ? styles : {}}
-          gridRef={gridRef}
-          scrollRef={scrollRef}
-          horizontal={horizontal}
-        />
-      </div>
+      <Grid
+        data={virtualize ? items : data}
+        styles={virtualize ? styles : {}}
+        gridRef={gridRef}
+        scrollRef={scrollRef}
+        horizontal={horizontal}
+        animation={animation}
+      />
 
-      <p className={classes.footer} style={{ padding: styles?.paddingLeft }}>
+      <p className={classes.footer}>
         images from <a href="https://robohash.org/">robohash.org</a>
       </p>
     </div>

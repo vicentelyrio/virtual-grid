@@ -7,6 +7,7 @@ export type Controls = {
   offScreenPages: number
   horizontal: boolean
   virtualize: boolean
+  animation: number
 }
 
 type ControlsProps = {
@@ -150,6 +151,42 @@ export function Controls({ controls, setControls }: ControlsProps) {
             <option value="3"></option>
             <option value="4"></option>
             <option value="5"></option>
+          </datalist>
+
+        </label>
+      </fieldset>
+
+      <fieldset className={classes.fieldset}>
+        <label className={classes.label}>
+          <span className={classes.labelText}>
+            Animation: {controls.animation/10}s
+          </span>
+          <input
+            className={classes.range}
+            name="animation"
+            type="range"
+            min="0"
+            max="10"
+            step="1"
+            value={controls.animation}
+            list="animation"
+            onChange={(event) => {
+              const { name, value } = event.target
+              onChangeControls(parseFloat(value), name)
+            }}
+          />
+          <datalist id="animation">
+            <option value="0"></option>
+            <option value="1"></option>
+            <option value="2"></option>
+            <option value="3"></option>
+            <option value="4"></option>
+            <option value="5"></option>
+            <option value="6"></option>
+            <option value="7"></option>
+            <option value="8"></option>
+            <option value="9"></option>
+            <option value="10"></option>
           </datalist>
 
         </label>

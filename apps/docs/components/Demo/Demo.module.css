@@ -3,17 +3,7 @@
   position: relative;
 }
 
-.scroll {
-  max-height: 80vh;
-  overflow-y: scroll;
-}
-
-.scrollHorizontal {
-  width: 100%;
-  overflow-x: scroll;
-  overflow-y: hidden;
-}
-
 .footer {
+  padding: 20px;
   color: #666;
 }
