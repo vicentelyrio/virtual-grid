@@ -8,14 +8,8 @@ const withNextra = nextra({
 
 export default withNextra({
   reactStrictMode: true,
+  output: 'export',
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'robohash.org',
-        port: '',
-        search: '',
-      },
-    ],
+    unoptimized: true
   }
 })
