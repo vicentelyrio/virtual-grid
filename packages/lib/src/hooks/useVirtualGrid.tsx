@@ -1,9 +1,9 @@
 import { useRef } from 'react'
-import { useLayout } from './useLayout'
-import { usePage } from './usePage'
-import { useContent } from './useContent'
+import { useLayout } from '@hooks/useLayout'
+import { usePage } from '@hooks/usePage'
+import { useContent } from '@hooks/useContent'
 
-import { VirtualGrid, VirtualGridProps } from '../types'
+import { VirtualGrid, VirtualGridProps } from '@types'
 
 export function useVirtualGrid<T>({
   data,

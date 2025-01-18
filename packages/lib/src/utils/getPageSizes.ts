@@ -1,4 +1,4 @@
-import { roundTo } from './roundTo'
+import { roundTo } from '@utils/roundTo'
 
 export type GetPageSizesProps = {
   screenStart: number
@@ -27,7 +27,7 @@ export function getPageSizes({
   const start = roundTo(screenStart / (itemSize + gap), 1)
   const end = roundTo(screenEnd / (itemSize + gap), 1)
   const index = roundTo(screenCenter / (itemSize + gap), 1)
-  const page = roundTo(end / itemsOnPage, 0)
+  const page = Math.floor(end / itemsOnPage)  // Changed from roundTo to Math.floor
 
   return {
     index,
@@ -35,4 +35,3 @@ export function getPageSizes({
     pageRange: [start, end],
   }
 }
-

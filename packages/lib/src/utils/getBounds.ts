@@ -1,4 +1,4 @@
-import { getRect } from './getRect'
+import { getRect } from '@utils/getRect'
 
 export type GetBoundsProps = {
   gridElement: HTMLElement | null

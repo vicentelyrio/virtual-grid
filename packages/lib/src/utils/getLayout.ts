@@ -1,6 +1,6 @@
-import { Layout } from '../types'
-import { calculateGridSize } from './calculateGridSize'
-import { getRect } from './getRect'
+import { Layout } from '@/types'
+import { calculateGridSize } from '@utils/calculateGridSize'
+import { getRect } from '@utils/getRect'
 
 export type Bounds = {
   width: number

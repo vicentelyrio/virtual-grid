@@ -1,4 +1,4 @@
-import { computeSize } from './computeSize'
+import { computeSize } from '@utils/computeSize'
 
 export type CalculateGridSizeProps = {
   horizontal: boolean

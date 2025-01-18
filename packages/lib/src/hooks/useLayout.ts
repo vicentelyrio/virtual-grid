@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import isEqual from 'react-fast-compare'
 
-import { getBounds } from '../utils/getBounds'
-import { getLayout } from '../utils/getLayout'
-import { Layout } from '../types'
+import { getBounds } from '@utils/getBounds'
+import { getLayout } from '@utils/getLayout'
+import { Layout } from '@types'
 
 export type UseLayoutProps = {
   gridElement: HTMLElement | null

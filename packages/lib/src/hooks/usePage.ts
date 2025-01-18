@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { computeScroll } from '../utils/computeScroll'
-import { GetPageReturnType, getPage } from '../utils/getPage'
-import { Layout } from '../types'
+import { computeScroll } from '@utils/computeScroll'
+import { GetPageReturnType, getPage } from '@utils/getPage'
+import { Layout } from '@types'
 
 export type UsePageProps = {
   scrollElement: HTMLElement | null
@@ -66,6 +66,11 @@ export function usePage({
     [scrollElement, horizontal, computeScrollPosition]
   )
 
+  const updatePage = useCallback(() => {
+    if (!scrollElement || !layout) return
+    setPage(getPage({ scrollElement, layout, gap }))
+  }, [scrollElement, layout, gap])
+
   const handleScroll = useCallback(() => {
     if (!scrollElement || !layout) return
 
@@ -89,13 +94,11 @@ export function usePage({
     lastScrollPosition.current = currentPosition
 
     // Set scrolling state
-    if (!scrolling) {
-      setScrolling(true)
-    }
+    setScrolling(true)
 
     // Update page calculation in next frame
     rafRef.current = requestAnimationFrame(() => {
-      setPage(getPage({ scrollElement, layout, gap }))
+      updatePage()
       rafRef.current = null
 
       // Reset scrolling state after scroll ends
@@ -104,8 +107,16 @@ export function usePage({
         scrollTimeoutRef.current = null
       }, 150)
     })
-  }, [scrollElement, layout, gap, horizontal, scrolling])
+  }, [scrollElement, layout, horizontal, updatePage])
 
+  // Initialize page on mount and layout change
+  useEffect(() => {
+    if (scrollElement && layout) {
+      updatePage()
+    }
+  }, [scrollElement, layout, updatePage])
+
+  // Setup scroll listener
   useEffect(() => {
     if (!scrollElement) return
 
@@ -122,15 +133,6 @@ export function usePage({
       }
     }
   }, [handleScroll, scrollElement])
-
-  useEffect(() => {
-    if (!page && layout) {
-      rafRef.current = requestAnimationFrame(() => {
-        setPage(getPage({ scrollElement, layout, gap }))
-        rafRef.current = null
-      })
-    }
-  }, [layout, scrollElement, page, gap])
 
   return {
     ...page,

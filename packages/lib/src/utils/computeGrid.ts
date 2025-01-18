@@ -1,4 +1,4 @@
-import { Layout } from '../types'
+import { Layout } from '@types'
 
 export type ComputeGridProps = {
   layout: Layout

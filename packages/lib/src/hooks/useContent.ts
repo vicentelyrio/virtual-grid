@@ -1,6 +1,6 @@
 import { CSSProperties, useMemo } from 'react'
-import { computeGrid } from '../utils/computeGridProps'
-import { Layout } from '../types'
+import { computeGrid } from '@utils/computeGrid'
+import { Layout } from '@types'
 
 export type UseContentProps<T> = {
   data: T[]

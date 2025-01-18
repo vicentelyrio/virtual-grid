@@ -1,6 +1,6 @@
-import { Layout } from "../types"
-import { GetPageSizesReturnType, getPageSizes } from "./getPageSizes"
-import { getScrollProps } from "./getScrollProps"
+import { Layout } from '@types'
+import { GetPageSizesReturnType, getPageSizes } from '@utils/getPageSizes'
+import { getScrollProps } from '@utils/getScrollProps'
 
 export type GetPageProps = {
   scrollElement: HTMLElement | null
