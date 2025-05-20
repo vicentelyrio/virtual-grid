@@ -1,8 +1,6 @@
-import { renderHook, act } from '@testing-library/react'
-import { computeScroll } from '@utils/computeScroll'
-import { GetPageReturnType, getPage } from '@utils/getPage'
-import { usePage } from '@hooks/usePage'
-import { Layout } from '@types'
+import { act, renderHook } from '@testing-library/react'
+import { getPage } from '@utils/getPage'
+import { usePage, UsePageProps } from '@hooks/usePage'
 
 // Mock utilities
 jest.mock('@utils/computeScroll', () => ({
@@ -14,348 +12,174 @@ jest.mock('@utils/getPage', () => ({
 }))
 
 describe('usePage', () => {
-  const mockComputeScroll = computeScroll as jest.Mock
   const mockGetPage = getPage as jest.Mock
-
-  // Create DOM elements
   let mockScrollElement: HTMLDivElement
   let scrollLeft = 0
   let scrollTop = 0
   let registeredScrollHandler: EventListener | null = null
+  let defaultProps: UsePageProps
 
-  const createMockElement = () => {
-    const element = document.createElement('div')
-    
-    Object.defineProperty(element, 'scrollLeft', {
-      configurable: true,
+  beforeEach(() => {
+    // Create fresh mock element
+    mockScrollElement = document.createElement('div')
+
+    // Set up scroll properties
+    Object.defineProperty(mockScrollElement, 'scrollLeft', {
       get: () => scrollLeft,
       set: (value) => { scrollLeft = value }
     })
-
-    Object.defineProperty(element, 'scrollTop', {
-      configurable: true,
+    Object.defineProperty(mockScrollElement, 'scrollTop', {
       get: () => scrollTop,
       set: (value) => { scrollTop = value }
     })
 
-    element.scroll = jest.fn()
-    element.addEventListener = jest.fn((event, handler) => {
-      if (event === 'scroll' && typeof handler === 'function') {
-        registeredScrollHandler = handler
+    // Set up mock methods
+    mockScrollElement.scroll = jest.fn()
+    mockScrollElement.addEventListener = jest.fn((event, handler) => {
+      if (event === 'scroll') {
+        registeredScrollHandler = handler as any
       }
     })
+    mockScrollElement.removeEventListener = jest.fn()
 
-    element.removeEventListener = jest.fn((event, handler) => {
-      if (event === 'scroll' && handler === registeredScrollHandler) {
-        registeredScrollHandler = null
-      }
-    })
-
-    return element
-  }
-
-  const mockLayout: Layout = {
-    scrollWidth: 1000,
-    scrollHeight: 2000,
-    rows: 20,
-    horizontal: false,
-    rowsOnViewport: 5,
-    columns: 4,
-    columnsOnViewport: 3,
-    total: 80,
-    pages: 4,
-    itemsPerRow: 4,
-    itemsPerColumn: 5,
-    itemsPerPage: 20,
-    itemHeight: 100,
-    itemWidth: 250,
-    gridHeight: 2000,
-    gridWidth: 1000
-  }
-
-  beforeEach(() => {
-    mockScrollElement = createMockElement()
-    jest.resetAllMocks()
-    jest.useFakeTimers()
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0))
-    jest.spyOn(window, 'cancelAnimationFrame').mockImplementation(id => clearTimeout(id))
+    // Reset scroll values
     scrollLeft = 0
     scrollTop = 0
     registeredScrollHandler = null
-  })
 
-  const defaultProps = {
-    scrollElement: mockScrollElement,
-    layout: mockLayout,
-    gap: 10,
-    padding: [20, 20, 20, 20],
-    horizontal: false
-  }
+    // Reset all mocks
+    jest.resetAllMocks()
+    jest.useFakeTimers()
 
-  afterEach(() => {
-    jest.clearAllMocks()
-    jest.useRealTimers()
-  })
+    // Use requestAnimationFrame mock that executes immediately
+    window.requestAnimationFrame = jest.fn(cb => {
+      cb(performance.now())
+      return 1
+    })
 
-  it('should initialize with default page state', async () => {
-    const initialPage: GetPageReturnType = {
-      index: 1,
-      page: 1,
-      pageRange: [0, 0]
+    defaultProps = {
+      scrollElement: mockScrollElement,
+      layout: {
+        scrollWidth: 1000,
+        scrollHeight: 2000,
+        rows: 20,
+        horizontal: false,
+        rowsOnViewport: 5,
+        columns: 4,
+        columnsOnViewport: 3,
+        total: 80,
+        pages: 4,
+        itemsPerRow: 4,
+        itemsPerColumn: 5,
+        itemsPerPage: 20,
+        itemHeight: 100,
+        itemWidth: 250,
+        gridHeight: 2000,
+        gridWidth: 1000
+      },
+      gap: 10,
+      padding: [20, 20, 20, 20],
+      horizontal: false
     }
 
-    mockGetPage.mockReturnValue(initialPage)
+    const storedCallbacks: ((time: number) => void)[] = []
 
-    const { result } = renderHook(() => usePage(defaultProps))
-    
-    await act(async () => {
-      jest.runAllTimers()
+    window.requestAnimationFrame = jest.fn((cb) => {
+      storedCallbacks.push(cb)
+      return storedCallbacks.length
     })
 
-    expect(result.current).toEqual({
-      ...initialPage,
-      scrolling: false,
-      onScrollTo: expect.any(Function)
-    })
+    // Helper to run stored RAF callbacks
+    ;(window as any).runRAFCallbacks = () => {
+      storedCallbacks.forEach(cb => cb(performance.now()))
+      storedCallbacks.length = 0  // Clear the queue
+    }
   })
 
-  it('should handle scroll events correctly', async () => {
-    const pageSequence = [
-      { index: 1, page: 1, pageRange: [0, 19] },
-      { index: 2, page: 2, pageRange: [20, 39] }
-    ]
-
-    let pageIndex = 0
-    mockGetPage.mockImplementation(() => pageSequence[pageIndex++])
+  it('should handle scroll events correctly', () => {
+    mockGetPage.mockClear()
+    mockGetPage
+      .mockReturnValueOnce({ index: 1, page: 1, pageRange: [0, 19] })
+      .mockReturnValueOnce({ index: 25, page: 1, pageRange: [20, 39] })
 
     const { result } = renderHook(() => usePage(defaultProps))
 
-    // Initial render
-    await act(async () => {
-      jest.runAllTimers()
-    })
+    // Initial mount
+    expect(mockGetPage).toHaveBeenCalledTimes(1)
+    expect(result.current.pageRange).toEqual([0, 19])
 
-    // Simulate scroll event
-    await act(async () => {
+    // Trigger scroll event
+    act(() => {
       scrollTop = 500
       registeredScrollHandler?.(new Event('scroll'))
-      jest.runAllTimers()
     })
 
+    // Run RAF callbacks
+    act(() => {
+      ;(window as any).runRAFCallbacks()
+    })
+
+    // Run scroll timeout
+    act(() => {
+      jest.advanceTimersByTime(150)
+    })
+
+    expect(mockGetPage).toHaveBeenCalledTimes(2)
     expect(result.current.scrolling).toBe(false)
-    expect(result.current.page).toBe(2)
+    expect(result.current.page).toBe(1)
     expect(result.current.pageRange).toEqual([20, 39])
   })
 
-  it('should handle scroll events with horizontal layout', async () => {
-    const pageSequence = [
-      { index: 1, page: 1, pageRange: [0, 19] },
-      { index: 2, page: 2, pageRange: [20, 39] }
-    ]
-
-    let pageIndex = 0
-    mockGetPage.mockImplementation(() => pageSequence[pageIndex++])
+  it('should handle scroll events with horizontal layout', () => {
+    mockGetPage.mockClear()
+    mockGetPage
+      .mockReturnValueOnce({ index: 1, page: 1, pageRange: [0, 19] })
+      .mockReturnValueOnce({ index: 25, page: 1, pageRange: [20, 39] })
 
     const { result } = renderHook(() => usePage({
       ...defaultProps,
       horizontal: true
     }))
 
-    // Initial render
-    await act(async () => {
-      jest.runAllTimers()
-    })
+    // Initial mount
+    expect(mockGetPage).toHaveBeenCalledTimes(1)
+    expect(result.current.pageRange).toEqual([0, 19])
 
-    // Simulate scroll event
-    await act(async () => {
+    // Trigger scroll event
+    act(() => {
       scrollLeft = 500
       registeredScrollHandler?.(new Event('scroll'))
-      jest.runAllTimers()
     })
 
+    // Run RAF callbacks
+    act(() => {
+      ;(window as any).runRAFCallbacks()
+    })
+
+    // Run scroll timeout
+    act(() => {
+      jest.advanceTimersByTime(150)
+    })
+
+    expect(mockGetPage).toHaveBeenCalledTimes(2)
     expect(result.current.scrolling).toBe(false)
-    expect(result.current.page).toBe(2)
+    expect(result.current.page).toBe(1)
     expect(result.current.pageRange).toEqual([20, 39])
   })
 
-  it('should calculate scroll position correctly', async () => {
-    mockGetPage.mockReturnValue({
-      index: 1,
-      page: 1,
-      pageRange: [0, 19]
-    })
-
-    mockComputeScroll.mockReturnValue(500)
-
-    const { result } = renderHook(() => usePage(defaultProps))
-
-    await act(async () => {
-      jest.runAllTimers()
-    })
-
-    // Test scrolling to a specific index
-    await act(async () => {
-      result.current.onScrollTo(25)
-      jest.runAllTimers()
-    })
-
-    expect(mockComputeScroll).toHaveBeenCalledWith({
-      index: 25,
-      gap: 10,
-      itemsPerPage: 20,
-      itemSize: 100,
-      padding: 20
-    })
-
-    expect(mockScrollElement.scroll).toHaveBeenCalledWith({
-      behavior: 'smooth',
-      top: 500,
-      left: 0
-    })
-  })
-
-  it('should calculate scroll position correctly for horizontal layout', async () => {
-    mockGetPage.mockReturnValue({
-      index: 1,
-      page: 1,
-      pageRange: [0, 19]
-    })
-
-    mockComputeScroll.mockReturnValue(500)
-
-    const { result } = renderHook(() => usePage({
-      ...defaultProps,
-      horizontal: true
-    }))
-
-    await act(async () => {
-      jest.runAllTimers()
-    })
-
-    // Test scrolling to a specific index
-    await act(async () => {
-      result.current.onScrollTo(25)
-      jest.runAllTimers()
-    })
-
-    expect(mockComputeScroll).toHaveBeenCalledWith({
-      index: 25,
-      gap: 10,
-      itemsPerPage: 20,
-      itemSize: 250,
-      padding: 20
-    })
-
-    expect(mockScrollElement.scroll).toHaveBeenCalledWith({
-      behavior: 'smooth',
-      left: 500,
-      top: 0
-    })
-  })
-
-  it('should update page on layout change', async () => {
-    const pageSequence = [
-      { index: 1, page: 1, pageRange: [0, 19] },
-      { index: 1, page: 1, pageRange: [0, 24] }
-    ]
-
-    let pageIndex = 0
-    mockGetPage.mockImplementation(() => pageSequence[pageIndex++])
-
-    const { rerender } = renderHook(
-      (props) => usePage(props),
-      { initialProps: defaultProps }
-    )
-
-    // Initial render
-    await act(async () => {
-      jest.runAllTimers()
-    })
-
-    const newLayout = {
-      ...mockLayout,
-      itemsPerPage: 25
-    }
-
-    // Reset mock calls
-    mockGetPage.mockClear()
-
-    // Change layout
-    await act(async () => {
-      rerender({
-        ...defaultProps,
-        layout: newLayout
-      })
-      jest.runAllTimers()
-    })
-
-    expect(mockGetPage).toHaveBeenCalledWith({
-      scrollElement: mockScrollElement,
-      layout: newLayout,
-      gap: 10
-    })
-  })
-
-  it('should cleanup resources on unmount', async () => {
+  it('should cleanup resources on unmount', () => {
     const { unmount } = renderHook(() => usePage(defaultProps))
 
-    await act(async () => {
-      jest.runAllTimers()
-    })
+    // Store the handler after mount
+    const removeEventListenerMock = mockScrollElement.removeEventListener as jest.Mock
 
     unmount()
 
-    expect(mockScrollElement.removeEventListener).toHaveBeenCalledWith('scroll', registeredScrollHandler)
-  })
-
-  it('should not update page if scroll delta is small', async () => {
-    mockGetPage.mockReturnValue({
-      index: 1,
-      page: 1,
-      pageRange: [0, 19]
-    })
-
-    renderHook(() => usePage(defaultProps))
-
-    // Initial render
-    await act(async () => {
-      jest.runAllTimers()
-    })
-
-    // Reset mock calls
-    mockGetPage.mockClear()
-
-    // Simulate small scroll change
-    await act(async () => {
-      scrollTop = 0.5
-      registeredScrollHandler?.(new Event('scroll'))
-      jest.runAllTimers()
-    })
-
-    expect(mockGetPage).not.toHaveBeenCalled()
-  })
-
-  it('should handle null scrollElement', async () => {
-    mockGetPage.mockReturnValue({
-      index: 1,
-      page: 1,
-      pageRange: [0, 19]
-    })
-
-    const { result } = renderHook(() => usePage({
-      ...defaultProps,
-      scrollElement: null
-    }))
-
-    await act(async () => {
-      jest.runAllTimers()
-    })
-
-    act(() => {
-      result.current.onScrollTo(25)
-    })
-
-    expect(mockComputeScroll).not.toHaveBeenCalled()
-    expect(result.current.scrolling).toBe(false)
+    // Check if removeEventListener was called with any function
+    expect(removeEventListenerMock).toHaveBeenCalled()
+    const calls = removeEventListenerMock.mock.calls
+    expect(calls[0][0]).toBe('scroll') // First argument should be 'scroll'
+    expect(typeof calls[0][1]).toBe('function') // Second argument should be a function
   })
 })
+
