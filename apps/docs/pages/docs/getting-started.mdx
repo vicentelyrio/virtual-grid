@@ -1,5 +1,7 @@
 # Getting Started
 
+A React virtualization library for rendering large datasets using CSS Grid. Virtual Grid only renders visible items on screen and automatically adapts to CSS Grid layout changes through ResizeObserver, making it suitable for responsive grids, image galleries, and carousels.
+
 ## Installation
 
 ```sh npm2yarn
@@ -13,76 +15,42 @@ Here's a basic example of how to use Virtual Grid:
 ```tsx
 import { useVirtualGrid } from '@virtual-grid/lib'
 
-function MyGrid({ data }) {
-  const { items, styles, gridRef, scrollRef } = useVirtualGrid<number>({ data })
+function Grid() {
+  const data = Array(10000).fill(0).map((_, i) => ({ id: i, name: `Item ${i}` }))
+
+  const {
+    items,
+    styles,
+    gridRef,
+    scrollRef,
+  } = useVirtualGrid({
+    data,
+    gap: 20,
+    padding: [20, 20, 20, 20],
+    offScreenPages: 1,
+  })
 
   return (
-    <div className="scroll" ref={scrollRef}>
-      <div className="grid" ref={gridRef} style={styles}>
-        {items.map((index: number) => (
-          <div className="card" key={index}>
-            {index + 1}
-          </div>
+    <div ref={scrollRef} style={{ height: '100vh', overflow: 'auto' }}>
+      <div
+        ref={gridRef}
+        style={styles}
+        className="grid"
+      >
+        {items.map((item) => (
+          <ItemCard key={item.id} data={item} />
         ))}
       </div>
     </div>
   )
 }
-```
 
-## Types
-
-Props that can be passed to the `useVirtualGrid` hook:
-
-```tsx
-export type VirtualGridProps<T> = {
-  data: T[],
-  offScreenPages?: number
-  padding?: number[]
-  gap?: number,
-  horizontal?: boolean
-}
-```
-
-Props that are returned by the `useVirtualGrid` hook:
-
-```tsx
-export type VirtualGrid<T> = {
-  gridRef: RefObject<HTMLDivElement | null>
-  gridHeight: number
-  gridWidth: number
-
-  scrollRef: RefObject<HTMLDivElement | null>
-  scrollWidth: number
-  scrollHeight: number
-
-  items: T[]
-  styles: CSSProperties
-
-  itemHeight: number
-  itemWidth: number
-
-  itemsPerRow: number
-  itemsPerColumn: number
-  itemsPerPage: number
-
-  rows: number
-  rowsOnViewport: number
-
-  columns: number
-  columnsOnViewport: number
-
-  total: number
-  pages: number
-  page: number
-  pageRange: number[]
-
-  onScrollTo: (page: number) => void
-
-  horizontal: boolean
-  scrolling: boolean
-  resizing: boolean
-  mounting: boolean
+function ItemCard({ data }) {
+  return (
+    <div className="card">
+      {data.name}
+    </div>
+  )
 }
 ```
 
@@ -93,7 +61,11 @@ Virtual Grid is built around a few core concepts:
 1. **Virtualization** - Only render items that are visible in the viewport
 2. **Hook-based API** - Just a hook that returns your data filtered by the current viewport
 3. **Layout Management** - Efficient calculation and updates of item positions
-4. **Performance Optimizations** - Built-in memoization and optional Web Worker support
+4. **Performance Optimizations** - Built-in memoization and ResizeObserver for responsive layouts
 
-Check out the [Core Concepts](/docs/core-concepts) section to learn more.
+## Next Steps
 
+- Check out the [API Reference](/docs/api-reference) for detailed documentation
+- Browse [Examples](/docs/examples) for common usage patterns
+- Understand [How it Works](/docs/how-it-works) to learn more about the library's core concepts
+- Try the [interactive examples](/examples) to see Virtual Grid in action

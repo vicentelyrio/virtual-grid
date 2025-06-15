@@ -1,0 +1,193 @@
+# API Reference
+
+## useVirtualGrid Hook
+
+The main hook that provides virtualization functionality.
+
+```tsx
+const virtualGrid = useVirtualGrid<T>({
+  data,
+  offScreenPages?: number,
+  padding?: number[],
+  gap?: number,
+  horizontal?: boolean,
+})
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `data` | `T[]` | required | Array of data items to virtualize |
+| `offScreenPages` | `number` | `1` | Number of pages to render outside viewport |
+| `padding` | `number[]` | `[0, 0, 0, 0]` | Padding [top, right, bottom, left] |
+| `gap` | `number` | `20` | Gap between grid items |
+| `horizontal` | `boolean` | `false` | Enable horizontal scrolling |
+
+### Parameter Details
+
+#### `data`
+The array of data items to virtualize. Can be any type of data structure.
+
+```tsx
+// Simple array
+const data = [1, 2, 3, 4, 5]
+
+// Object array
+const data = [
+  { id: 1, name: 'Item 1' },
+  { id: 2, name: 'Item 2' }
+]
+```
+
+#### `offScreenPages`
+Controls how many additional pages of items to render outside the visible viewport. Higher values provide smoother scrolling but use more memory.
+
+```tsx
+// Render only visible items + 1 page buffer
+useVirtualGrid({ data, offScreenPages: 1 })
+
+// Render more buffer for very smooth scrolling
+useVirtualGrid({ data, offScreenPages: 3 })
+```
+
+#### `padding`
+Array of padding values in CSS order: `[top, right, bottom, left]`. These values must match your CSS padding for accurate calculations.
+
+```tsx
+// Equal padding on all sides
+useVirtualGrid({ data, padding: [20, 20, 20, 20] })
+
+// Different padding per side
+useVirtualGrid({ data, padding: [10, 20, 10, 20] })
+```
+
+#### `gap`
+The gap between grid items. This value must match your CSS grid gap for accurate positioning.
+
+```tsx
+// 20px gap between items
+useVirtualGrid({ data, gap: 20 })
+```
+
+#### `horizontal`
+Enables horizontal scrolling mode for carousel-like layouts.
+
+```tsx
+// Vertical scrolling (default)
+useVirtualGrid({ data, horizontal: false })
+
+// Horizontal scrolling
+useVirtualGrid({ data, horizontal: true })
+```
+
+**Why `gap` and `padding` parameters are required:**
+To calculate accurate padding offsets, Virtual Grid needs to know the exact `gap` between items and container `padding`. These values must match your CSS to ensure proper scroll positioning and layout calculations.
+
+## Return Values
+
+The hook returns a `VirtualGrid<T>` object with the following properties:
+
+### Core Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `items` | `T[]` | Currently visible items to render |
+| `styles` | `CSSProperties` | Styles to apply to grid container |
+| `gridRef` | `RefObject<HTMLDivElement>` | Ref for the grid container |
+| `scrollRef` | `RefObject<HTMLDivElement>` | Ref for the scroll container |
+
+### Navigation Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `page` | `number` | Current page number |
+| `pageRange` | `number[]` | Array of visible page numbers |
+| `onScrollTo` | `(page: number) => void` | Function to scroll to specific page |
+
+### State Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `scrolling` | `boolean` | Whether user is currently scrolling |
+| `resizing` | `boolean` | Whether window is being resized |
+| `mounting` | `boolean` | Whether component is still mounting |
+
+### Layout Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `rows` | `number` | Total number of rows |
+| `columns` | `number` | Total number of columns |
+| `rowsOnViewport` | `number` | Number of rows visible in viewport |
+| `columnsOnViewport` | `number` | Number of columns visible in viewport |
+| `total` | `number` | Total number of items |
+| `pages` | `number` | Total number of pages |
+| `itemsPerRow` | `number` | Number of items per row |
+| `itemsPerColumn` | `number` | Number of items per column |
+| `itemsPerPage` | `number` | Number of items per page |
+
+### Dimension Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `itemHeight` | `number` | Height of each item |
+| `itemWidth` | `number` | Width of each item |
+| `gridHeight` | `number` | Total grid height |
+| `gridWidth` | `number` | Total grid width |
+| `scrollHeight` | `number` | Scroll container height |
+| `scrollWidth` | `number` | Scroll container width |
+
+## Type Definitions
+
+### VirtualGridProps
+
+```tsx
+export type VirtualGridProps<T> = {
+  data: T[]
+  offScreenPages?: number
+  padding?: number[]
+  gap?: number
+  horizontal?: boolean
+}
+```
+
+### VirtualGrid
+
+```tsx
+export type VirtualGrid<T> = Layout & {
+  items: T[]
+  styles: CSSProperties
+  page: number
+  pageRange: number[]
+  onScrollTo: (page: number) => void
+  scrolling: boolean
+  resizing: boolean
+  mounting: boolean
+  gridRef: RefObject<HTMLDivElement | null>
+  scrollRef: RefObject<HTMLDivElement | null>
+}
+```
+
+### Layout
+
+```tsx
+export type Layout = {
+  scrollWidth: number
+  scrollHeight: number
+  rows: number
+  horizontal: boolean
+  rowsOnViewport: number
+  columns: number
+  columnsOnViewport: number
+  total: number
+  pages: number
+  itemsPerRow: number
+  itemsPerColumn: number
+  itemsPerPage: number
+  itemHeight: number
+  itemWidth: number
+  gridHeight: number
+  gridWidth: number
+}
+```
