@@ -5,8 +5,13 @@ import { Grid } from '@components/Grid/Grid'
 import { Controls } from '@components/Controls/Controls'
 
 import classes from './Demo.module.css'
+import clsx from 'clsx'
 
-export function Demo() {
+type DemoProps = {
+  className?: string
+}
+
+export function Demo({ className }: DemoProps) {
   const [controls, setControls] = useState<Controls>({
     itemCount: 1000,
     gap: 20,
@@ -45,7 +50,7 @@ export function Demo() {
   })
 
   return (
-    <div className={classes.container}>
+    <div className={clsx(classes.container, className)}>
       <Controls
         controls={controls}
         setControls={setControls}

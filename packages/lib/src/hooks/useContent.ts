@@ -37,10 +37,10 @@ export function useContent<T>({
 
     const styles = {
       width,
-      paddingTop: `${paddingTop ?? 0}px`,
-      paddingRight: `${paddingRight ?? 0}px`,
-      paddingBottom: `${paddingBottom ?? 0}px`,
-      paddingLeft: `${paddingLeft ?? 0}px`,
+      paddingTop: `${numWithFallback(paddingTop)}px`,
+      paddingRight: `${numWithFallback(paddingRight)}px`,
+      paddingBottom: `${numWithFallback(paddingBottom)}px`,
+      paddingLeft: `${numWithFallback(paddingLeft)}px`,
       gap: `${gap ?? 0}px`,
     }
 
@@ -54,4 +54,8 @@ export function useContent<T>({
     items,
     styles,
   }
+}
+
+function numWithFallback(num: number) {
+  return isNaN(num) ? 0 : num
 }

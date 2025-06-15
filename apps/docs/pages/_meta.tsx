@@ -14,8 +14,8 @@ export default {
     title: 'Documentation',
     type: 'page'
   },
-  examples: {
-    title: 'Examples',
+  demos: {
+    title: 'Demos',
     type: 'page'
   },
 }
