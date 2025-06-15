@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react'
 import { useVirtualGrid } from '@virtual-grid/lib'
 
-import { Grid } from '../Grid/Grid'
-import { Controls } from '../Controls/Controls'
+import { Grid } from '@components/Grid/Grid'
+import { Controls } from '@components/Controls/Controls'
 
 import classes from './Demo.module.css'
 

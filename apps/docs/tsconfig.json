@@ -10,6 +10,10 @@
     "node_modules"
   ],
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@*": ["./*"]
+    },
     "allowJs": true,
     "incremental": true,
     "jsx": "preserve"
