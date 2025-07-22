@@ -4,7 +4,6 @@ describe('getRect', () => {
   const originalWindow = window
 
   beforeEach(() => {
-    // Mock window dimensions
     Object.defineProperty(window, 'innerHeight', { value: 768, configurable: true })
     Object.defineProperty(window, 'innerWidth', { value: 1024, configurable: true })
   })

@@ -27,7 +27,7 @@ export function getPageSizes({
   const start = roundTo(screenStart / (itemSize + gap), 1)
   const end = roundTo(screenEnd / (itemSize + gap), 1)
   const index = roundTo(screenCenter / (itemSize + gap), 1)
-  const page = Math.floor(end / itemsOnPage)  // Changed from roundTo to Math.floor
+  const page = Math.floor(end / itemsOnPage)
 
   return {
     index,

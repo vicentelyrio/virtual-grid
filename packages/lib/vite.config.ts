@@ -12,6 +12,7 @@ export default defineConfig({
     dts({ include: ['src'] }),
   ],
   resolve: {
+    preserveSymlinks: true,
     alias: {
       '@': resolve(__dirname, './src'),
       '@utils': resolve(__dirname, './src/utils'),
@@ -39,4 +40,4 @@ export default defineConfig({
     emptyOutDir: true,
     target: 'esnext',
   }
-})
+} as any)

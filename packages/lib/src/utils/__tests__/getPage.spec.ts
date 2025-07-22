@@ -4,7 +4,6 @@ import { getPage } from '@utils/getPage'
 import { getScrollProps } from '@utils/getScrollProps'
 import { getPageSizes } from '@utils/getPageSizes'
 
-// Mock dependencies
 jest.mock('@utils/getScrollProps')
 jest.mock('@utils/getPageSizes')
 
@@ -15,7 +14,6 @@ describe('getPage', () => {
   beforeEach(() => {
     jest.clearAllMocks()
 
-    // Default mock implementations
     mockGetScrollProps.mockReturnValue({
       scrollTop: 0,
       scrollLeft: 0

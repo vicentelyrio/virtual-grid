@@ -2,7 +2,6 @@ import { getLayout } from '@utils/getLayout'
 import { getRect } from '@utils/getRect'
 import { calculateGridSize } from '@utils/calculateGridSize'
 
-// Mock dependencies
 jest.mock('@utils/getRect')
 jest.mock('@utils/calculateGridSize')
 
@@ -11,10 +10,8 @@ describe('getLayout', () => {
   const mockCalculateGridSize = calculateGridSize as jest.Mock
 
   beforeEach(() => {
-    // Reset mocks
     jest.clearAllMocks()
 
-    // Default mock implementations
     mockGetRect.mockImplementation(() => ({
       width: 1000,
       height: 800
@@ -41,12 +38,10 @@ describe('getLayout', () => {
   })
 
   it('should calculate vertical layout correctly', () => {
-    // Create mock elements
     const gridElement = document.createElement('div')
     const childElement = document.createElement('div')
     gridElement.appendChild(childElement)
 
-    // Mock getRect for different elements
     mockGetRect
       .mockImplementationOnce(() => ({ width: 1000, height: 800 })) // scrollElement
       .mockImplementationOnce(() => ({ width: 200, height: 150 })) // firstItem
@@ -87,12 +82,10 @@ describe('getLayout', () => {
   })
 
   it('should calculate horizontal layout correctly', () => {
-    // Create mock elements
     const gridElement = document.createElement('div')
     const childElement = document.createElement('div')
     gridElement.appendChild(childElement)
 
-    // Mock getRect for different elements
     mockGetRect
       .mockImplementationOnce(() => ({ width: 1000, height: 800 })) // scrollElement
       .mockImplementationOnce(() => ({ width: 200, height: 150 })) // firstItem

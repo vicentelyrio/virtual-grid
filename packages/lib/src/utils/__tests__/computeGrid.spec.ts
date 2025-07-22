@@ -2,7 +2,6 @@ import { Layout } from '@types'
 import { computeGrid, MAX_SIZE, type ComputeGridProps } from '@utils/computeGrid'
 
 describe('computeGrid', () => {
-  // Base layout configuration for tests
   const baseLayout: Layout = {
     scrollWidth: 1200,
     scrollHeight: 800,
@@ -22,11 +21,10 @@ describe('computeGrid', () => {
     gridWidth: 1000,
   }
 
-  // Base props configuration for tests
   const baseProps: ComputeGridProps = {
     layout: baseLayout,
     page: 2,
-    padding: [10, 10, 10, 10], // [top, right, bottom, left]
+    padding: [10, 10, 10, 10],
     offScreenPages: 1,
     gap: 8,
   }
@@ -53,7 +51,6 @@ describe('computeGrid', () => {
     it('should calculate correct boundaries and padding for middle page', () => {
       const result = computeGrid(baseProps)
 
-      // Calculate expected values
       const itemH = baseLayout.itemHeight + baseProps.gap
       const minBoundary = Math.max(0, baseProps.page - baseProps.offScreenPages - 1)
       const maxBoundary = Math.min(baseLayout.pages, baseProps.page + 1 + baseProps.offScreenPages)
@@ -122,7 +119,6 @@ describe('computeGrid', () => {
     it('should calculate correct boundaries and padding for middle page', () => {
       const result = computeGrid(horizontalProps)
 
-      // Calculate expected values
       const itemW = horizontalLayout.itemWidth + horizontalProps.gap
       const minBoundary = Math.max(0, horizontalProps.page - horizontalProps.offScreenPages - 1)
       const maxBoundary = Math.min(horizontalLayout.pages, horizontalProps.page + 1 + horizontalProps.offScreenPages)

@@ -34,8 +34,8 @@
     "@types/node": "^20.12.12",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
-    "@virtual-grid/eslint-config": "workspace:*",
-    "@virtual-grid/typescript-config": "workspace:*",
+    "@virtual-grid/eslint-config": "*",
+    "@virtual-grid/typescript-config": "*",
     "@vitejs/plugin-react": "^4.2.1",
     "eslint": "^8.57.0",
     "jest": "^29.7.0",
@@ -51,7 +51,6 @@
     "vite-plugin-tsc-watch": "^3.0.1"
   },
   "dependencies": {
-    "debounce": "^2.1.0",
     "react-fast-compare": "^3.2.2"
   }
 }

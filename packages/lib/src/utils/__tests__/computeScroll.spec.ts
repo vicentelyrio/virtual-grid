@@ -1,7 +1,6 @@
 import { computeScroll, type ComputeScrollProps } from '@utils/computeScroll'
 
 describe('computeScroll', () => {
-  // Base props for testing
   const baseProps: ComputeScrollProps = {
     index: 1,
     itemSize: 100,

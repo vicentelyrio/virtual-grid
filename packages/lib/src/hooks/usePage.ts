@@ -74,7 +74,6 @@ export function usePage({
   const handleScroll = useCallback(() => {
     if (!scrollElement || !layout) return
 
-    // Clear existing timeouts
     if (scrollTimeoutRef.current) {
       clearTimeout(scrollTimeoutRef.current)
     }
@@ -82,26 +81,21 @@ export function usePage({
       cancelAnimationFrame(rafRef.current)
     }
 
-    // Get current scroll position
     const currentPosition = horizontal
       ? scrollElement.scrollLeft
       : scrollElement.scrollTop
 
-    // Check if scroll position changed significantly
     const scrollDelta = Math.abs(currentPosition - lastScrollPosition.current)
     if (scrollDelta < 1) return
 
     lastScrollPosition.current = currentPosition
 
-    // Set scrolling state
     setScrolling(true)
 
-    // Update page calculation in next frame
     rafRef.current = requestAnimationFrame(() => {
       updatePage()
       rafRef.current = null
 
-      // Reset scrolling state after scroll ends
       scrollTimeoutRef.current = setTimeout(() => {
         setScrolling(false)
         scrollTimeoutRef.current = null
@@ -109,14 +103,12 @@ export function usePage({
     })
   }, [scrollElement, layout, horizontal, updatePage])
 
-  // Initialize page on mount and layout change
   useEffect(() => {
     if (scrollElement && layout) {
       updatePage()
     }
   }, [scrollElement, layout, updatePage])
 
-  // Setup scroll listener
   useEffect(() => {
     if (!scrollElement) return
 

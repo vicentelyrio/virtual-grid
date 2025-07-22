@@ -21,7 +21,7 @@ describe('calculateGridSize', () => {
     itemHeight: 100,
     itemWidth: 150,
     total: 12,
-    padding: [10, 10, 10, 10], // top, right, bottom, left
+    padding: [10, 10, 10, 10],
     gap: 8,
   }
 

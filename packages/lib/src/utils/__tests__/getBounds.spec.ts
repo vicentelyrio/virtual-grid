@@ -1,22 +1,18 @@
 import { getBounds } from '@utils/getBounds'
 import { getRect } from '@utils/getRect'
 
-// Mock getRect module
 jest.mock('@utils/getRect')
 const mockedGetRect = jest.mocked(getRect)
 
 describe('getBounds', () => {
-  // Store original window dimensions
   const originalInnerWidth = window.innerWidth
   const originalInnerHeight = window.innerHeight
 
   beforeEach(() => {
-    // Reset mocks before each test
     jest.resetAllMocks()
   })
 
   afterEach(() => {
-    // Restore window dimensions after each test
     Object.defineProperty(window, 'innerWidth', {
       writable: true,
       configurable: true,
@@ -45,7 +41,6 @@ describe('getBounds', () => {
 
   describe('window scroll element', () => {
     beforeEach(() => {
-      // Set up window dimensions for tests
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
         configurable: true,
