@@ -108,8 +108,8 @@ The hook returns a `VirtualGrid<T>` object with the following properties:
 |----------|------|-------------|
 | `items` | `T[]` | Currently visible items to render |
 | `styles` | `CSSProperties` | Styles to apply to grid container |
-| `gridRef` | `RefObject<HTMLDivElement>` | Ref for the grid container |
-| `scrollRef` | `RefObject<HTMLDivElement>` | Ref for the scroll container |
+| `gridRef` | `RefObject<HTMLDivElement \| null>` | Ref for the grid container |
+| `scrollRef` | `RefObject<HTMLDivElement \| null>` | Ref for the scroll container |
 | `page` | `number` | Current page number |
 | `pageRange` | `number[]` | Array of visible page numbers |
 | `onScrollTo` | `(page: number) => void` | Function to scroll to specific page |
@@ -278,7 +278,7 @@ Virtual Grid provides the core virtualization logic while leaving accessibility 
 
 ```tsx
 function AccessibleGrid() {
-  const { items, styles, gridRef, scrollRef } = useVirtualGrid({ data: myData })
+  const { items, styles, gridRef, scrollRef, columns } = useVirtualGrid({ data: myData })
 
   return (
     <div
@@ -286,8 +286,7 @@ function AccessibleGrid() {
       role="grid"
       aria-label="Data grid"
       tabIndex={0}
-      style={{ height: '100vh', overflow: 'auto' }}
-    >
+      style={{ height: '100vh', overflow: 'auto' }}>
       <div ref={gridRef} style={styles}>
         {items.map((item, index) => (
           <div
@@ -295,8 +294,7 @@ function AccessibleGrid() {
             role="gridcell"
             tabIndex={-1}
             aria-rowindex={Math.floor(index / columns) + 1}
-            aria-colindex={(index % columns) + 1}
-          >
+            aria-colindex={(index % columns) + 1}>
             {item.name}
           </div>
         ))}
@@ -313,12 +311,12 @@ This is a monorepo using Turborepo and Yarn workspaces.
 ```
 virtual-grid/
 ├── apps/
-│   ├── docs/          # Next.js documentation site
-│   └── playground/    # React Cosmos development environment
+│   ├── docs/               # Next.js documentation site
+│   └── playground/         # React Cosmos development environment
 ├── packages/
-│   ├── lib/           # Main virtual-grid library
-│   ├── eslint-config/ # Shared ESLint configuration
-│   └── typescript-config/ # Shared TypeScript configuration
+│   ├── lib/                # Main virtual-grid library
+│   ├── eslint-config/      # Shared ESLint configuration
+│   └── typescript-config/  # Shared TypeScript configuration
 ```
 
 ### Getting Started
