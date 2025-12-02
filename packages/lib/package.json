@@ -8,6 +8,13 @@
   "files": [
     "dist"
   ],
+  "exports": {
+    ".": {
+      "types": "./dist/main.d.ts",
+      "import": "./dist/main.js",
+      "require": "./dist/main.js"
+    }
+  },
   "repository": "https://github.com/vicentelyrio/virtual-grid/tree/main/packages/lib",
   "scripts": {
     "build": "tsc && vite build",
