@@ -11,7 +11,7 @@ export function useVirtualGrid<T>({
   padding = [0, 0, 0, 0],
   gap = 20,
   horizontal = false,
-}: VirtualGridProps<T>): Partial<VirtualGrid<T>> {
+}: VirtualGridProps<T>): VirtualGrid<T> {
   const scrollRef = useRef<HTMLDivElement>(null)
   const gridRef = useRef<HTMLDivElement>(null)
 

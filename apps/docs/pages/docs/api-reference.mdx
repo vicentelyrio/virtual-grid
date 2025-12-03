@@ -1,18 +1,20 @@
 # API Reference
 
-## useVirtualGrid Hook
+## Hook: useVirtualGrid
 
 The main hook that provides virtualization functionality.
 
 ```tsx
 const virtualGrid = useVirtualGrid<T>({
   data,
-  offScreenPages?: number,
-  padding?: number[],
-  gap?: number,
-  horizontal?: boolean,
+  offScreenPages,
+  padding,
+  gap,
+  horizontal,
 })
 ```
+
+> The hook returns a `VirtualGrid<T>` object. Layout-related fields may be `undefined` until the browser has measured the grid and scroll containers.
 
 ## Parameters
 
@@ -88,57 +90,45 @@ To calculate accurate padding offsets, Virtual Grid needs to know the exact `gap
 
 The hook returns a `VirtualGrid<T>` object with the following properties:
 
-### Core Properties
+### Always Defined
 
 | Property | Type | Description |
 |----------|------|-------------|
-| `items` | `T[]` | Currently visible items to render |
-| `styles` | `CSSProperties` | Styles to apply to grid container |
-| `gridRef` | `RefObject<HTMLDivElement>` | Ref for the grid container |
-| `scrollRef` | `RefObject<HTMLDivElement>` | Ref for the scroll container |
-
-### Navigation Properties
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `page` | `number` | Current page number |
-| `pageRange` | `number[]` | Array of visible page numbers |
-| `onScrollTo` | `(page: number) => void` | Function to scroll to specific page |
-
-### State Properties
-
-| Property | Type | Description |
-|----------|------|-------------|
+| `gridRef` | `RefObject<HTMLDivElement \| null>` | Ref for the grid container |
+| `scrollRef` | `RefObject<HTMLDivElement \| null>` | Ref for the scroll container |
 | `scrolling` | `boolean` | Whether user is currently scrolling |
 | `resizing` | `boolean` | Whether window is being resized |
 | `mounting` | `boolean` | Whether component is still mounting |
+| `onScrollTo` | `(page: number) => void` | Function to scroll to specific page |
 
-### Layout Properties
+### May be Undefined
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `rows` | `number` | Total number of rows |
-| `columns` | `number` | Total number of columns |
-| `rowsOnViewport` | `number` | Number of rows visible in viewport |
-| `columnsOnViewport` | `number` | Number of columns visible in viewport |
-| `total` | `number` | Total number of items |
-| `pages` | `number` | Total number of pages |
-| `itemsPerRow` | `number` | Number of items per row |
-| `itemsPerColumn` | `number` | Number of items per column |
-| `itemsPerPage` | `number` | Number of items per page |
-
-### Dimension Properties
+The following properties may be `undefined` during initial mount until the browser has measured the grid and scroll containers:
 
 | Property | Type | Description |
 |----------|------|-------------|
-| `itemHeight` | `number` | Height of each item |
-| `itemWidth` | `number` | Width of each item |
-| `gridHeight` | `number` | Total grid height |
-| `gridWidth` | `number` | Total grid width |
-| `scrollHeight` | `number` | Scroll container height |
-| `scrollWidth` | `number` | Scroll container width |
+| `items?` | `T[]` | Currently visible items to render |
+| `styles?` | `CSSProperties` | Styles to apply to grid container |
+| `page?` | `number` | Current page number |
+| `pageRange?` | `number[]` | Array of visible page numbers |
+| `rows?` | `number` | Total number of rows |
+| `columns?` | `number` | Total number of columns |
+| `rowsOnViewport?` | `number` | Number of rows visible in viewport |
+| `columnsOnViewport?` | `number` | Number of columns visible in viewport |
+| `total?` | `number` | Total number of items |
+| `pages?` | `number` | Total number of pages |
+| `itemsPerRow?` | `number` | Number of items per row |
+| `itemsPerColumn?` | `number` | Number of items per column |
+| `itemsPerPage?` | `number` | Number of items per page |
+| `itemHeight?` | `number` | Height of each item |
+| `itemWidth?` | `number` | Width of each item |
+| `gridHeight?` | `number` | Total grid height |
+| `gridWidth?` | `number` | Total grid width |
+| `scrollHeight?` | `number` | Scroll container height |
+| `scrollWidth?` | `number` | Scroll container width |
+| `horizontal?` | `boolean` | Whether horizontal scrolling is enabled |
 
-## Type Definitions
+## Type Reference
 
 ### VirtualGridProps
 
@@ -155,17 +145,33 @@ export type VirtualGridProps<T> = {
 ### VirtualGrid
 
 ```tsx
-export type VirtualGrid<T> = Layout & {
-  items: T[]
-  styles: CSSProperties
-  page: number
-  pageRange: number[]
-  onScrollTo: (page: number) => void
+export type VirtualGrid<T> = {
+  gridRef: RefObject<HTMLDivElement | null>
+  scrollRef: RefObject<HTMLDivElement | null>
   scrolling: boolean
   resizing: boolean
   mounting: boolean
-  gridRef: RefObject<HTMLDivElement | null>
-  scrollRef: RefObject<HTMLDivElement | null>
+  onScrollTo: (page: number) => void
+  items?: T[]
+  styles?: CSSProperties
+  page?: number
+  pageRange?: number[]
+  scrollWidth?: number
+  scrollHeight?: number
+  rows?: number
+  horizontal?: boolean
+  rowsOnViewport?: number
+  columns?: number
+  columnsOnViewport?: number
+  total?: number
+  pages?: number
+  itemsPerRow?: number
+  itemsPerColumn?: number
+  itemsPerPage?: number
+  itemHeight?: number
+  itemWidth?: number
+  gridHeight?: number
+  gridWidth?: number
 }
 ```
 
@@ -191,3 +197,29 @@ export type Layout = {
   gridWidth: number
 }
 ```
+
+### PageResult
+
+```tsx
+export type PageResult = {
+  page: number
+  pageRange: number[]
+}
+```
+
+### ContentResult
+
+```tsx
+export type ContentResult = {
+  items: unknown[]
+  styles: CSSProperties
+}
+```
+
+## Version & Environment Requirements
+
+- **Node.js**: `>=18` (matches the monorepo engine requirement).
+- **React**: `^19.0.0` (declared as a peer dependency).
+- **Browser features**: relies on `ResizeObserver` and modern CSS Grid support for accurate layout.
+
+If you target older browsers, you may need polyfills for `ResizeObserver` and should verify CSS Grid behavior in your supported environments.

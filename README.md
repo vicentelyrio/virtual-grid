@@ -1,23 +1,37 @@
 # Virtual Grid
 A React virtualization library for rendering large datasets using CSS Grid. Virtual Grid only renders visible items on screen and automatically adapts to CSS Grid layout changes through ResizeObserver, making it suitable for responsive grids, image galleries, and carousels.
 
-## How it works
-Virtual Grid works by:
-- Using CSS Grid for layout calculations and responsive behavior
-- Observing grid container size changes with ResizeObserver
-- Calculating which items are visible based on scroll position
-- Only rendering those visible items plus configurable off-screen pages
-- Using dynamic padding instead of absolute positioning to maintain scroll position
-- Handling both vertical and horizontal scrolling scenarios
+## Why Virtual Grid?
 
-### Padding-based positioning
-Virtual Grid uses dynamic padding to maintain the correct scroll position.
+Unlike other virtualization libraries that use `position: absolute` for item positioning, Virtual Grid relies on **native CSS Grid** with **dynamic padding** to maintain scroll position. This fundamental difference provides several key advantages:
 
-This approach:
-- Keeps the natural CSS Grid layout intact
-- Avoids complex absolute positioning calculations
-- Maintains proper scrollbar behavior
-- Works seamlessly with responsive CSS Grid changes
+### Native CSS Grid Support
+- **Fully responsive**: Works seamlessly with `auto-fit`, `auto-fill`, `minmax()`, and media queries
+- **No positioning conflicts**: Items remain in normal document flow, avoiding z-index and stacking context issues
+- **True grid behavior**: Maintains all CSS Grid features like `gap`, `align-items`, `justify-items`, etc.
+
+### Padding-based Positioning
+Instead of absolutely positioning items, Virtual Grid adjusts the container's padding to maintain scroll position:
+
+```tsx
+// Virtual Grid (padding-based)
+<div style={{
+  paddingTop: offsetBefore,
+  paddingBottom: offsetAfter,
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))'
+}}>
+  {visibleItems.map(item => (
+    <div>{item.content}</div>
+  ))}
+</div>
+```
+
+### Benefits
+- **Automatic responsiveness**: Grid automatically reflows when viewport changes
+- **Simpler CSS**: Use standard CSS Grid without positioning workarounds
+- **Better scrollbar accuracy**: Native scroll behavior without height calculations
+- **Easier debugging**: Items appear in normal document flow in DevTools
 
 ### Limitations
 - **Not suitable for masonry layouts** - Requires predictable item heights for accurate calculations

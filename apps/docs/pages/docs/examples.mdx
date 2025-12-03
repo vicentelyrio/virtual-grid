@@ -23,7 +23,7 @@ function BasicGrid() {
         style={styles}
         className="grid"
       >
-        {items.map((item) => (
+        {items?.map((item) => (
           <div key={item.id} className="card">
             {item.name}
           </div>
@@ -64,7 +64,7 @@ function HorizontalGrid() {
         style={styles}
         className="horizontal-grid"
       >
-        {items.map((item) => (
+        {items?.map((item) => (
           <div key={item.id} className="horizontal-card">
             {item.name}
           </div>
@@ -94,7 +94,7 @@ function Carousel() {
     padding: [0, 16, 0, 16],
   })
 
-  const totalPages = Math.ceil(data.length / 3) // Assuming 3 items per page
+  const totalPages = Math.ceil(data.length / 3)
 
   return (
     <div className="carousel-container">
@@ -113,7 +113,7 @@ function Carousel() {
             gap: 16,
           }}
         >
-          {items.map((item) => (
+          {items?.map((item) => (
             <div key={item.id} className="carousel-slide">
               <img src={item.src} alt={item.title} />
               <h3>{item.title}</h3>
@@ -124,15 +124,15 @@ function Carousel() {
 
       <div className="carousel-controls">
         <button 
-          onClick={() => onScrollTo(Math.max(0, page - 1))}
+          onClick={() => onScrollTo(Math.max(0, (page ?? 0) - 1))}
           disabled={page === 0}
         >
           Previous
         </button>
-        <span>{page + 1} of {totalPages}</span>
+        <span>{(page ?? 0) + 1} of {totalPages}</span>
         <button 
-          onClick={() => onScrollTo(page + 1)}
-          disabled={page >= totalPages - 1}
+          onClick={() => onScrollTo((page ?? 0) + 1)}
+          disabled={(page ?? 0) >= totalPages - 1}
         >
           Next
         </button>
@@ -161,24 +161,24 @@ function ScrollableGrid() {
       <div className="navigation-controls">
         <button onClick={() => onScrollTo(0)}>First Page</button>
         <button 
-          onClick={() => onScrollTo(page - 1)}
+          onClick={() => onScrollTo((page ?? 0) - 1)}
           disabled={page === 0}
         >
           Previous
         </button>
-        <span>Page {page + 1} of {pages}</span>
+        <span>Page {(page ?? 0) + 1} of {pages ?? 0}</span>
         <button 
-          onClick={() => onScrollTo(page + 1)}
-          disabled={page >= pages - 1}
+          onClick={() => onScrollTo((page ?? 0) + 1)}
+          disabled={(page ?? 0) >= (pages ?? 0) - 1}
         >
           Next
         </button>
-        <button onClick={() => onScrollTo(pages - 1)}>Last Page</button>
+        <button onClick={() => onScrollTo((pages ?? 0) - 1)}>Last Page</button>
       </div>
 
       <div ref={scrollRef} style={{ height: '80vh', overflow: 'auto' }}>
         <div ref={gridRef} style={styles} className="grid">
-          {items.map((item) => (
+          {items?.map((item) => (
             <div key={item.id} className="card">
               {item.name}
             </div>
@@ -344,19 +344,19 @@ function AccessibleGrid() {
       ref={scrollRef}
       role="grid"
       aria-label="Virtual data grid"
-      aria-rowcount={Math.ceil(data.length / columns)}
+      aria-rowcount={columns ? Math.ceil(data.length / columns) : undefined}
       aria-colcount={columns}
       tabIndex={0}
       style={{ height: '400px', overflow: 'auto' }}
     >
       <div ref={gridRef} style={styles}>
-        {items.map((item, index) => (
+        {items?.map((item, index) => (
           <div
             key={item.id}
             role="gridcell"
             tabIndex={-1}
-            aria-rowindex={Math.floor(index / columns) + 1}
-            aria-colindex={(index % columns) + 1}
+            aria-rowindex={columns ? Math.floor(index / columns) + 1 : undefined}
+            aria-colindex={columns ? (index % columns) + 1 : undefined}
             aria-label={`${item.name}, ${item.description}`}
             className="accessible-card"
           >
@@ -440,7 +440,7 @@ function OptimizedGrid({ data }) {
   return (
     <div ref={scrollRef} style={{ height: '400px', overflow: 'auto' }}>
       <div ref={gridRef} style={styles}>
-        {items.map((item) => (
+        {items?.map((item) => (
           <ItemCard key={item.id} item={item} />
         ))}
       </div>
