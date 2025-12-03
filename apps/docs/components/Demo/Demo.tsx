@@ -51,11 +51,6 @@ export function Demo({ className }: DemoProps) {
 
   return (
     <div className={clsx(classes.container, className)}>
-      <Controls
-        controls={controls}
-        setControls={setControls}
-      />
-
       <Grid
         data={virtualize ? items : data}
         styles={virtualize ? styles : {}}
@@ -64,10 +59,13 @@ export function Demo({ className }: DemoProps) {
         horizontal={horizontal}
         animation={animation}
       />
-
       <p className={classes.footer}>
         images from <a href="https://robohash.org/">robohash.org</a>
       </p>
+      <Controls
+        controls={controls}
+        setControls={setControls}
+      />
     </div>
   )
 }

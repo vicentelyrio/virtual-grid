@@ -5,10 +5,10 @@
 .sticky {
   display: grid;
   grid-auto-flow: column;
-  position: absolute;
+  position: sticky;
   z-index: 10;
   gap: 20px;
-  top: 0;
+  bottom: 0;
   right: 0;
   left: 0;
   padding: 14px;
