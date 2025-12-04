@@ -1,2 +1,1 @@
-export * from './basic-grid'
 export * from './horizontal-grid'

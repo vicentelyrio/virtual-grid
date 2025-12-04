@@ -1,14 +1,15 @@
 import { useVirtualGrid } from '@virtual-grid/lib'
 
-import classes from './basic.module.css'
+import classes from './horizontal-grid.module.css'
 
 const data = Array(1000).fill(0).map((_, i) => i + 1)
 
-export function BasicGrid() {
+export function HorizontalGrid() {
   const { items, styles, gridRef, scrollRef } = useVirtualGrid({
     data,
     gap: 16,
     padding: [16, 16, 16, 16],
+    horizontal: true,
   })
 
   return (
