@@ -1,15 +1,23 @@
+import { BasicGrid } from '@examples'
+import { Tabs } from 'nextra/components'
+
 # Examples
 
 ## Basic Grid
 
 A simple responsive grid that adapts to container size:
 
+<Tabs items={['preview', 'basic-grid.tsx', 'basic-grid.module.css']}>
+  <Tabs.Tab>
+    <BasicGrid />
+  </Tabs.Tab>
+  <Tabs.Tab>
 ```tsx
 import { useVirtualGrid } from '@virtual-grid/lib'
 
-function BasicGrid() {
-  const data = Array(10000).fill(0).map((_, i) => ({ id: i, name: `Item ${i}` }))
+const data = Array(1000).fill(0).map((_, i) => i + 1)
 
+export function BasicGrid() {
   const { items, styles, gridRef, scrollRef } = useVirtualGrid({
     data,
     gap: 16,
@@ -17,14 +25,14 @@ function BasicGrid() {
   })
 
   return (
-    <div ref={scrollRef} style={{ height: '400px', overflow: 'auto' }}>
+    <div ref={scrollRef} className={classes.container}>
       <div
         ref={gridRef}
         style={styles}
-        className="grid">
+        className={classes.grid}>
         {items?.map((item) => (
-          <div key={item.id} className="card">
-            {item.name}
+          <div key={item} className={classes.card}>
+            {item}
           </div>
         ))}
       </div>
@@ -32,6 +40,53 @@ function BasicGrid() {
   )
 }
 ```
+  </Tabs.Tab>
+  <Tabs.Tab>
+```css
+.container {
+  background: #323232;
+  height: 400px;
+  overflow-y: auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  align-content: start;
+}
+
+.card {
+  background: #191919;
+  border-radius: 6px;
+  font-size: 10px;
+  height: 120px;
+  white-space: nowrap;
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  opacity: 0;
+  animation-name: fadeIn;
+  animation-fill-mode: forwards;
+  animation-duration: .5s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+```
+  </Tabs.Tab>
+</Tabs>
+
+
 
 ## Horizontal Scrolling
 
