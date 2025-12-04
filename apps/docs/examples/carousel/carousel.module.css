@@ -1,0 +1,81 @@
+.container {
+  background: #000;
+  border-radius: 6px;
+  border: 1px solid #3f3f3f;
+}
+
+.carousel {
+  margin: 32px;
+  overflow: hidden;
+}
+
+.scroll {
+  overflow-y: hidden;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 100%;
+  grid-template-rows: repeat(1, minmax(320px, 1fr));
+  align-content: start;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
+  gap: 16px;
+  padding: 0;
+}
+
+.card {
+  background: #191919;
+  border-radius: 6px;
+  font-size: 14px;
+  height: 100%;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.navigation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+
+.dot {
+  background: #999;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.dot.active {
+  opacit: 1;
+  background: #fff;
+}

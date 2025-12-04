@@ -1,0 +1,76 @@
+import { Carousel, HorizontalGrid, VerticalGrid } from '@examples'
+import { Tabs } from 'nextra/components'
+
+## Vertical Grid
+
+<Tabs items={['preview', 'component', 'css']}>
+  <Tabs.Tab>
+    <VerticalGrid />
+  </Tabs.Tab>
+  <Tabs.Tab>
+```tsx
+import { useVirtualGrid } from '@virtual-grid/lib'
+
+const data = Array(1000).fill(0).map((_, i) => i + 1)
+
+export function VerticalGrid() {
+  const { items, styles, gridRef, scrollRef } = useVirtualGrid({
+    data,
+    gap: 16,
+    padding: [16, 16, 16, 16],
+  })
+
+  return (
+    <div ref={scrollRef} className={classes.container}>
+      <div ref={gridRef} className={classes.grid} style={styles}>
+        {items?.map((item) => (
+          <div key={item} className={classes.card}>
+            {item}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+```
+  </Tabs.Tab>
+  <Tabs.Tab>
+```css
+.container {
+  background: #000;
+  border-radius: 6px;
+  border: 1px solid #3f3f3f;
+  height: 420px;
+  overflow-y: auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  align-content: start;
+  gap: 16px;
+  padding: 16px;
+}
+
+.card {
+  background: #191919;
+  border-radius: 6px;
+  font-size: 14px;
+  height: 120px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+```
+  </Tabs.Tab>
+</Tabs>
+

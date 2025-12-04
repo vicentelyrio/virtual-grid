@@ -1,0 +1,176 @@
+import { Tabs } from 'nextra/components'
+
+import { Carousel } from './carousel'
+
+## Carousel with Navigation
+
+<Tabs items={['preview', 'component', 'css']}>
+  <Tabs.Tab>
+    <Carousel />
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+```tsx
+import clsx from 'clsx'
+import { useVirtualGrid } from '@virtual-grid/lib'
+
+import classes from './carousel.module.css'
+
+const data = Array(1000).fill(0).map((_, i) => i + 1)
+
+export function Carousel() {
+  const {
+    items,
+    styles,
+    gridRef,
+    scrollRef,
+    page = 1,
+    pages = 1,
+    onScrollTo
+  } = useVirtualGrid({
+    data,
+    horizontal: true,
+    gap: 16,
+    padding: [0, 0, 0, 0],
+  })
+
+  return (
+    <div className={classes.container}>
+      <div className={classes.carousel}>
+        <div ref={scrollRef} className={classes.scroll}>
+          <div ref={gridRef} className={classes.grid} style={{}}>
+            {items?.map((item) => (
+              <div key={item} className={classes.card}>
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className={classes.controls}>
+          <div className={classes.navigation}>
+            {getPaginationArray(page, pages, 2).map((item) => (
+              <div
+                key={item}
+                className={clsx([classes.dot, item + 1 === page && classes.active])}
+                onClick={() => onScrollTo(item + 1)}
+              />
+            ))}
+          </div>
+          <h6>{page} of {pages}</h6>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function getPaginationArray(currentPage: number, totalPages: number, pad: number) {
+  const start = Math.max(0, currentPage - pad)
+  const end = Math.min(totalPages - 1, currentPage + pad)
+
+  const pages = []
+
+  for (let i = start; i <= end; i++) {
+    pages.push(i)
+  }
+
+  return pages
+}
+```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+```css
+.container {
+  background: #000;
+  border-radius: 6px;
+  border: 1px solid #3f3f3f;
+}
+
+.carousel {
+  margin: 32px;
+  overflow: hidden;
+}
+
+.scroll {
+  overflow-y: hidden;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 100%;
+  grid-template-rows: repeat(1, minmax(320px, 1fr));
+  align-content: start;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
+  gap: 16px;
+  padding: 0;
+}
+
+.card {
+  background: #191919;
+  border-radius: 6px;
+  font-size: 14px;
+  height: 100%;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.navigation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+
+.dot {
+  background: #ccc;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.dot:last-of-type {
+  opacity: 0.5;
+}
+
+.dot:first-of-type {
+  opacity: 0.5;
+}
+
+.dot.active {
+  opacit: 1;
+  background: #007bff;
+}
+```
+  </Tabs.Tab>
+</Tabs>
+

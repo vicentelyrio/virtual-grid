@@ -1,10 +1,10 @@
 import { useVirtualGrid } from '@virtual-grid/lib'
 
-import classes from './basic-grid.module.css'
+import classes from './vertical-grid.module.css'
 
 const data = Array(1000).fill(0).map((_, i) => i + 1)
 
-export function BasicGrid() {
+export function VerticalGrid() {
   const { items, styles, gridRef, scrollRef } = useVirtualGrid({
     data,
     gap: 16,
@@ -13,10 +13,7 @@ export function BasicGrid() {
 
   return (
     <div ref={scrollRef} className={classes.container}>
-      <div
-        ref={gridRef}
-        style={styles}
-        className={classes.grid}>
+      <div ref={gridRef} className={classes.grid} style={styles}>
         {items?.map((item) => (
           <div key={item} className={classes.card}>
             {item}

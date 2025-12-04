@@ -14,10 +14,7 @@ export function HorizontalGrid() {
 
   return (
     <div ref={scrollRef} className={classes.container}>
-      <div
-        ref={gridRef}
-        style={styles}
-        className={classes.grid}>
+      <div ref={gridRef} className={classes.grid} style={styles}>
         {items?.map((item) => (
           <div key={item} className={classes.card}>
             {item}

@@ -8,10 +8,10 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  grid-template-rows: repeat(4, minmax(120px, 1fr));
-  align-content: start;
   grid-auto-flow: column;
+  grid-auto-columns: 220px;
+  grid-template-rows: repeat(3, minmax(120px, 1fr));
+  align-content: start;
   gap: 16px;
   padding: 16px;
 }
