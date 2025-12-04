@@ -1,9 +1,9 @@
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useLayout } from '@hooks/useLayout'
 import { usePage } from '@hooks/usePage'
 import { useContent } from '@hooks/useContent'
 
-import { VirtualGrid, VirtualGridProps } from '@types'
+import type { VirtualGrid, VirtualGridProps } from '@types'
 
 export function useVirtualGrid<T>({
   data,
@@ -14,11 +14,19 @@ export function useVirtualGrid<T>({
 }: VirtualGridProps<T>): VirtualGrid<T> {
   const scrollRef = useRef<HTMLDivElement>(null)
   const gridRef = useRef<HTMLDivElement>(null)
-
-  const gridElement = gridRef.current
-  const scrollElement = scrollRef.current
+  const [gridElement, setGridElement] = useState<HTMLElement | null>(null)
+  const [scrollElement, setScrollElement] = useState<HTMLElement | null>(null)
 
   const total = data?.length ?? 0
+
+  useEffect(() => {
+    if (gridRef.current) {
+      setGridElement(gridRef.current)
+    }
+    if (scrollRef.current) {
+      setScrollElement(scrollRef.current)
+    }
+  })
 
   const { resizing, layout } = useLayout({
     gridElement,

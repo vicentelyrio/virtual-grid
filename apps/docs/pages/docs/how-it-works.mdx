@@ -1,27 +1,6 @@
 # How it Works
 
-Virtual Grid is built on several core concepts that enable efficient grid virtualization while maintaining flexibility and ease of use.
-
-## What Makes Virtual Grid Different
-
 Most virtualization libraries use `position: absolute` to position items in a virtual space. Virtual Grid takes a different approach by using **dynamic padding** with native CSS Grid.
-
-### Traditional Approach (Absolute Positioning)
-
-```tsx
-<div style={{ position: 'relative', height: '10000px' }}>
-  <div style={{ position: 'absolute', top: '2400px', left: '0px' }}>Item 1</div>
-  <div style={{ position: 'absolute', top: '2400px', left: '300px' }}>Item 2</div>
-  <div style={{ position: 'absolute', top: '2600px', left: '0px' }}>Item 3</div>
-</div>
-```
-
-**Problems with this approach:**
-- Breaks CSS Grid's automatic layout calculations
-- Requires manual calculation of every item's x/y position
-- Doesn't adapt to viewport changes without recalculation
-- Complicates responsive design with media queries
-- Items are removed from document flow
 
 ### Virtual Grid Approach (Padding-based)
 
@@ -47,41 +26,9 @@ Most virtualization libraries use `position: absolute` to position items in a vi
 - Items remain in normal document flow
 - Simpler calculations (only need to track page offsets, not individual item positions)
 
-### Visual Comparison
-
-**Traditional Virtualization (Absolute Positioning)**
-```
-┌─────────────────────────┐
-│  Virtual Container      │
-│  height: 10000px        │
-│  ┌──────┐  ┌──────┐   │  ← Items positioned absolutely
-│  │Item 1│  │Item 2│   │     at calculated x/y coordinates
-│  │top:  │  │top:  │   │
-│  │2400px│  │2400px│   │
-│  └──────┘  └──────┘   │
-│                         │
-│  ┌──────┐  ┌──────┐   │  ← All positions manually calculated
-│  │Item 3│  │Item 4│   │     and updated on resize
-│  └──────┘  └──────┘   │
-└─────────────────────────┘
-```
-
-**Virtual Grid (Padding-based + CSS Grid)**
-```
-┌─────────────────────────┐
-│  Padding Top: 2400px    │  ← Offset to maintain scroll position
-├─────────────────────────┤
-│  ┌──────┐  ┌──────┐   │  ← CSS Grid positions items
-│  │Item 1│  │Item 2│   │     automatically based on
-│  └──────┘  └──────┘   │     grid-template-columns
-│                         │
-│  ┌──────┐  ┌──────┐   │  ← Items in normal document flow
-│  │Item 3│  │Item 4│   │     Grid handles responsive layout
-│  └──────┘  └──────┘   │
-├─────────────────────────┤
-│  Padding Bottom: 6800px │  ← Maintains total scroll height
-└─────────────────────────┘
-```
+## SSR Considerations
+For SSR, you can rely on page hydration.
+Rendering the first set of items on the server and then hydrate the rest on the client.
 
 ## Virtualization Explained
 
@@ -107,8 +54,6 @@ Instead of tracking individual items, Virtual Grid thinks in terms of "pages":
 const itemsPerPage = rowsOnViewport * columnsOnViewport
 const totalPages = Math.ceil(totalItems / itemsPerPage)
 ```
-
-This simplifies calculations and improves performance compared to item-by-item virtualization.
 
 #### 3. Scroll Position Tracking
 
@@ -149,8 +94,6 @@ This creates the illusion of a complete list while only rendering a fraction of 
 ## Hook-based Architecture
 
 Virtual Grid follows a hook-based architecture similar to libraries like react-table and react-hook-form. This approach provides several benefits:
-
-### Benefits
 
 **1. Flexibility**
 You control the rendering completely:
@@ -217,7 +160,7 @@ const resizeObserver = new ResizeObserver(() => {
   // Measure grid dimensions
   const gridRect = gridElement.getBoundingClientRect()
   const scrollRect = scrollElement.getBoundingClientRect()
-  
+
   // Calculate layout
   calculateLayout()
 })
@@ -279,23 +222,13 @@ When the viewport changes:
 4. Visible items are recalculated
 5. Padding is adjusted
 
-**No manual calculation of item positions needed!**
-
 ## Performance Optimizations
 
 Virtual Grid includes several built-in performance optimizations to ensure smooth scrolling and responsive behavior.
 
 ### 1. Memoization
 
-Key calculations are memoized using React's `useMemo`:
-
-```tsx
-const { items, styles } = useMemo(() => {
-  // Expensive calculations only run when dependencies change
-  return computeGrid({ layout, page, padding, offScreenPages, gap })
-}, [layout, page, padding, offScreenPages, gap])
-```
-
+Key calculations are memoized using React's `useMemo`.
 This prevents unnecessary recalculations when unrelated props change.
 
 ### 2. RequestAnimationFrame
@@ -307,7 +240,7 @@ const handleScroll = () => {
   if (rafRef.current) {
     cancelAnimationFrame(rafRef.current)
   }
-  
+
   rafRef.current = requestAnimationFrame(() => {
     updatePage()
     // Schedule scroll end detection
@@ -325,11 +258,11 @@ ResizeObserver updates are debounced to avoid excessive recalculations:
 ```tsx
 const handleResize = useCallback(() => {
   setResizing(true)
-  
+
   if (rafRef.current) {
     cancelAnimationFrame(rafRef.current)
   }
-  
+
   rafRef.current = requestAnimationFrame(() => {
     calculateLayout()
     setResizing(false)
@@ -424,6 +357,5 @@ Virtual Grid shines with:
 - **Responsive layouts** - Automatically adapts without configuration
 
 You might not need virtualization if:
-- Your dataset has < 100 items
+- Your dataset is not that large
 - You need all items mounted for animations/interactions
-- SEO requires all content to be server-rendered

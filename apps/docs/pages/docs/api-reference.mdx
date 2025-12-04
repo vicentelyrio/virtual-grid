@@ -83,9 +83,6 @@ useVirtualGrid({ data, horizontal: false })
 useVirtualGrid({ data, horizontal: true })
 ```
 
-**Why `gap` and `padding` parameters are required:**
-To calculate accurate padding offsets, Virtual Grid needs to know the exact `gap` between items and container `padding`. These values must match your CSS to ensure proper scroll positioning and layout calculations.
-
 ## Return Values
 
 The hook returns a `VirtualGrid<T>` object with the following properties:
@@ -99,6 +96,7 @@ The hook returns a `VirtualGrid<T>` object with the following properties:
 | `scrolling` | `boolean` | Whether user is currently scrolling |
 | `resizing` | `boolean` | Whether window is being resized |
 | `mounting` | `boolean` | Whether component is still mounting |
+| `horizontal` | `boolean` | Whether horizontal scrolling is enabled |
 | `onScrollTo` | `(page: number) => void` | Function to scroll to specific page |
 
 ### May be Undefined
@@ -126,7 +124,6 @@ The following properties may be `undefined` during initial mount until the brows
 | `gridWidth?` | `number` | Total grid width |
 | `scrollHeight?` | `number` | Scroll container height |
 | `scrollWidth?` | `number` | Scroll container width |
-| `horizontal?` | `boolean` | Whether horizontal scrolling is enabled |
 
 ## Type Reference
 
@@ -151,27 +148,27 @@ export type VirtualGrid<T> = {
   scrolling: boolean
   resizing: boolean
   mounting: boolean
+  horizontal: boolean
   onScrollTo: (page: number) => void
   items?: T[]
-  styles?: CSSProperties
-  page?: number
-  pageRange?: number[]
   scrollWidth?: number
   scrollHeight?: number
-  rows?: number
-  horizontal?: boolean
-  rowsOnViewport?: number
   columns?: number
   columnsOnViewport?: number
-  total?: number
-  pages?: number
-  itemsPerRow?: number
-  itemsPerColumn?: number
-  itemsPerPage?: number
-  itemHeight?: number
-  itemWidth?: number
   gridHeight?: number
   gridWidth?: number
+  itemsPerColumn?: number
+  itemsPerPage?: number
+  itemsPerRow?: number
+  itemHeight?: number
+  itemWidth?: number
+  page?: number
+  pages?: number
+  pageRange?: number[]
+  rows?: number
+  rowsOnViewport?: number
+  styles?: CSSProperties
+  total?: number
 }
 ```
 
@@ -198,6 +195,19 @@ export type Layout = {
 }
 ```
 
+### Styles
+
+```tsx
+export type Styles = {
+  width?: string | number
+  paddingTop?: string
+  paddingRight?: string
+  paddingBottom?: string
+  paddingLeft?: string
+  gap?: string
+}
+```
+
 ### PageResult
 
 ```tsx
@@ -215,11 +225,3 @@ export type ContentResult = {
   styles: CSSProperties
 }
 ```
-
-## Version & Environment Requirements
-
-- **Node.js**: `>=18` (matches the monorepo engine requirement).
-- **React**: `^19.0.0` (declared as a peer dependency).
-- **Browser features**: relies on `ResizeObserver` and modern CSS Grid support for accurate layout.
-
-If you target older browsers, you may need polyfills for `ResizeObserver` and should verify CSS Grid behavior in your supported environments.

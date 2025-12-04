@@ -29,11 +29,20 @@ export type Layout = {
   gridWidth: number
 }
 
+export type Styles = {
+  width?: string | number
+  paddingTop?: string
+  paddingRight?: string
+  paddingBottom?: string
+  paddingLeft?: string
+  gap?: string
+}
+
 export type VirtualGridProps<T> = {
-  data: T[],
+  data: T[]
   offScreenPages?: number
   padding?: number[]
-  gap?: number,
+  gap?: number
   horizontal?: boolean
 }
 
@@ -43,25 +52,25 @@ export type VirtualGrid<T> = {
   scrolling: boolean
   resizing: boolean
   mounting: boolean
+  horizontal: boolean
   onScrollTo: (page: number) => void
   items?: T[]
-  styles?: CSSProperties
-  page?: number
-  pageRange?: number[]
   scrollWidth?: number
   scrollHeight?: number
-  rows?: number
-  horizontal?: boolean
-  rowsOnViewport?: number
   columns?: number
   columnsOnViewport?: number
-  total?: number
-  pages?: number
-  itemsPerRow?: number
-  itemsPerColumn?: number
-  itemsPerPage?: number
-  itemHeight?: number
-  itemWidth?: number
   gridHeight?: number
   gridWidth?: number
+  itemsPerColumn?: number
+  itemsPerPage?: number
+  itemsPerRow?: number
+  itemHeight?: number
+  itemWidth?: number
+  page?: number
+  pages?: number
+  pageRange?: number[]
+  rows?: number
+  rowsOnViewport?: number
+  styles?: CSSProperties
+  total?: number
 }

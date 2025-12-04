@@ -12,10 +12,16 @@ export default {
   },
   docs: {
     title: 'Documentation',
-    type: 'page'
+    type: 'page',
+    theme: {
+      footer: false,
+    }
   },
   demos: {
     title: 'Demos',
-    type: 'page'
+    type: 'page',
+    theme: {
+      footer: false,
+    }
   },
 }

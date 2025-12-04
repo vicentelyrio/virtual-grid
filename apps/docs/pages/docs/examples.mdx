@@ -18,11 +18,10 @@ function BasicGrid() {
 
   return (
     <div ref={scrollRef} style={{ height: '400px', overflow: 'auto' }}>
-      <div 
-        ref={gridRef} 
+      <div
+        ref={gridRef}
         style={styles}
-        className="grid"
-      >
+        className="grid">
         {items?.map((item) => (
           <div key={item.id} className="card">
             {item.name}
@@ -50,20 +49,18 @@ function HorizontalGrid() {
   })
 
   return (
-    <div 
-      ref={scrollRef} 
-      style={{ 
-        width: '100%', 
+    <div
+      ref={scrollRef}
+      style={{
+        width: '100%',
         height: '200px',
-        overflowX: 'auto', 
-        overflowY: 'hidden' 
-      }}
-    >
-      <div 
-        ref={gridRef} 
+        overflowX: 'auto',
+        overflowY: 'hidden'
+      }}>
+      <div
+        ref={gridRef}
         style={styles}
-        className="horizontal-grid"
-      >
+        className="horizontal-grid">
         {items?.map((item) => (
           <div key={item.id} className="horizontal-card">
             {item.name}
@@ -101,8 +98,7 @@ function Carousel() {
       <div
         ref={scrollRef}
         className="carousel-scroll"
-        style={{ overflowX: 'auto', overflowY: 'hidden' }}
-      >
+        style={{ overflowX: 'auto', overflowY: 'hidden' }}>
         <div
           ref={gridRef}
           style={{
@@ -111,8 +107,7 @@ function Carousel() {
             gridAutoFlow: 'column',
             gridTemplateColumns: 'repeat(auto-fit, 400px)',
             gap: 16,
-          }}
-        >
+          }}>
           {items?.map((item) => (
             <div key={item.id} className="carousel-slide">
               <img src={item.src} alt={item.title} />
@@ -123,17 +118,15 @@ function Carousel() {
       </div>
 
       <div className="carousel-controls">
-        <button 
+        <button
           onClick={() => onScrollTo(Math.max(0, (page ?? 0) - 1))}
-          disabled={page === 0}
-        >
+          disabled={page === 0}>
           Previous
         </button>
         <span>{(page ?? 0) + 1} of {totalPages}</span>
-        <button 
+        <button
           onClick={() => onScrollTo((page ?? 0) + 1)}
-          disabled={(page ?? 0) >= totalPages - 1}
-        >
+          disabled={(page ?? 0) >= totalPages - 1}>
           Next
         </button>
       </div>
@@ -160,17 +153,15 @@ function ScrollableGrid() {
     <div>
       <div className="navigation-controls">
         <button onClick={() => onScrollTo(0)}>First Page</button>
-        <button 
+        <button
           onClick={() => onScrollTo((page ?? 0) - 1)}
-          disabled={page === 0}
-        >
+          disabled={page === 0}>
           Previous
         </button>
         <span>Page {(page ?? 0) + 1} of {pages ?? 0}</span>
-        <button 
+        <button
           onClick={() => onScrollTo((page ?? 0) + 1)}
-          disabled={(page ?? 0) >= (pages ?? 0) - 1}
-        >
+          disabled={(page ?? 0) >= (pages ?? 0) - 1}>
           Next
         </button>
         <button onClick={() => onScrollTo((pages ?? 0) - 1)}>Last Page</button>
@@ -320,56 +311,6 @@ Virtual Grid works with standard CSS Grid. The library handles the virtualizatio
   }
 }
 ```
-
-## Accessibility
-
-Virtual Grid provides the core virtualization logic while leaving accessibility implementation to your components:
-
-```tsx
-function AccessibleGrid() {
-  const data = Array(1000).fill(0).map((_, i) => ({ 
-    id: i, 
-    name: `Item ${i}`,
-    description: `Description for item ${i}`
-  }))
-
-  const { items, styles, gridRef, scrollRef, columns } = useVirtualGrid({ 
-    data,
-    gap: 16,
-    padding: [16, 16, 16, 16]
-  })
-
-  return (
-    <div
-      ref={scrollRef}
-      role="grid"
-      aria-label="Virtual data grid"
-      aria-rowcount={columns ? Math.ceil(data.length / columns) : undefined}
-      aria-colcount={columns}
-      tabIndex={0}
-      style={{ height: '400px', overflow: 'auto' }}
-    >
-      <div ref={gridRef} style={styles}>
-        {items?.map((item, index) => (
-          <div
-            key={item.id}
-            role="gridcell"
-            tabIndex={-1}
-            aria-rowindex={columns ? Math.floor(index / columns) + 1 : undefined}
-            aria-colindex={columns ? (index % columns) + 1 : undefined}
-            aria-label={`${item.name}, ${item.description}`}
-            className="accessible-card"
-          >
-            <h3>{item.name}</h3>
-            <p>{item.description}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-```
-
 ## Error Handling
 
 Virtual Grid follows a hooks-first approach and doesn't include built-in error boundaries. Implement error handling at the component level:
@@ -453,14 +394,14 @@ function OptimizedGrid({ data }) {
 
 ```tsx
 // For smooth scrolling with more memory usage
-const smoothScrolling = useVirtualGrid({ 
-  data, 
-  offScreenPages: 3 
+const smoothScrolling = useVirtualGrid({
+  data,
+  offScreenPages: 3
 })
 
 // For memory efficiency with less smooth scrolling
-const memoryEfficient = useVirtualGrid({ 
-  data, 
-  offScreenPages: 1 
+const memoryEfficient = useVirtualGrid({
+  data,
+  offScreenPages: 1
 })
 ```
