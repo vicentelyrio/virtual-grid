@@ -38,7 +38,9 @@ export function getPageSizes({
   const start = roundTo(safeScreenStart / itemWithGap, 1)
   const end = roundTo(screenEnd / itemWithGap, 1)
   const index = roundTo(screenCenter / itemWithGap, 1)
-  const page = Math.floor(Math.max(0, end - 1) / safeItemsOnPage) + 1
+  // Use Math.round(end) to handle edge case where scroll doesn't quite reach max
+  // (e.g., end = 999.9 should give page 334, not 333)
+  const page = Math.floor(Math.max(0, Math.round(end) - 1) / safeItemsOnPage) + 1
 
   return {
     index,

@@ -43,7 +43,7 @@ describe('getPage', () => {
   it('should handle null layout', () => {
     const result = getPage({
       scrollElement: document.createElement('div'),
-      layout: null as any,
+      layout: null as unknown as Layout,
       gap: 10
     })
 

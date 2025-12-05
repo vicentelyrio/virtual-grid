@@ -76,7 +76,7 @@ function TestComponent<T>({
         y: 0,
         toJSON: () => ({})
       })
-      
+
       // Mock scroll method to capture scroll position
       node.scroll = jest.fn((optionsOrX?: ScrollToOptions | number, y?: number) => {
         if (typeof optionsOrX === 'object') {
@@ -86,7 +86,7 @@ function TestComponent<T>({
           scrollCallRef.current?.(horizontal ? optionsOrX : (y ?? 0))
         }
       }) as typeof node.scroll
-      
+
       // Assign to the ref
       ;(result.scrollRef as React.MutableRefObject<HTMLDivElement | null>).current = node
     }
@@ -137,13 +137,11 @@ function TestComponent<T>({
     <div
       ref={scrollRefCallback}
       data-testid="scroll-container"
-      style={{ width: viewportWidth, height: viewportHeight, overflow: 'auto' }}
-    >
+      style={{ width: viewportWidth, height: viewportHeight, overflow: 'auto' }}>
       <div
         ref={gridRefCallback}
         data-testid="grid-container"
-        style={result.styles}
-      >
+        style={result.styles}>
         <div ref={itemRefCallback} data-testid="grid-item" style={{ width: itemWidth, height: itemHeight }}>
           Item
         </div>
@@ -363,7 +361,17 @@ describe('useVirtualGrid - Integration Tests', () => {
       const ITEM_WIDTH = 383
       const ITEM_HEIGHT = 320
 
-      it('D1. Vertical scroll - should calculate 500 pages', async () => {
+      // Viewport calculations (for paging):
+      // - rowsOnViewport = round(656/320) = 2
+      // - columnsOnViewport = round(766/383) = 2
+      // - itemsPerPage = 2 × 2 = 4
+      // - pages = ceil(1000/4) = 250
+      //
+      // Capacity calculations (for grid sizing):
+      // - itemsPerRow = floor((766+16)/(383+16)) = floor(1.96) = 1
+      // - itemsPerColumn = floor((656+16)/(320+16)) = floor(2.0) = 2
+
+      it('D1. Vertical scroll - should calculate 250 pages (2×2 visible)', async () => {
         render(
           <TestComponent
             data={createData(TOTAL_ITEMS)}
@@ -383,13 +391,17 @@ describe('useVirtualGrid - Integration Tests', () => {
           expect(pages).not.toBe('undefined')
         }, { timeout: 2000 })
 
+        // Viewport-based (for paging)
         expect(screen.getByTestId('result-rows-on-viewport').textContent).toBe('2')
+        expect(screen.getByTestId('result-columns-on-viewport').textContent).toBe('2')
+        expect(screen.getByTestId('result-items-per-page').textContent).toBe('4')
+        expect(screen.getByTestId('result-pages').textContent).toBe('250')
+        // Capacity-based (for grid sizing) - can differ from viewport
         expect(screen.getByTestId('result-items-per-row').textContent).toBe('1')
-        expect(screen.getByTestId('result-items-per-page').textContent).toBe('2')
-        expect(screen.getByTestId('result-pages').textContent).toBe('500')
+        expect(screen.getByTestId('result-items-per-column').textContent).toBe('2')
       })
 
-      it('D2. Horizontal scroll - should calculate 500 pages', async () => {
+      it('D2. Horizontal scroll - should calculate 250 pages (2×2 visible)', async () => {
         render(
           <TestComponent
             data={createData(TOTAL_ITEMS)}
@@ -409,8 +421,233 @@ describe('useVirtualGrid - Integration Tests', () => {
           expect(pages).not.toBe('undefined')
         }, { timeout: 2000 })
 
+        // Viewport-based (for paging)
         expect(screen.getByTestId('result-columns-on-viewport').textContent).toBe('2')
-        expect(screen.getByTestId('result-items-per-column').textContent).toBe('1')
+        expect(screen.getByTestId('result-rows-on-viewport').textContent).toBe('2')
+        expect(screen.getByTestId('result-items-per-page').textContent).toBe('4')
+        expect(screen.getByTestId('result-pages').textContent).toBe('250')
+        // Capacity-based (for grid sizing) - can differ from viewport
+        expect(screen.getByTestId('result-items-per-column').textContent).toBe('2')
+        expect(screen.getByTestId('result-items-per-row').textContent).toBe('1')
+      })
+    })
+
+    describe('Layout E: Partial visibility (cropped last column/row)', () => {
+      /**
+       * Tests for when items are partially visible at the viewport edge.
+       * Example: 766px viewport with 275px items shows 2 full columns + ~73% of 3rd column
+       * 
+       * The columnsOnViewport/rowsOnViewport uses Math.round, so:
+       * - round(766/275) = round(2.78) = 3 (includes partial column)
+       * - This means paging considers the partial item as part of the page
+       */
+
+      it('E1. Horizontal: 2 full columns + partial 3rd, 2 rows (3×2 = 6 items/page)', async () => {
+        // 766px wide viewport, 275px items, 16px gap
+        // 2 full columns: 275 + 16 + 275 = 566px
+        // Remaining: 766 - 566 = 200px (shows ~73% of 3rd column)
+        // round(766/275) = round(2.78) = 3 columns
+        const VIEWPORT_WIDTH = 766
+        const VIEWPORT_HEIGHT = 600  // Fits 2 rows: round(600/275) = 2
+        const ITEM_SIZE = 275
+
+        render(
+          <TestComponent
+            data={createData(TOTAL_ITEMS)}
+            horizontal={true}
+            gap={GAP}
+            viewportWidth={VIEWPORT_WIDTH}
+            viewportHeight={VIEWPORT_HEIGHT}
+            itemWidth={ITEM_SIZE}
+            itemHeight={ITEM_SIZE}
+          />
+        )
+
+        await triggerResize(VIEWPORT_WIDTH, VIEWPORT_HEIGHT)
+
+        await waitFor(() => {
+          const pages = screen.getByTestId('result-pages').textContent
+          expect(pages).not.toBe('undefined')
+        }, { timeout: 2000 })
+
+        // round(766/275) = 3 columns (2 full + partial)
+        expect(screen.getByTestId('result-columns-on-viewport').textContent).toBe('3')
+        // round(600/275) = 2 rows
+        expect(screen.getByTestId('result-rows-on-viewport').textContent).toBe('2')
+        expect(screen.getByTestId('result-items-per-page').textContent).toBe('6')  // 3 × 2
+        expect(screen.getByTestId('result-pages').textContent).toBe('167')  // ceil(1000/6)
+      })
+
+      it('E2. Vertical: 2 full rows + partial 3rd, 2 columns (2×3 = 6 items/page)', async () => {
+        // Same as E1 but rotated - vertical scroll with partial bottom row
+        const VIEWPORT_WIDTH = 600   // Fits 2 columns: round(600/275) = 2
+        const VIEWPORT_HEIGHT = 766  // 2 full rows + partial 3rd
+        const ITEM_SIZE = 275
+
+        render(
+          <TestComponent
+            data={createData(TOTAL_ITEMS)}
+            horizontal={false}
+            gap={GAP}
+            viewportWidth={VIEWPORT_WIDTH}
+            viewportHeight={VIEWPORT_HEIGHT}
+            itemWidth={ITEM_SIZE}
+            itemHeight={ITEM_SIZE}
+          />
+        )
+
+        await triggerResize(VIEWPORT_WIDTH, VIEWPORT_HEIGHT)
+
+        await waitFor(() => {
+          const pages = screen.getByTestId('result-pages').textContent
+          expect(pages).not.toBe('undefined')
+        }, { timeout: 2000 })
+
+        // round(600/275) = 2 columns
+        expect(screen.getByTestId('result-columns-on-viewport').textContent).toBe('2')
+        // round(766/275) = 3 rows (2 full + partial)
+        expect(screen.getByTestId('result-rows-on-viewport').textContent).toBe('3')
+        expect(screen.getByTestId('result-items-per-page').textContent).toBe('6')  // 2 × 3
+        expect(screen.getByTestId('result-pages').textContent).toBe('167')  // ceil(1000/6)
+      })
+
+      it('E3. Horizontal: 3 full columns + small peek of 4th (rounds down)', async () => {
+        // Testing edge case where partial is < 50% so rounds down
+        // 900px viewport, 275px items
+        // 3 full columns: 275*3 + 16*2 = 825 + 32 = 857px
+        // Remaining: 900 - 857 = 43px (~16% of item - rounds down)
+        // round(900/275) = round(3.27) = 3 columns
+        const VIEWPORT_WIDTH = 900
+        const VIEWPORT_HEIGHT = 320  // round(320/275) = 1 row
+        const ITEM_SIZE = 275
+
+        render(
+          <TestComponent
+            data={createData(TOTAL_ITEMS)}
+            horizontal={true}
+            gap={GAP}
+            viewportWidth={VIEWPORT_WIDTH}
+            viewportHeight={VIEWPORT_HEIGHT}
+            itemWidth={ITEM_SIZE}
+            itemHeight={ITEM_SIZE}
+          />
+        )
+
+        await triggerResize(VIEWPORT_WIDTH, VIEWPORT_HEIGHT)
+
+        await waitFor(() => {
+          const pages = screen.getByTestId('result-pages').textContent
+          expect(pages).not.toBe('undefined')
+        }, { timeout: 2000 })
+
+        // round(900/275) = 3 columns (small peek doesn't count)
+        expect(screen.getByTestId('result-columns-on-viewport').textContent).toBe('3')
+        expect(screen.getByTestId('result-rows-on-viewport').textContent).toBe('1')
+        expect(screen.getByTestId('result-items-per-page').textContent).toBe('3')  // 3 × 1
+        expect(screen.getByTestId('result-pages').textContent).toBe('334')  // ceil(1000/3)
+      })
+
+      it('E4. Horizontal: exactly 50% visible rounds up to include', async () => {
+        // 412.5px would be 50% of 275px item visible
+        // Testing boundary: round(0.5) = 1 in JavaScript
+        // Viewport where partial item is ~50%: 275 * 2.5 = 687.5 ≈ 688px
+        // round(688/275) = round(2.50) = 3 (rounds to nearest even, but JS rounds up)
+        const VIEWPORT_WIDTH = 688
+        const VIEWPORT_HEIGHT = 275
+        const ITEM_SIZE = 275
+
+        render(
+          <TestComponent
+            data={createData(TOTAL_ITEMS)}
+            horizontal={true}
+            gap={GAP}
+            viewportWidth={VIEWPORT_WIDTH}
+            viewportHeight={VIEWPORT_HEIGHT}
+            itemWidth={ITEM_SIZE}
+            itemHeight={ITEM_SIZE}
+          />
+        )
+
+        await triggerResize(VIEWPORT_WIDTH, VIEWPORT_HEIGHT)
+
+        await waitFor(() => {
+          const pages = screen.getByTestId('result-pages').textContent
+          expect(pages).not.toBe('undefined')
+        }, { timeout: 2000 })
+
+        // round(688/275) = round(2.50) = 3 (JS rounds 0.5 up)
+        expect(screen.getByTestId('result-columns-on-viewport').textContent).toBe('3')
+        expect(screen.getByTestId('result-rows-on-viewport').textContent).toBe('1')
+        expect(screen.getByTestId('result-items-per-page').textContent).toBe('3')
+      })
+
+      it('E5. Carousel-like: wide items with partial next item peeking', async () => {
+        // Common carousel pattern: show 1 full item + peek of next
+        // 500px viewport, 400px items
+        // 1 full item + 100px peek (25% of next item)
+        // round(500/400) = round(1.25) = 1 (peek doesn't count as full page item)
+        const VIEWPORT_WIDTH = 500
+        const VIEWPORT_HEIGHT = 400
+        const ITEM_WIDTH = 400
+        const ITEM_HEIGHT = 400
+
+        render(
+          <TestComponent
+            data={createData(TOTAL_ITEMS)}
+            horizontal={true}
+            gap={GAP}
+            viewportWidth={VIEWPORT_WIDTH}
+            viewportHeight={VIEWPORT_HEIGHT}
+            itemWidth={ITEM_WIDTH}
+            itemHeight={ITEM_HEIGHT}
+          />
+        )
+
+        await triggerResize(VIEWPORT_WIDTH, VIEWPORT_HEIGHT)
+
+        await waitFor(() => {
+          const pages = screen.getByTestId('result-pages').textContent
+          expect(pages).not.toBe('undefined')
+        }, { timeout: 2000 })
+
+        // Small peek doesn't count: round(500/400) = round(1.25) = 1
+        expect(screen.getByTestId('result-columns-on-viewport').textContent).toBe('1')
+        expect(screen.getByTestId('result-rows-on-viewport').textContent).toBe('1')
+        expect(screen.getByTestId('result-items-per-page').textContent).toBe('1')
+        expect(screen.getByTestId('result-pages').textContent).toBe('1000')
+      })
+
+      it('E6. Carousel-like: wide items with substantial next item visible', async () => {
+        // Carousel showing 1 full item + 60% of next item
+        // 640px viewport, 400px items
+        // round(640/400) = round(1.6) = 2
+        const VIEWPORT_WIDTH = 640
+        const VIEWPORT_HEIGHT = 400
+        const ITEM_WIDTH = 400
+        const ITEM_HEIGHT = 400
+
+        render(
+          <TestComponent
+            data={createData(TOTAL_ITEMS)}
+            horizontal={true}
+            gap={GAP}
+            viewportWidth={VIEWPORT_WIDTH}
+            viewportHeight={VIEWPORT_HEIGHT}
+            itemWidth={ITEM_WIDTH}
+            itemHeight={ITEM_HEIGHT}
+          />
+        )
+
+        await triggerResize(VIEWPORT_WIDTH, VIEWPORT_HEIGHT)
+
+        await waitFor(() => {
+          const pages = screen.getByTestId('result-pages').textContent
+          expect(pages).not.toBe('undefined')
+        }, { timeout: 2000 })
+
+        // Substantial partial counts: round(640/400) = round(1.6) = 2
+        expect(screen.getByTestId('result-columns-on-viewport').textContent).toBe('2')
+        expect(screen.getByTestId('result-rows-on-viewport').textContent).toBe('1')
         expect(screen.getByTestId('result-items-per-page').textContent).toBe('2')
         expect(screen.getByTestId('result-pages').textContent).toBe('500')
       })
@@ -473,7 +710,7 @@ describe('useVirtualGrid - Integration Tests', () => {
     /**
      * Scroll position formula:
      * position = padding + (unitsPerPage * (pageIndex - 1) * itemSize) + (unitsPerPage * (pageIndex - 1) * gap)
-     * 
+     *
      * Where unitsPerPage = rowsOnViewport (vertical) or columnsOnViewport (horizontal)
      */
 
@@ -697,6 +934,7 @@ describe('useVirtualGrid - Integration Tests', () => {
         await act(async () => {
           screen.getByTestId('scroll-to-2').click()
         })
+
         // Should scroll by 2 rows worth, not 4 items worth
         const expectedForPage2 = PADDING + 2 * (ITEM_SIZE + GAP) // 802
         expect(scrollPositions[scrollPositions.length - 1]).toBe(expectedForPage2)

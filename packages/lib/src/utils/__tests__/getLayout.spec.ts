@@ -70,9 +70,9 @@ describe('getLayout', () => {
       columns: 4, // 1000/(200+10) rounded down
       total: 20,
       pages: 1, // ceil(total/itemsPerPage)
-      itemsPerRow: 4, // 1000/(200+10) rounded down
-      itemsPerColumn: 5, // 800/(150+10) rounded down
-      itemsPerPage: 20, // 5 * 4
+      itemsPerRow: 4, // floor((1000+10)/(200+10)) = 4 (for grid sizing)
+      itemsPerColumn: 5, // floor((800+10)/(150+10)) = 5 (for grid sizing)
+      itemsPerPage: 25, // rowsOnViewport * columnsOnViewport = 5 * 5 (for paging)
       itemHeight: 150,
       itemWidth: 200,
       gridHeight: 1600,
@@ -114,9 +114,9 @@ describe('getLayout', () => {
       columns: 9, // 2000/(200+10) rounded down
       total: 20,
       pages: 1, // ceil(total/itemsPerPage)
-      itemsPerRow: 4, // 1000/(200+10) rounded down
-      itemsPerColumn: 5, // 800/(150+10) rounded down
-      itemsPerPage: 25, // 5 * 5 (columnsOnViewport * itemsPerColumn)
+      itemsPerRow: 4, // floor((1000+10)/(200+10)) = 4 (for grid sizing)
+      itemsPerColumn: 5, // floor((800+10)/(150+10)) = 5 (for grid sizing)
+      itemsPerPage: 25, // rowsOnViewport * columnsOnViewport = 5 * 5 (for paging)
       itemHeight: 150,
       itemWidth: 200,
       gridHeight: 800,

@@ -146,7 +146,8 @@ describe('useVirtualGrid', () => {
   })
 
   it('should handle undefined data', () => {
-    const { result } = renderHook(() => useVirtualGrid({ ...defaultProps, data: undefined as any }))
+    // @ts-expect-error Testing invalid input: data should not be undefined
+    const { result } = renderHook(() => useVirtualGrid({ ...defaultProps, data: undefined }))
 
     expect(mockUseLayout).toHaveBeenCalledWith(
       expect.objectContaining({

@@ -37,15 +37,17 @@ export function getLayout({
     const itemHeight = item.height ?? 0
     const itemWidth = item.width ?? 0
 
-    const itemsPerRow = Math.max(Math.floor(width / (itemWidth + gap)), 1)
-    const itemsPerColumn = Math.max(Math.floor(height / (itemHeight + gap)), 1)
-
+    // Viewport-based calculations (for paging - how many items are visible)
     const rowsOnViewport = Math.max(Math.round(bounds?.height / itemHeight) || 1, 1)
     const columnsOnViewport = Math.max(Math.round(bounds?.width / itemWidth) || 1, 1)
 
-    const itemsPerPage = horizontal
-      ? columnsOnViewport * itemsPerColumn
-      : rowsOnViewport * itemsPerRow
+    // Capacity-based calculations (for grid sizing - how many items fit in cross-axis)
+    // Using (size + gap) / (itemSize + gap) accounts for last item not needing trailing gap
+    const itemsPerRow = Math.max(Math.floor((width + gap) / (itemWidth + gap)), 1)
+    const itemsPerColumn = Math.max(Math.floor((height + gap) / (itemHeight + gap)), 1)
+
+    // itemsPerPage uses viewport calculations for consistent paging behavior
+    const itemsPerPage = rowsOnViewport * columnsOnViewport
 
     const safeItemsPerPage = Math.max(1, itemsPerPage)
     const pages = Math.max(1, Math.ceil(total / safeItemsPerPage))
