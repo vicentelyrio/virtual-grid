@@ -12,7 +12,7 @@ describe('getPageSizes', () => {
 
     expect(result).toEqual({
       index: 2.3, // Center position (500) / (itemSize + gap) = 500/220 ≈ 2.3
-      page: 0, // end/itemsOnPage = 4.5/10 = 0.45 -> Math.floor = 0
+      page: 1, // end/itemsOnPage = 4.5/10 = 0.45 -> Math.floor = 0 + 1
       pageRange: [0, 4.5] // start = 0, end = 1000/(200+20) = 4.5
     })
   })
@@ -28,7 +28,7 @@ describe('getPageSizes', () => {
 
     expect(result).toEqual({
       index: 4.3, // (440 + 500)/(200 + 20) ≈ 4.3
-      page: 0, // 6.5/10 = 0.65 -> Math.floor = 0
+      page: 1, // 6.5/10 = 0.65 -> Math.floor = 0 + 1
       pageRange: [2.0, 6.5] // start = 440/220 = 2, end = (440+1000)/220 = 6.5
     })
   })
@@ -44,7 +44,7 @@ describe('getPageSizes', () => {
 
     expect(result).toEqual({
       index: 1.1, // 250/220 ≈ 1.1
-      page: 0, // 2.3/10 = 0.23 -> Math.floor = 0
+      page: 1, // 2.3/10 = 0.23 -> Math.floor = 0 + 1
       pageRange: [0, 2.3] // end = 500/220 ≈ 2.3
     })
   })
@@ -60,7 +60,7 @@ describe('getPageSizes', () => {
 
     expect(result).toEqual({
       index: 4.5, // 500/110 ≈ 4.5
-      page: 0, // 9.1/10 = 0.91 -> Math.floor = 0
+      page: 1, // 9.1/10 = 0.91 -> Math.floor = 0 + 1
       pageRange: [0, 9.1] // end = 1000/110 ≈ 9.1
     })
   })
@@ -76,7 +76,7 @@ describe('getPageSizes', () => {
 
     expect(result).toEqual({
       index: 12.3, // (2200 + 500)/220 ≈ 12.3
-      page: 2, // 14.5/5 = 2.9 -> Math.floor = 2
+      page: 3, // 14.5/5 = 2.9 -> Math.floor = 2 + 1
       pageRange: [10.0, 14.5]
     })
   })

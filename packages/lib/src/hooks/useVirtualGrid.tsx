@@ -26,7 +26,7 @@ export function useVirtualGrid<T>({
     if (scrollRef.current) {
       setScrollElement(scrollRef.current)
     }
-  })
+  }, [])
 
   const { resizing, layout } = useLayout({
     gridElement,
@@ -56,15 +56,15 @@ export function useVirtualGrid<T>({
 
   return {
     ...layout,
+    page,
     gridRef,
     scrollRef,
     items,
     styles,
-    page,
     pageRange,
     onScrollTo,
     scrolling,
     resizing,
-    mounting: !items || !layout || !page,
+    mounting: !items || !layout?.pages || !page,
   }
 }

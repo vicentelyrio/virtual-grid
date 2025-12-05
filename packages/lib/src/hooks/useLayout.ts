@@ -68,7 +68,6 @@ export function useLayout({
     if (!gridElement || !scrollElement) return
 
     resizeObserverRef.current = new ResizeObserver(handleResize)
-
     resizeObserverRef.current.observe(scrollElement)
 
     calculateLayout()

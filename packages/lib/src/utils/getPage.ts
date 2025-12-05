@@ -18,7 +18,7 @@ export function getPage({
   try {
     const { scrollTop = 0, scrollLeft = 0 } = getScrollProps({ scrollElement })
 
-    if (!layout) return {} as GetPageSizesReturnType
+    if (!layout) return { index: 0, page: 1, pageRange: [0, 0] } as GetPageSizesReturnType
 
     const {
       itemHeight,
@@ -29,6 +29,16 @@ export function getPage({
       scrollWidth,
       scrollHeight,
     } = layout
+
+    const missingRequired =
+      !Number.isFinite(itemHeight) ||
+      !Number.isFinite(itemWidth) ||
+      !Number.isFinite(rowsOnViewport) ||
+      !Number.isFinite(columnsOnViewport) ||
+      !Number.isFinite(scrollWidth) ||
+      !Number.isFinite(scrollHeight)
+
+    if (missingRequired) return { index: 0, page: 1, pageRange: [0, 0] }
 
     const verticalProps = {
       screenStart: scrollTop,
@@ -46,9 +56,20 @@ export function getPage({
       gap,
     }
 
-    return getPageSizes(horizontal ? horizontalProps : verticalProps)
-  } catch (e) {
-    return {} as GetPageSizesReturnType
+    const pageSizes = getPageSizes(horizontal ? horizontalProps : verticalProps)
+    const totalPages = Math.max(1, layout.pages ?? 1)
+    const normalizedPage = Math.min(Math.max(1, pageSizes.page || 1), totalPages)
+
+    return {
+      ...pageSizes,
+      page: normalizedPage,
+    }
+  } catch {
+    return {
+      index: 0,
+      page: 1,
+      pageRange: [0, 0]
+    } as GetPageSizesReturnType
   }
 }
 

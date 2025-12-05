@@ -152,11 +152,20 @@ describe('computeSize', () => {
         itemsPerPage: 3,
       })
 
-      // itemsCount = 10/3 ≈ 3.33...
-      // itemsSum = 100 * 3.33... = 333.33...
-      // gapSum = (3.33... - 1) * 8 = 18.67...
-      // total = 333.33... + 18.67... + 10 = 362
-      expect(result).toBeCloseTo(362, 1)
+      // itemsCount = ceil(10/3) = 4
+      // itemsSum = 100 * 4 = 400
+      // gapSum = (4 - 1) * 8 = 24
+      // total = 400 + 24 + 10 = 434
+      expect(result).toBe(434)
+    })
+
+    it('should guard against zero itemsPerPage', () => {
+      const result = computeSize({
+        ...baseProps,
+        itemsPerPage: 0,
+      })
+
+      expect(result).toBe(baseProps.padding)
     })
   })
 })

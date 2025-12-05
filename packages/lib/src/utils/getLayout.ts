@@ -37,8 +37,8 @@ export function getLayout({
     const itemHeight = item.height ?? 0
     const itemWidth = item.width ?? 0
 
-    const containerWidth = width - (padding[1] - padding[3] + gap)
-    const containerHeight = height - (padding[0] - padding[2] + gap)
+    const containerWidth = width - (padding[1] - padding[3])
+    const containerHeight = height - (padding[0] - padding[2])
 
     const itemsPerRow = Math.max(Math.floor(containerWidth / (itemWidth + gap)), 1)
     const itemsPerColumn = Math.max(Math.floor(containerHeight / (itemHeight + gap)), 1)
@@ -49,6 +49,9 @@ export function getLayout({
     const itemsPerPage = horizontal
       ? columnsOnViewport * itemsPerColumn
       : rowsOnViewport * itemsPerRow
+
+    const safeItemsPerPage = Math.max(1, itemsPerPage)
+    const pages = Math.max(1, Math.ceil(total / safeItemsPerPage))
 
     const { height: gridHeight, width: gridWidth } = calculateGridSize({
       horizontal,
@@ -65,10 +68,6 @@ export function getLayout({
 
     const rows = Math.ceil(gridHeight / (itemHeight + gap)) || 0
     const columns = Math.floor(gridWidth / (itemWidth + gap)) || 0
-
-    const pages = horizontal
-      ? Math.ceil(columns / columnsOnViewport)
-      : Math.ceil(rows / rowsOnViewport)
 
     return {
       scrollWidth: bounds?.width ?? 0,
@@ -88,8 +87,7 @@ export function getLayout({
       gridWidth,
       horizontal
     }
-  } catch (e) {
+  } catch {
     return {} as Layout
   }
 }
-

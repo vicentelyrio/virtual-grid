@@ -2,7 +2,7 @@ import { useVirtualGrid } from '@virtual-grid/lib'
 
 import classes from './vertical-grid.module.css'
 
-const data = Array(1000).fill(0).map((_, i) => i + 1)
+const data = Array.from({ length: 1000 }, (_, i) => i + 1)
 
 export function VerticalGrid() {
   const { items, styles, gridRef, scrollRef } = useVirtualGrid({

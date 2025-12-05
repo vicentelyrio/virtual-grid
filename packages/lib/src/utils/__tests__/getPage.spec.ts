@@ -35,7 +35,7 @@ describe('getPage', () => {
 
     expect(result).toEqual({
       index: 0,
-      page: 0,
+      page: 1,
       pageRange: [0, 0]
     })
   })

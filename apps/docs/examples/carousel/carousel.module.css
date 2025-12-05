@@ -13,6 +13,9 @@
   overflow-y: hidden;
   overflow-x: auto;
   scrollbar-width: none;
+  scroll-snap-type: x proximity;
+  scroll-snap-align: center;
+  scroll-behavior: smooth;
 }
 
 .scroll::-webkit-scrollbar {
@@ -22,12 +25,9 @@
 .grid {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 100%;
+  grid-auto-columns: 766px;
   grid-template-rows: repeat(1, minmax(320px, 1fr));
   align-content: start;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  overscroll-behavior-x: contain;
   gap: 16px;
   padding: 0;
 }
@@ -67,15 +67,23 @@
   gap: 16px;
 }
 
-.dot {
-  background: #999;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+.nav {
   cursor: pointer;
+  color: #666;
 }
 
-.dot.active {
-  opacit: 1;
-  background: #fff;
+.nav.active {
+  color: #fff;
+}
+
+.nav.disabled {
+  color: #222;
+}
+
+.fixed {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 16px;
+  gap: 16px;
 }

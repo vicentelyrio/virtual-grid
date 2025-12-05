@@ -66,9 +66,9 @@ export type VirtualGrid<T> = {
   itemsPerRow?: number
   itemHeight?: number
   itemWidth?: number
-  page?: number
-  pages?: number
-  pageRange?: number[]
+  page: number
+  pages: number
+  pageRange: number[]
   rows?: number
   rowsOnViewport?: number
   styles?: CSSProperties

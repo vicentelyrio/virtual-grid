@@ -69,7 +69,7 @@ describe('getLayout', () => {
       columnsOnViewport: 5, // 1000/200 rounded down
       columns: 4, // 1000/(200+10) rounded down
       total: 20,
-      pages: 2, // ceil(10/5)
+      pages: 1, // ceil(total/itemsPerPage)
       itemsPerRow: 4, // (1000-30)/(200+10) rounded down
       itemsPerColumn: 4, // (800-30)/(150+10) rounded down
       itemsPerPage: 20, // 5 * 4
@@ -113,7 +113,7 @@ describe('getLayout', () => {
       columnsOnViewport: 5,
       columns: 9, // 2000/(200+10) rounded down
       total: 20,
-      pages: 2, // ceil(9/5)
+      pages: 1, // ceil(total/itemsPerPage)
       itemsPerRow: 4,
       itemsPerColumn: 4, // Considering padding and gaps
       itemsPerPage: 20, // 5 * 4

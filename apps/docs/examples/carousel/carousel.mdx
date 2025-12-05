@@ -15,6 +15,7 @@ import clsx from 'clsx'
 import { useVirtualGrid } from '@virtual-grid/lib'
 
 import classes from './carousel.module.css'
+import { useMemo } from 'react'
 
 const data = Array(1000).fill(0).map((_, i) => i + 1)
 
@@ -24,8 +25,8 @@ export function Carousel() {
     styles,
     gridRef,
     scrollRef,
-    page = 1,
-    pages = 1,
+    page,
+    pages,
     onScrollTo
   } = useVirtualGrid({
     data,
@@ -34,11 +35,16 @@ export function Carousel() {
     padding: [0, 0, 0, 0],
   })
 
+  const navigation = useMemo(() => {
+    if (!page || !pages) return []
+    return getPaginationArray(page, pages, 2)
+  }, [page, pages])
+
   return (
     <div className={classes.container}>
       <div className={classes.carousel}>
-        <div ref={scrollRef} className={classes.scroll}>
-          <div ref={gridRef} className={classes.grid} style={{}}>
+        <div className={classes.scroll} ref={scrollRef}>
+          <div className={classes.grid} ref={gridRef} style={styles}>
             {items?.map((item) => (
               <div key={item} className={classes.card}>
                 {item}
@@ -49,13 +55,38 @@ export function Carousel() {
 
         <div className={classes.controls}>
           <div className={classes.navigation}>
-            {getPaginationArray(page, pages, 2).map((item) => (
+            <div className={classes.fixed}>
+              <button
+                className={clsx([classes.nav, 1 === page && classes.disabled])}
+                onClick={() => onScrollTo(1)}>
+                first
+              </button>
               <div
+                className={clsx([classes.nav, 1 === page && classes.disabled])}
+                onClick={() => onScrollTo(page - 1)}>
+                prev
+              </div>
+            </div>
+            {navigation.map((item) => (
+              <button
                 key={item}
-                className={clsx([classes.dot, item + 1 === page && classes.active])}
-                onClick={() => onScrollTo(item + 1)}
-              />
+                className={clsx([classes.nav, item === page && classes.active])}
+                onClick={() => onScrollTo(item)}>
+                {item}
+              </button>
             ))}
+            <div className={classes.fixed}>
+              <button
+                className={clsx([classes.nav, pages === page && classes.disabled])}
+                onClick={() => onScrollTo(page + 1)}>
+                next
+              </button>
+              <button
+                className={clsx([classes.nav, pages === page && classes.disabled])}
+                onClick={() => onScrollTo(pages)}>
+                last
+              </button>
+            </div>
           </div>
           <h6>{page} of {pages}</h6>
         </div>
@@ -65,16 +96,21 @@ export function Carousel() {
 }
 
 function getPaginationArray(currentPage: number, totalPages: number, pad: number) {
-  const start = Math.max(0, currentPage - pad)
-  const end = Math.min(totalPages - 1, currentPage + pad)
+  const amount = pad * 2 + 1
 
-  const pages = []
-
-  for (let i = start; i <= end; i++) {
-    pages.push(i)
+  // left pad
+  if (currentPage <= pad) {
+    return Array.from({ length: amount }, (_, i) => i + 1)
   }
 
-  return pages
+  // right pad
+  if (currentPage >= totalPages - pad) {
+    const start = totalPages - (amount - 1)
+    return Array.from({ length: amount }, (_, i) => start + i)
+  }
+
+  const start = currentPage - pad
+  return Array.from({ length: amount }, (_, i) => start + i)
 }
 ```
   </Tabs.Tab>
@@ -96,6 +132,9 @@ function getPaginationArray(currentPage: number, totalPages: number, pad: number
   overflow-y: hidden;
   overflow-x: auto;
   scrollbar-width: none;
+  scroll-snap-type: x proximity;
+  scroll-snap-align: center;
+  scroll-behavior: smooth;
 }
 
 .scroll::-webkit-scrollbar {
@@ -105,12 +144,9 @@ function getPaginationArray(currentPage: number, totalPages: number, pad: number
 .grid {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 100%;
+  grid-auto-columns: 766px;
   grid-template-rows: repeat(1, minmax(320px, 1fr));
   align-content: start;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  overscroll-behavior-x: contain;
   gap: 16px;
   padding: 0;
 }
@@ -150,27 +186,28 @@ function getPaginationArray(currentPage: number, totalPages: number, pad: number
   gap: 16px;
 }
 
-.dot {
-  background: #ccc;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+.nav {
   cursor: pointer;
+  color: #666;
 }
 
-.dot:last-of-type {
-  opacity: 0.5;
+.nav.active {
+  color: #fff;
 }
 
-.dot:first-of-type {
-  opacity: 0.5;
+.nav.disabled {
+  color: #222;
 }
 
-.dot.active {
-  opacit: 1;
-  background: #007bff;
+.fixed {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 16px;
+  gap: 16px;
 }
 ```
   </Tabs.Tab>
 </Tabs>
 
+> Note: Scroll snap and animations are not part of the hook. You can use css scroll-snap-align and scroll-behavior to achieve this effect.

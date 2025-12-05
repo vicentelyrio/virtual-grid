@@ -98,6 +98,9 @@ The hook returns a `VirtualGrid<T>` object with the following properties:
 | `mounting` | `boolean` | Whether component is still mounting |
 | `horizontal` | `boolean` | Whether horizontal scrolling is enabled |
 | `onScrollTo` | `(page: number) => void` | Function to scroll to specific page |
+| `page` | `number` | Current page number |
+| `pages` | `number` | Total number of pages |
+| `pageRange` | `number[]` | Array of visible page numbers |
 
 ### May be Undefined
 
@@ -107,14 +110,11 @@ The following properties may be `undefined` during initial mount until the brows
 |----------|------|-------------|
 | `items?` | `T[]` | Currently visible items to render |
 | `styles?` | `CSSProperties` | Styles to apply to grid container |
-| `page?` | `number` | Current page number |
-| `pageRange?` | `number[]` | Array of visible page numbers |
 | `rows?` | `number` | Total number of rows |
 | `columns?` | `number` | Total number of columns |
 | `rowsOnViewport?` | `number` | Number of rows visible in viewport |
 | `columnsOnViewport?` | `number` | Number of columns visible in viewport |
 | `total?` | `number` | Total number of items |
-| `pages?` | `number` | Total number of pages |
 | `itemsPerRow?` | `number` | Number of items per row |
 | `itemsPerColumn?` | `number` | Number of items per column |
 | `itemsPerPage?` | `number` | Number of items per page |
@@ -162,9 +162,9 @@ export type VirtualGrid<T> = {
   itemsPerRow?: number
   itemHeight?: number
   itemWidth?: number
-  page?: number
-  pages?: number
-  pageRange?: number[]
+  page: number
+  pages: number
+  pageRange: number[]
   rows?: number
   rowsOnViewport?: number
   styles?: CSSProperties

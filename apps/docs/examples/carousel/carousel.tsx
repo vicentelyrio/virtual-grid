@@ -2,6 +2,7 @@ import clsx from 'clsx'
 import { useVirtualGrid } from '@virtual-grid/lib'
 
 import classes from './carousel.module.css'
+import { useMemo } from 'react'
 
 const data = Array(1000).fill(0).map((_, i) => i + 1)
 
@@ -11,8 +12,8 @@ export function Carousel() {
     styles,
     gridRef,
     scrollRef,
-    page = 1,
-    pages = 1,
+    page,
+    pages,
     onScrollTo
   } = useVirtualGrid({
     data,
@@ -21,11 +22,16 @@ export function Carousel() {
     padding: [0, 0, 0, 0],
   })
 
+  const navigation = useMemo(() => {
+    if (!page || !pages) return []
+    return getPaginationArray(page, pages, 2)
+  }, [page, pages])
+
   return (
     <div className={classes.container}>
       <div className={classes.carousel}>
-        <div ref={scrollRef} className={classes.scroll}>
-          <div ref={gridRef} className={classes.grid} style={{}}>
+        <div className={classes.scroll} ref={scrollRef}>
+          <div className={classes.grid} ref={gridRef} style={styles}>
             {items?.map((item) => (
               <div key={item} className={classes.card}>
                 {item}
@@ -36,13 +42,38 @@ export function Carousel() {
 
         <div className={classes.controls}>
           <div className={classes.navigation}>
-            {getPaginationArray(page, pages, 2).map((item) => (
+            <div className={classes.fixed}>
+              <button
+                className={clsx([classes.nav, 1 === page && classes.disabled])}
+                onClick={() => onScrollTo(1)}>
+                first
+              </button>
               <div
+                className={clsx([classes.nav, 1 === page && classes.disabled])}
+                onClick={() => onScrollTo(page - 1)}>
+                prev
+              </div>
+            </div>
+            {navigation.map((item) => (
+              <button
                 key={item}
-                className={clsx([classes.dot, item + 1 === page && classes.active])}
-                onClick={() => onScrollTo(item + 1)}
-              />
+                className={clsx([classes.nav, item === page && classes.active])}
+                onClick={() => onScrollTo(item)}>
+                {item}
+              </button>
             ))}
+            <div className={classes.fixed}>
+              <button
+                className={clsx([classes.nav, pages === page && classes.disabled])}
+                onClick={() => onScrollTo(page + 1)}>
+                next
+              </button>
+              <button
+                className={clsx([classes.nav, pages === page && classes.disabled])}
+                onClick={() => onScrollTo(pages)}>
+                last
+              </button>
+            </div>
           </div>
           <h6>{page} of {pages}</h6>
         </div>
@@ -53,8 +84,18 @@ export function Carousel() {
 
 function getPaginationArray(currentPage: number, totalPages: number, pad: number) {
   const amount = pad * 2 + 1
-  const start = Math.max(0, currentPage - pad)
-  const end = Math.min(totalPages - 1, currentPage + pad)
 
-  return Array(amount).fill(0).map((_, i) => i)
+  // left pad
+  if (currentPage <= pad) {
+    return Array.from({ length: amount }, (_, i) => i + 1)
+  }
+
+  // right pad
+  if (currentPage >= totalPages - pad) {
+    const start = totalPages - (amount - 1)
+    return Array.from({ length: amount }, (_, i) => start + i)
+  }
+
+  const start = currentPage - pad
+  return Array.from({ length: amount }, (_, i) => start + i)
 }

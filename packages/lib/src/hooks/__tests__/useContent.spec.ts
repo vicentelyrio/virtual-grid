@@ -43,7 +43,7 @@ describe('useContent', () => {
       data,
       gap: 10,
       layout: mockLayout,
-      page: 0,
+      page: 1,
       padding: [20, 20, 20, 20],
       offScreenPages: 1
     }
@@ -92,7 +92,7 @@ describe('useContent', () => {
       data: [],
       gap: 10,
       layout: mockLayout,
-      page: 0,
+      page: 1,
       padding: [],
       offScreenPages: 1
     }
@@ -125,7 +125,7 @@ describe('useContent', () => {
       data,
       gap: 10,
       layout: mockLayout,
-      page: 0,
+      page: 1,
       padding: [20, 20, 20, 20],
       offScreenPages: 1
     }
@@ -152,7 +152,7 @@ describe('useContent', () => {
       data,
       gap: 10,
       layout: mockLayout,
-      page: 0,
+      page: 1,
       padding: [20, 20, 20, 20],
       offScreenPages: 1
     }

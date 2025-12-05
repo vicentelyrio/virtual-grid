@@ -13,7 +13,11 @@ export function computeSize({
   padding,
   gap
 }: ComputeSizeProps): number {
-  const itemsCount = Math.max(total, itemsPerPage) / itemsPerPage
+  if (!itemsPerPage || itemsPerPage <= 0) {
+    return padding
+  }
+
+  const itemsCount = Math.max(1, Math.ceil(total / itemsPerPage))
   const itemsSum = itemSize * itemsCount
   const gapSum = (itemsCount - 1) * gap
 
