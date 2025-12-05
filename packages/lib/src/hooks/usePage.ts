@@ -31,7 +31,8 @@ export function usePage({
   const {
     itemHeight = 0,
     itemWidth = 0,
-    itemsPerPage = 0
+    rowsOnViewport = 1,
+    columnsOnViewport = 1,
   } = layout || {}
 
   const computeScrollPosition = useCallback(
@@ -42,12 +43,14 @@ export function usePage({
       return computeScroll({
         index,
         gap,
-        itemsPerPage,
+        rowsOnViewport,
+        columnsOnViewport,
+        horizontal,
         itemSize: size,
         padding: paddingStart,
       })
     },
-    [horizontal, itemHeight, itemWidth, gap, itemsPerPage, padding]
+    [horizontal, itemHeight, itemWidth, gap, rowsOnViewport, columnsOnViewport, padding]
   )
 
   const onScrollTo = useCallback(

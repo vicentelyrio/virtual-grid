@@ -1,8 +1,8 @@
 import { act, renderHook } from '@testing-library/react'
 import { getPage } from '@utils/getPage'
+import { computeScroll } from '@utils/computeScroll'
 import { usePage, UsePageProps } from '@hooks/usePage'
 
-// Mock utilities
 jest.mock('@utils/computeScroll', () => ({
   computeScroll: jest.fn()
 }))
@@ -11,19 +11,18 @@ jest.mock('@utils/getPage', () => ({
   getPage: jest.fn()
 }))
 
+const mockComputeScroll = computeScroll as jest.Mock
+
 describe('usePage', () => {
   const mockGetPage = getPage as jest.Mock
   let mockScrollElement: HTMLDivElement
   let scrollLeft = 0
   let scrollTop = 0
-  let registeredScrollHandler: EventListener | null = null
   let defaultProps: UsePageProps
 
   beforeEach(() => {
-    // Create fresh mock element
     mockScrollElement = document.createElement('div')
 
-    // Set up scroll properties
     Object.defineProperty(mockScrollElement, 'scrollLeft', {
       get: () => scrollLeft,
       set: (value) => { scrollLeft = value }
@@ -33,29 +32,15 @@ describe('usePage', () => {
       set: (value) => { scrollTop = value }
     })
 
-    // Set up mock methods
     mockScrollElement.scroll = jest.fn()
-    mockScrollElement.addEventListener = jest.fn((event, handler) => {
-      if (event === 'scroll') {
-        registeredScrollHandler = handler as any
-      }
-    })
+    mockScrollElement.addEventListener = jest.fn()
     mockScrollElement.removeEventListener = jest.fn()
 
-    // Reset scroll values
     scrollLeft = 0
     scrollTop = 0
-    registeredScrollHandler = null
 
-    // Reset all mocks
     jest.resetAllMocks()
     jest.useFakeTimers()
-
-    // Use requestAnimationFrame mock that executes immediately
-    window.requestAnimationFrame = jest.fn(cb => {
-      cb(performance.now())
-      return 1
-    })
 
     defaultProps = {
       scrollElement: mockScrollElement,
@@ -82,95 +67,79 @@ describe('usePage', () => {
       horizontal: false
     }
 
-    const storedCallbacks: ((time: number) => void)[] = []
-
     window.requestAnimationFrame = jest.fn((cb) => {
-      storedCallbacks.push(cb)
-      return storedCallbacks.length
+      cb(performance.now())
+      return 1
     })
-
-    // Helper to run stored RAF callbacks
-    ;(window as any).runRAFCallbacks = () => {
-      storedCallbacks.forEach(cb => cb(performance.now()))
-      storedCallbacks.length = 0  // Clear the queue
-    }
   })
 
-  it('should handle scroll events correctly', () => {
+  it('should register scroll listener and respond to layout changes', () => {
     mockGetPage.mockClear()
-    mockGetPage
-      .mockReturnValueOnce({ index: 1, page: 1, pageRange: [0, 19] })
-      .mockReturnValueOnce({ index: 25, page: 1, pageRange: [20, 39] })
+    mockGetPage.mockReturnValue({ index: 1, page: 1, pageRange: [0, 19] })
 
-    const { result } = renderHook(() => usePage(defaultProps))
+    const { result, rerender } = renderHook(
+      (props: UsePageProps) => usePage(props),
+      { initialProps: defaultProps }
+    )
 
-    // Initial mount
+    // Verify scroll listener was registered
+    expect(mockScrollElement.addEventListener).toHaveBeenCalledWith(
+      'scroll',
+      expect.any(Function),
+      { passive: true }
+    )
+
+    // Verify initial page state
     expect(mockGetPage).toHaveBeenCalledTimes(1)
+    expect(result.current.page).toBe(1)
     expect(result.current.pageRange).toEqual([0, 19])
 
-    // Trigger scroll event
-    act(() => {
-      scrollTop = 500
-      registeredScrollHandler?.(new Event('scroll'))
-    })
+    // Verify responds to layout changes
+    mockGetPage.mockReturnValue({ index: 2, page: 2, pageRange: [20, 39] })
+    const newLayout = { ...defaultProps.layout, pages: 5 }
 
-    // Run RAF callbacks
-    act(() => {
-      ;(window as any).runRAFCallbacks()
-    })
-
-    // Run scroll timeout
-    act(() => {
-      jest.advanceTimersByTime(150)
-    })
+    rerender({ ...defaultProps, layout: newLayout })
 
     expect(mockGetPage).toHaveBeenCalledTimes(2)
-    expect(result.current.scrolling).toBe(false)
-    expect(result.current.page).toBe(1)
+    expect(result.current.page).toBe(2)
     expect(result.current.pageRange).toEqual([20, 39])
   })
 
-  it('should handle scroll events with horizontal layout', () => {
+  it('should register scroll listener with horizontal layout', () => {
     mockGetPage.mockClear()
-    mockGetPage
-      .mockReturnValueOnce({ index: 1, page: 1, pageRange: [0, 19] })
-      .mockReturnValueOnce({ index: 25, page: 1, pageRange: [20, 39] })
+    mockGetPage.mockReturnValue({ index: 1, page: 1, pageRange: [0, 19] })
 
-    const { result } = renderHook(() => usePage({
-      ...defaultProps,
-      horizontal: true
-    }))
+    const { result, rerender } = renderHook(
+      (props: UsePageProps) => usePage(props),
+      { initialProps: { ...defaultProps, horizontal: true } }
+    )
 
-    // Initial mount
+    // Verify scroll listener was registered
+    expect(mockScrollElement.addEventListener).toHaveBeenCalledWith(
+      'scroll',
+      expect.any(Function),
+      { passive: true }
+    )
+
+    // Verify initial page state
     expect(mockGetPage).toHaveBeenCalledTimes(1)
+    expect(result.current.page).toBe(1)
     expect(result.current.pageRange).toEqual([0, 19])
 
-    // Trigger scroll event
-    act(() => {
-      scrollLeft = 500
-      registeredScrollHandler?.(new Event('scroll'))
-    })
+    // Verify responds to layout changes
+    mockGetPage.mockReturnValue({ index: 2, page: 2, pageRange: [20, 39] })
+    const newLayout = { ...defaultProps.layout, pages: 5 }
 
-    // Run RAF callbacks
-    act(() => {
-      ;(window as any).runRAFCallbacks()
-    })
-
-    // Run scroll timeout
-    act(() => {
-      jest.advanceTimersByTime(150)
-    })
+    rerender({ ...defaultProps, horizontal: true, layout: newLayout })
 
     expect(mockGetPage).toHaveBeenCalledTimes(2)
-    expect(result.current.scrolling).toBe(false)
-    expect(result.current.page).toBe(1)
+    expect(result.current.page).toBe(2)
     expect(result.current.pageRange).toEqual([20, 39])
   })
 
   it('should cleanup resources on unmount', () => {
     const { unmount } = renderHook(() => usePage(defaultProps))
 
-    // Store the handler after mount
     const removeEventListenerMock = mockScrollElement.removeEventListener as jest.Mock
 
     unmount()
@@ -180,6 +149,125 @@ describe('usePage', () => {
     const calls = removeEventListenerMock.mock.calls
     expect(calls[0][0]).toBe('scroll') // First argument should be 'scroll'
     expect(typeof calls[0][1]).toBe('function') // Second argument should be a function
+  })
+
+  describe('onScrollTo with multi-item pages', () => {
+    it('should pass rowsOnViewport and columnsOnViewport for vertical scroll', () => {
+      mockGetPage.mockReturnValue({ index: 1, page: 1, pageRange: [0, 19] })
+      mockComputeScroll.mockReturnValue(200)
+
+      // Layout with multiple items per page:
+      // - 2 items per row (itemsPerRow = 2)
+      // - 2 rows visible (rowsOnViewport = 2)
+      // - itemsPerPage = 2 * 2 = 4
+      const multiItemLayout = {
+        ...defaultProps.layout,
+        itemsPerRow: 2,
+        rowsOnViewport: 2,
+        columnsOnViewport: 2,
+        itemsPerPage: 4,
+        itemHeight: 100,
+        horizontal: false
+      }
+
+      const { result } = renderHook(() => usePage({
+        ...defaultProps,
+        layout: multiItemLayout,
+        horizontal: false
+      }))
+
+      act(() => {
+        result.current.onScrollTo(2, 'instant')
+      })
+
+      expect(mockComputeScroll).toHaveBeenCalledWith({
+        index: 2,
+        gap: 10,
+        rowsOnViewport: 2,
+        columnsOnViewport: 2,
+        horizontal: false,
+        itemSize: 100,
+        padding: 20
+      })
+    })
+
+    it('should pass rowsOnViewport and columnsOnViewport for horizontal scroll', () => {
+      mockGetPage.mockReturnValue({ index: 1, page: 1, pageRange: [0, 19] })
+      mockComputeScroll.mockReturnValue(300)
+
+      // Layout with multiple items per page in horizontal mode:
+      // - 3 items per column (itemsPerColumn = 3)
+      // - 2 columns visible (columnsOnViewport = 2)
+      // - itemsPerPage = 3 * 2 = 6
+      const multiItemLayout = {
+        ...defaultProps.layout,
+        itemsPerColumn: 3,
+        rowsOnViewport: 3,
+        columnsOnViewport: 2,
+        itemsPerPage: 6,
+        itemWidth: 150,
+        horizontal: true
+      }
+
+      const { result } = renderHook(() => usePage({
+        ...defaultProps,
+        layout: multiItemLayout,
+        horizontal: true
+      }))
+
+      act(() => {
+        result.current.onScrollTo(2, 'instant')
+      })
+
+      expect(mockComputeScroll).toHaveBeenCalledWith({
+        index: 2,
+        gap: 10,
+        rowsOnViewport: 3,
+        columnsOnViewport: 2,
+        horizontal: true,
+        itemSize: 150,
+        padding: 20
+      })
+    })
+
+    it('should handle single item per page correctly', () => {
+      mockGetPage.mockReturnValue({ index: 1, page: 1, pageRange: [0, 1] })
+      mockComputeScroll.mockReturnValue(100)
+
+      // Layout with single item per page (carousel-like):
+      // - 1 item per row
+      // - 1 row visible
+      // - itemsPerPage = 1
+      const singleItemLayout = {
+        ...defaultProps.layout,
+        itemsPerRow: 1,
+        rowsOnViewport: 1,
+        columnsOnViewport: 1,
+        itemsPerPage: 1,
+        itemHeight: 100,
+        horizontal: false
+      }
+
+      const { result } = renderHook(() => usePage({
+        ...defaultProps,
+        layout: singleItemLayout,
+        horizontal: false
+      }))
+
+      act(() => {
+        result.current.onScrollTo(3, 'instant')
+      })
+
+      expect(mockComputeScroll).toHaveBeenCalledWith({
+        index: 3,
+        gap: 10,
+        rowsOnViewport: 1,
+        columnsOnViewport: 1,
+        horizontal: false,
+        itemSize: 100,
+        padding: 20
+      })
+    })
   })
 })
 

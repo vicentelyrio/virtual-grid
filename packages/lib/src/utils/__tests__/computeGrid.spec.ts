@@ -180,7 +180,6 @@ describe('computeGrid', () => {
 
       expect(result.start).toBeDefined()
       expect(result.end).toBeDefined()
-      // Verify padding calculations without gap
       expect(result.paddingTop).toBe(
         Math.max(0, baseProps.page - baseProps.offScreenPages - 1) *
         baseLayout.rowsOnViewport * baseLayout.itemHeight +

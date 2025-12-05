@@ -1,8 +1,8 @@
+import { useMemo } from 'react'
 import clsx from 'clsx'
 import { useVirtualGrid } from '@virtual-grid/lib'
 
 import classes from './carousel.module.css'
-import { useMemo } from 'react'
 
 const data = Array(1000).fill(0).map((_, i) => i + 1)
 
@@ -75,7 +75,7 @@ export function Carousel() {
               </button>
             </div>
           </div>
-          <h6>{page} of {pages}</h6>
+          <h6>page {page} of {pages} pages</h6>
         </div>
       </div>
     </div>

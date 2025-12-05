@@ -3,7 +3,9 @@ export type ComputeScrollProps = {
   itemSize: number
   padding: number
   gap: number
-  itemsPerPage: number
+  rowsOnViewport: number
+  columnsOnViewport: number
+  horizontal: boolean
 }
 
 export function computeScroll({
@@ -11,10 +13,13 @@ export function computeScroll({
   itemSize,
   padding,
   gap,
-  itemsPerPage
+  rowsOnViewport,
+  columnsOnViewport,
+  horizontal
 }: ComputeScrollProps) {
-  const itemsSum = itemSize * itemsPerPage * (index - 1)
-  const gapSum = itemsPerPage * gap * (index - 1)
+  const unitsPerPage = horizontal ? columnsOnViewport : rowsOnViewport
+  const itemsSum = itemSize * unitsPerPage * (index - 1)
+  const gapSum = unitsPerPage * gap * (index - 1)
   return gapSum + padding + itemsSum
 }
 

@@ -5,7 +5,6 @@ import { useContent } from '@hooks/useContent'
 import { useVirtualGrid } from '@hooks/useVirtualGrid'
 import { Layout, VirtualGridProps } from '@types'
 
-// Mock all dependent hooks
 jest.mock('@hooks/useLayout', () => ({
   useLayout: jest.fn()
 }))
@@ -19,7 +18,6 @@ jest.mock('@hooks/useContent', () => ({
 }))
 
 describe('useVirtualGrid', () => {
-  // Mock hook returns
   const mockLayout: Layout = {
     scrollWidth: 1000,
     scrollHeight: 2000,
@@ -72,7 +70,6 @@ describe('useVirtualGrid', () => {
   beforeEach(() => {
     jest.resetAllMocks()
 
-    // Setup default mock returns
     mockUseLayout.mockReturnValue(mockLayoutHook)
     mockUsePage.mockReturnValue(mockPageHook)
     mockUseContent.mockReturnValue(mockContentHook)
@@ -92,11 +89,9 @@ describe('useVirtualGrid', () => {
   it('should initialize with default props', () => {
     const { result } = renderHook(() => useVirtualGrid(defaultProps))
 
-    // Verify refs are initialized
     expect(result.current.gridRef).toBeDefined()
     expect(result.current.scrollRef).toBeDefined()
 
-    // Verify hooks are called with correct props
     expect(mockUseLayout).toHaveBeenCalledWith({
       gridElement: null,
       scrollElement: null,
@@ -123,7 +118,6 @@ describe('useVirtualGrid', () => {
       gap: 20
     })
 
-    // Verify return value structure
     expect(result.current).toEqual({
       ...mockLayout,
       gridRef: expect.any(Object),
@@ -288,5 +282,275 @@ describe('useVirtualGrid', () => {
         padding: customPadding
       })
     )
+  })
+
+  /**
+   * Multi-item paging scenarios
+   *
+   * These tests verify that the correct `pages` value is returned
+   * based on different viewport/item configurations.
+   *
+   * Formula:
+   * - Vertical:   itemsPerPage = rowsOnViewport × itemsPerRow
+   * - Horizontal: itemsPerPage = columnsOnViewport × itemsPerColumn
+   * - pages = ceil(total / itemsPerPage)
+   */
+  describe('Multi-item paging scenarios', () => {
+    const TOTAL_ITEMS = 1000
+
+    describe('Vertical scrolling (horizontal: false)', () => {
+      it('should return 1000 pages when 1 item visible (1×1 grid)', () => {
+        const layout: Layout = {
+          ...mockLayout,
+          horizontal: false,
+          total: TOTAL_ITEMS,
+          rowsOnViewport: 1,
+          columnsOnViewport: 1,
+          itemsPerRow: 1,
+          itemsPerColumn: 1,
+          itemsPerPage: 1,
+          pages: 1000
+        }
+
+        mockUseLayout.mockReturnValue({ resizing: false, layout })
+        mockUsePage.mockReturnValue({ ...mockPageHook, page: 1 })
+
+        const { result } = renderHook(() => useVirtualGrid({
+          ...defaultProps,
+          data: Array(TOTAL_ITEMS).fill({ id: 1 }),
+          horizontal: false
+        }))
+
+        expect(result.current.pages).toBe(1000)
+        expect(result.current.itemsPerPage).toBe(1)
+      })
+
+      it('should return 500 pages when 2 rows visible (2×1 grid)', () => {
+        const layout: Layout = {
+          ...mockLayout,
+          horizontal: false,
+          total: TOTAL_ITEMS,
+          rowsOnViewport: 2,
+          columnsOnViewport: 1,
+          itemsPerRow: 1,
+          itemsPerColumn: 2,
+          itemsPerPage: 2,
+          pages: 500
+        }
+
+        mockUseLayout.mockReturnValue({ resizing: false, layout })
+        mockUsePage.mockReturnValue({ ...mockPageHook, page: 1 })
+
+        const { result } = renderHook(() => useVirtualGrid({
+          ...defaultProps,
+          data: Array(TOTAL_ITEMS).fill({ id: 1 }),
+          horizontal: false
+        }))
+
+        expect(result.current.pages).toBe(500)
+        expect(result.current.itemsPerPage).toBe(2)
+        expect(result.current.rowsOnViewport).toBe(2)
+      })
+
+      it('should return 250 pages when 4 items visible (2×2 grid)', () => {
+        const layout: Layout = {
+          ...mockLayout,
+          horizontal: false,
+          total: TOTAL_ITEMS,
+          rowsOnViewport: 2,
+          columnsOnViewport: 2,
+          itemsPerRow: 2,
+          itemsPerColumn: 2,
+          itemsPerPage: 4,
+          pages: 250
+        }
+
+        mockUseLayout.mockReturnValue({ resizing: false, layout })
+        mockUsePage.mockReturnValue({ ...mockPageHook, page: 1 })
+
+        const { result } = renderHook(() => useVirtualGrid({
+          ...defaultProps,
+          data: Array(TOTAL_ITEMS).fill({ id: 1 }),
+          horizontal: false
+        }))
+
+        expect(result.current.pages).toBe(250)
+        expect(result.current.itemsPerPage).toBe(4)
+      })
+
+      it('should return 167 pages when 6 items visible (2×3 grid)', () => {
+        const layout: Layout = {
+          ...mockLayout,
+          horizontal: false,
+          total: TOTAL_ITEMS,
+          rowsOnViewport: 2,
+          columnsOnViewport: 3,
+          itemsPerRow: 3,
+          itemsPerColumn: 2,
+          itemsPerPage: 6,
+          pages: 167 // ceil(1000/6)
+        }
+
+        mockUseLayout.mockReturnValue({ resizing: false, layout })
+        mockUsePage.mockReturnValue({ ...mockPageHook, page: 1 })
+
+        const { result } = renderHook(() => useVirtualGrid({
+          ...defaultProps,
+          data: Array(TOTAL_ITEMS).fill({ id: 1 }),
+          horizontal: false
+        }))
+
+        expect(result.current.pages).toBe(167)
+        expect(result.current.itemsPerPage).toBe(6)
+      })
+    })
+
+    describe('Horizontal scrolling (horizontal: true)', () => {
+      it('should return 1000 pages when 1 item visible (1×1 grid)', () => {
+        const layout: Layout = {
+          ...mockLayout,
+          horizontal: true,
+          total: TOTAL_ITEMS,
+          rowsOnViewport: 1,
+          columnsOnViewport: 1,
+          itemsPerRow: 1,
+          itemsPerColumn: 1,
+          itemsPerPage: 1,
+          pages: 1000
+        }
+
+        mockUseLayout.mockReturnValue({ resizing: false, layout })
+        mockUsePage.mockReturnValue({ ...mockPageHook, page: 1 })
+
+        const { result } = renderHook(() => useVirtualGrid({
+          ...defaultProps,
+          data: Array(TOTAL_ITEMS).fill({ id: 1 }),
+          horizontal: true
+        }))
+
+        expect(result.current.pages).toBe(1000)
+        expect(result.current.itemsPerPage).toBe(1)
+      })
+
+      it('should return 500 pages when 2 columns visible (1×2 grid)', () => {
+        const layout: Layout = {
+          ...mockLayout,
+          horizontal: true,
+          total: TOTAL_ITEMS,
+          rowsOnViewport: 1,
+          columnsOnViewport: 2,
+          itemsPerRow: 2,
+          itemsPerColumn: 1,
+          itemsPerPage: 2,
+          pages: 500
+        }
+
+        mockUseLayout.mockReturnValue({ resizing: false, layout })
+        mockUsePage.mockReturnValue({ ...mockPageHook, page: 1 })
+
+        const { result } = renderHook(() => useVirtualGrid({
+          ...defaultProps,
+          data: Array(TOTAL_ITEMS).fill({ id: 1 }),
+          horizontal: true
+        }))
+
+        expect(result.current.pages).toBe(500)
+        expect(result.current.itemsPerPage).toBe(2)
+        expect(result.current.columnsOnViewport).toBe(2)
+      })
+
+      it('should return 250 pages when 4 items visible (2×2 grid)', () => {
+        const layout: Layout = {
+          ...mockLayout,
+          horizontal: true,
+          total: TOTAL_ITEMS,
+          rowsOnViewport: 2,
+          columnsOnViewport: 2,
+          itemsPerRow: 2,
+          itemsPerColumn: 2,
+          itemsPerPage: 4,
+          pages: 250
+        }
+
+        mockUseLayout.mockReturnValue({ resizing: false, layout })
+        mockUsePage.mockReturnValue({ ...mockPageHook, page: 1 })
+
+        const { result } = renderHook(() => useVirtualGrid({
+          ...defaultProps,
+          data: Array(TOTAL_ITEMS).fill({ id: 1 }),
+          horizontal: true
+        }))
+
+        expect(result.current.pages).toBe(250)
+        expect(result.current.itemsPerPage).toBe(4)
+      })
+
+      it('should return 167 pages when 6 items visible (2×3 grid)', () => {
+        const layout: Layout = {
+          ...mockLayout,
+          horizontal: true,
+          total: TOTAL_ITEMS,
+          rowsOnViewport: 2,
+          columnsOnViewport: 3,
+          itemsPerRow: 3,
+          itemsPerColumn: 2,
+          itemsPerPage: 6,
+          pages: 167
+        }
+
+        mockUseLayout.mockReturnValue({ resizing: false, layout })
+        mockUsePage.mockReturnValue({ ...mockPageHook, page: 1 })
+
+        const { result } = renderHook(() => useVirtualGrid({
+          ...defaultProps,
+          data: Array(TOTAL_ITEMS).fill({ id: 1 }),
+          horizontal: true
+        }))
+
+        expect(result.current.pages).toBe(167)
+        expect(result.current.itemsPerPage).toBe(6)
+      })
+    })
+
+    describe('Symmetry: same layout should give same pages for both scroll directions', () => {
+      it('2×2 grid should return 250 pages for both horizontal and vertical', () => {
+        const baseLayout = {
+          ...mockLayout,
+          total: TOTAL_ITEMS,
+          rowsOnViewport: 2,
+          columnsOnViewport: 2,
+          itemsPerRow: 2,
+          itemsPerColumn: 2,
+          itemsPerPage: 4,
+          pages: 250
+        }
+
+        // Vertical
+        mockUseLayout.mockReturnValue({
+          resizing: false,
+          layout: { ...baseLayout, horizontal: false }
+        })
+        const { result: verticalResult } = renderHook(() => useVirtualGrid({
+          ...defaultProps,
+          data: Array(TOTAL_ITEMS).fill({ id: 1 }),
+          horizontal: false
+        }))
+
+        // Horizontal
+        mockUseLayout.mockReturnValue({
+          resizing: false,
+          layout: { ...baseLayout, horizontal: true }
+        })
+        const { result: horizontalResult } = renderHook(() => useVirtualGrid({
+          ...defaultProps,
+          data: Array(TOTAL_ITEMS).fill({ id: 1 }),
+          horizontal: true
+        }))
+
+        expect(verticalResult.current.pages).toBe(250)
+        expect(horizontalResult.current.pages).toBe(250)
+        expect(verticalResult.current.pages).toBe(horizontalResult.current.pages)
+      })
+    })
   })
 })

@@ -3,7 +3,6 @@ import { getBounds } from '@utils/getBounds'
 import { getLayout } from '@utils/getLayout'
 import { useLayout } from '@hooks/useLayout'
 
-// Mock utilities
 jest.mock('@utils/getBounds', () => ({
   getBounds: jest.fn()
 }))
@@ -16,7 +15,6 @@ describe('useLayout', () => {
   const mockGetBounds = getBounds as jest.Mock
   const mockGetLayout = getLayout as jest.Mock
 
-  // Create DOM elements
   const mockGridElement = document.createElement('div')
   const mockScrollElement = document.createElement('div')
 
@@ -137,14 +135,13 @@ describe('useLayout', () => {
       await new Promise(resolve => setTimeout(resolve, 0))
     })
 
-    // Should set up resize observer
     expect(mockObserve).toHaveBeenCalledWith(mockScrollElement)
 
-    // Should calculate initial layout
     expect(mockGetBounds).toHaveBeenCalledWith({
       scrollElement: mockScrollElement,
       gridElement: mockGridElement
     })
+
     expect(mockGetLayout).toHaveBeenCalledWith({
       gridElement: mockGridElement,
       scrollElement: mockScrollElement,
@@ -220,7 +217,6 @@ describe('useLayout', () => {
   it('should handle resize events with RAF', async () => {
     const { result } = renderHook(() => useLayout(defaultProps))
 
-    // Wait for initial setup
     await act(async () => {
       await new Promise(resolve => setTimeout(resolve, 0))
     })
@@ -239,7 +235,6 @@ describe('useLayout', () => {
       resizeCallback([entry], {} as ResizeObserver)
     })
 
-    // Should be resizing after callback
     expect(result.current.resizing).toBe(true)
 
     // Wait for RAF to execute
@@ -247,13 +242,11 @@ describe('useLayout', () => {
       await new Promise(resolve => setTimeout(resolve, 0))
     })
 
-    // Should have calculated new layout and set resizing false
     expect(mockGetLayout).toHaveBeenCalled()
     expect(result.current.resizing).toBe(false)
   })
 
   it('should not update layout if new layout is equal to current', async () => {
-    // Setup initial mocks
     mockGetBounds.mockReturnValue({
       width: 1000,
       height: 800,
@@ -266,7 +259,6 @@ describe('useLayout', () => {
 
     const { result } = renderHook(() => useLayout(defaultProps))
 
-    // Wait for initial setup
     await act(async () => {
       await new Promise(resolve => setTimeout(resolve, 0))
     })
@@ -281,7 +273,6 @@ describe('useLayout', () => {
       await new Promise(resolve => setTimeout(resolve, 0))
     })
 
-    // The layout shouldn't have been updated since it's the same
     expect(mockGetLayout.mock.calls.length).toBe(initialCallCount + 1)
     expect(result.current.layout).toEqual(sameLayout)
   })

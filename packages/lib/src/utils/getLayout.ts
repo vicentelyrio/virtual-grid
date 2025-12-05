@@ -37,14 +37,11 @@ export function getLayout({
     const itemHeight = item.height ?? 0
     const itemWidth = item.width ?? 0
 
-    const containerWidth = width - (padding[1] - padding[3])
-    const containerHeight = height - (padding[0] - padding[2])
+    const itemsPerRow = Math.max(Math.floor(width / (itemWidth + gap)), 1)
+    const itemsPerColumn = Math.max(Math.floor(height / (itemHeight + gap)), 1)
 
-    const itemsPerRow = Math.max(Math.floor(containerWidth / (itemWidth + gap)), 1)
-    const itemsPerColumn = Math.max(Math.floor(containerHeight / (itemHeight + gap)), 1)
-
-    const rowsOnViewport = Math.max(Math.floor(bounds?.height / itemHeight) || 1, 1)
-    const columnsOnViewport = Math.max(Math.floor(bounds?.width / itemWidth) || 1, 1)
+    const rowsOnViewport = Math.max(Math.round(bounds?.height / itemHeight) || 1, 1)
+    const columnsOnViewport = Math.max(Math.round(bounds?.width / itemWidth) || 1, 1)
 
     const itemsPerPage = horizontal
       ? columnsOnViewport * itemsPerColumn

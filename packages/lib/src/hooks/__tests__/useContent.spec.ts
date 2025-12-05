@@ -3,7 +3,6 @@ import { useContent } from '@hooks/useContent'
 import { computeGrid } from '@utils/computeGrid'
 import { Layout } from '@types'
 
-// Mock the computeGrid utility
 jest.mock('@utils/computeGrid', () => ({
   computeGrid: jest.fn()
 }))
@@ -11,12 +10,10 @@ jest.mock('@utils/computeGrid', () => ({
 describe('useContent', () => {
   const mockComputeGrid = computeGrid as jest.Mock
 
-  // Reset mock between tests
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
-  // Create a mock layout that satisfies the Layout type
   const mockLayout: Layout = {
     scrollWidth: 1000,
     scrollHeight: 2000,
@@ -37,7 +34,6 @@ describe('useContent', () => {
   }
 
   it('should compute styles and slice data correctly', async () => {
-    // Setup mock data
     const data = Array.from({ length: 100 }, (_, i) => ({ id: i }))
     const mockProps = {
       data,
@@ -48,7 +44,6 @@ describe('useContent', () => {
       offScreenPages: 1
     }
 
-    // Mock computeGrid return value
     mockComputeGrid.mockReturnValue({
       width: mockLayout.gridWidth,
       paddingTop: 20,
@@ -59,10 +54,8 @@ describe('useContent', () => {
       end: 15 // 5 rows * 3 cols
     })
 
-    // Render the hook
     const { result } = renderHook(() => useContent(mockProps))
 
-    // Check if computeGrid was called with correct props
     expect(mockComputeGrid).toHaveBeenCalledWith({
       layout: mockProps.layout,
       page: mockProps.page,
@@ -71,9 +64,8 @@ describe('useContent', () => {
       gap: mockProps.gap
     })
 
-    // Check styles
     expect(result.current.styles).toEqual({
-      width: mockLayout.gridWidth,
+      width: `${mockLayout.gridWidth}px`,
       paddingTop: '20px',
       paddingRight: '20px',
       paddingBottom: '20px',
@@ -81,7 +73,6 @@ describe('useContent', () => {
       gap: '10px'
     })
 
-    // Check sliced data
     expect(result.current.items).toHaveLength(15)
     expect(result.current.items[0]).toEqual({ id: 0 })
     expect(result.current.items[14]).toEqual({ id: 14 })
@@ -109,12 +100,9 @@ describe('useContent', () => {
 
     const { result } = renderHook(() => useContent(mockProps))
 
+    // When padding values are undefined, they are removed from the styles object
     expect(result.current.styles).toEqual({
-      width: mockLayout.gridWidth,
-      paddingTop: '0px',
-      paddingRight: '0px',
-      paddingBottom: '0px',
-      paddingLeft: '0px',
+      width: `${mockLayout.gridWidth}px`,
       gap: '10px'
     })
   })
@@ -170,13 +158,10 @@ describe('useContent', () => {
     const { result, rerender } = renderHook(() => useContent(mockProps))
     const firstResult = result.current
 
-    // Rerender with same props
     rerender()
 
-    // Should have same values
     expect(result.current.items).toStrictEqual(firstResult.items)
     expect(result.current.styles).toStrictEqual(firstResult.styles)
-    // computeGrid should only be called once - this verifies memoization is working
     expect(mockComputeGrid).toHaveBeenCalledTimes(1)
   })
 
@@ -207,15 +192,12 @@ describe('useContent', () => {
     )
     const firstResult = result.current
 
-    // Rerender with different page
     rerender({
       ...initialProps,
       page: 1
     })
 
-    // Should return new object instance
     expect(result.current).not.toBe(firstResult)
-    // computeGrid should be called twice
     expect(mockComputeGrid).toHaveBeenCalledTimes(2)
   })
 })

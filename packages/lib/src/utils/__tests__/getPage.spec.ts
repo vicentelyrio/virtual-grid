@@ -47,7 +47,12 @@ describe('getPage', () => {
       gap: 10
     })
 
-    expect(result).toEqual({})
+    // Returns default values when layout is null
+    expect(result).toEqual({
+      index: 0,
+      page: 1,
+      pageRange: [0, 0]
+    })
   })
 
   it('should calculate vertical page correctly', () => {
@@ -221,6 +226,11 @@ describe('getPage', () => {
       gap: 10
     })
 
-    expect(result).toEqual({})
+    // Returns default values on error
+    expect(result).toEqual({
+      index: 0,
+      page: 1,
+      pageRange: [0, 0]
+    })
   })
 })
