@@ -68,7 +68,6 @@ describe('useLayout', () => {
       unobserve = mockUnobserve
     }
 
-    // @ts-ignore
     window.ResizeObserver = MockResizeObserver
   })
 

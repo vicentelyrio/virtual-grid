@@ -1,5 +1,6 @@
 {
   "name": "@virtual-grid/root",
+  "private": true,
   "author": {
     "name": "vicentelyrio",
     "email": "vicentelyrio@gmail.com"
@@ -8,12 +9,14 @@
   "repository": "https://github.com/vicentelyrio/virtual-grid",
   "license": "MIT",
   "scripts": {
+    "prepare": "husky",
     "postinstall": "manypkg check",
     "dev": "turbo run dev --continue --concurrency=100%",
     "dev:playground": "turbo run dev --filter=@virtual-grid/playground",
     "dev:lib": "turbo run dev --filter=@virtual-grid/lib",
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
+    "validate": "yarn build && yarn lint && yarn typecheck && yarn test",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint -- --fix",
     "test": "turbo run test",
@@ -38,6 +41,8 @@
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.20",
     "eslint": "^8.57.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
     "turbo": "^2.2.3"
@@ -52,5 +57,13 @@
   "packageManager": "yarn@1.22.10",
   "manypkg": {
     "defaultBranch": "main"
+  },
+  "lint-staged": {
+    "packages/**/*.{ts,tsx}": [
+      "eslint --max-warnings 0"
+    ],
+    "apps/**/*.{ts,tsx}": [
+      "eslint --max-warnings 0"
+    ]
   }
 }

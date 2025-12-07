@@ -1,15 +1,9 @@
 import { getScrollProps } from '@utils/getScrollProps'
 
 describe('getScrollProps', () => {
-  const originalWindow = window
-
   beforeEach(() => {
     Object.defineProperty(window, 'scrollY', { value: 100, configurable: true })
     Object.defineProperty(window, 'scrollX', { value: 50, configurable: true })
-  })
-
-  afterEach(() => {
-    window = originalWindow
   })
 
   it('should handle null input', () => {

@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig, UserConfig } from 'vite'
 import { tscWatch } from 'vite-plugin-tsc-watch'
 import dts from 'vite-plugin-dts'
 import react from '@vitejs/plugin-react'
@@ -40,4 +40,4 @@ export default defineConfig({
     emptyOutDir: true,
     target: 'esnext',
   }
-} as any)
+} as UserConfig)

@@ -1,15 +1,9 @@
 import { getRect } from '@utils/getRect'
 
 describe('getRect', () => {
-  const originalWindow = window
-
   beforeEach(() => {
     Object.defineProperty(window, 'innerHeight', { value: 768, configurable: true })
     Object.defineProperty(window, 'innerWidth', { value: 1024, configurable: true })
-  })
-
-  afterEach(() => {
-    window = originalWindow
   })
 
   it('should handle null input', () => {

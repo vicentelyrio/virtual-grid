@@ -61,5 +61,5 @@ function numWithFallback(num: number) {
 }
 
 function removeUndefined(obj: Styles): Styles {
-  return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== undefined))
+  return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined))
 }
