@@ -56,8 +56,11 @@ jobs:
 
       - name: Build docs
         env:
-          GITHUB_ACTIONS: 'true'
+          BASE_PATH: '/virtual-grid'
         run: yarn build --filter=@virtual-grid/docs
+
+      - name: Add .nojekyll file
+        run: touch apps/docs/out/.nojekyll
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

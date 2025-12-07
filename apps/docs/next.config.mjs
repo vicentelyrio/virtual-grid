@@ -6,7 +6,7 @@ const withNextra = nextra({
   defaultShowCopyCode: true
 })
 
-const isGitHubPages = process.env.GITHUB_ACTIONS === 'true'
+const basePath = process.env.BASE_PATH || ''
 
 export default withNextra({
   reactStrictMode: true,
@@ -14,6 +14,6 @@ export default withNextra({
   images: {
     unoptimized: true
   },
-  basePath: isGitHubPages ? '/virtual-grid' : '',
-  assetPrefix: isGitHubPages ? '/virtual-grid' : '',
+  basePath,
+  assetPrefix: basePath,
 })
