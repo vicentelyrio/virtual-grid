@@ -33,6 +33,7 @@
     "cs:release": "yarn cs:version && yarn cs:publish"
   },
   "dependencies": {
+    "@changesets/cli": "^2.27.1",
     "@manypkg/cli": "^0.21.4",
     "@mdx-js/react": "^3.1.0",
     "@types/react": "^19.0.2",
