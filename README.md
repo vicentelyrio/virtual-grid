@@ -1,6 +1,8 @@
 # Virtual Grid
 A React virtualization library for rendering large datasets using CSS Grid. Virtual Grid only renders visible items on screen and automatically adapts to CSS Grid layout changes through ResizeObserver, making it suitable for responsive grids, image galleries, and carousels.
 
+[Documentation](https://vicentelyrio.github.io/virtual-grid/)
+
 ## Why Virtual Grid?
 
 Unlike other virtualization libraries that use `position: absolute` for item positioning, Virtual Grid relies on **native CSS Grid** with **dynamic padding** to maintain scroll position. This fundamental difference provides several key advantages:
@@ -16,8 +18,7 @@ Instead of absolutely positioning items, Virtual Grid adjusts the container's pa
 ```tsx
 // Virtual Grid (padding-based)
 <div style={{
-  paddingTop: offsetBefore,
-  paddingBottom: offsetAfter,
+  ...virtualGridStyles,
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))'
 }}>
@@ -196,10 +197,10 @@ function Carousel() {
       </div>
 
       <div className="carousel-controls">
-        <button onClick={() => onScrollTo(Math.max(0, page - 1))}>
+        <button onClick={() => onScrollTo(page - 1)}>
           Previous
         </button>
-        <span>{page + 1} of {Math.ceil(data.length / 3)}</span>
+        <span>{page} of {pages}</span>
         <button onClick={() => onScrollTo(page + 1)}>
           Next
         </button>
@@ -209,67 +210,6 @@ function Carousel() {
 }
 ```
 
-### Programmatic Scrolling
-```tsx
-function ScrollableGrid() {
-  const { items, styles, gridRef, scrollRef, onScrollTo, page } = useVirtualGrid({
-    data: myData,
-    gap: 20,
-  })
-
-  return (
-    <div>
-      <div>
-        <button onClick={() => onScrollTo(0)}>First Page</button>
-        <button onClick={() => onScrollTo(page - 1)}>Previous</button>
-        <span>Page {page}</span>
-        <button onClick={() => onScrollTo(page + 1)}>Next</button>
-      </div>
-
-      <div ref={scrollRef} style={{ height: '80vh', overflow: 'auto' }}>
-        <div ref={gridRef} style={styles}>
-          {items.map((item) => (
-            <ItemCard key={item.id} data={item} />
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-}
-```
-
-## CSS Styling
-Virtual Grid works with standard CSS Grid. The library handles the virtualization while you control the layout with CSS:
-
-```css
-/* Basic responsive grid */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  align-content: start;
-}
-
-/* Carousel layout */
-.carousel-scroll {
-  overflow-x: auto;
-  overflow-y: hidden;
-}
-
-.carousel-scroll .grid {
-  display: grid;
-  grid-auto-flow: column;
-  grid-template-columns: repeat(auto-fit, 400px);
-  gap: 16px;
-}
-
-/* Fixed columns grid */
-.fixed-columns {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-}
-```
 The ResizeObserver automatically detects when your CSS Grid layout changes (due to viewport resize, media queries, etc.) and recalculates the virtualization accordingly.
 
 ## Error Handling
@@ -284,37 +224,6 @@ function SafeGrid({ data }: SafeGridProps) {
   catch {
     return <GridComponent {...data} />
   }
-}
-```
-
-## Accessibility
-Virtual Grid provides the core virtualization logic while leaving accessibility implementation to your components:
-
-```tsx
-function AccessibleGrid() {
-  const { items, styles, gridRef, scrollRef, columns } = useVirtualGrid({ data: myData })
-
-  return (
-    <div
-      ref={scrollRef}
-      role="grid"
-      aria-label="Data grid"
-      tabIndex={0}
-      style={{ height: '100vh', overflow: 'auto' }}>
-      <div ref={gridRef} style={styles}>
-        {items.map((item, index) => (
-          <div
-            key={item.id}
-            role="gridcell"
-            tabIndex={-1}
-            aria-rowindex={Math.floor(index / columns) + 1}
-            aria-colindex={(index % columns) + 1}>
-            {item.name}
-          </div>
-        ))}
-      </div>
-    </div>
-  )
 }
 ```
 
@@ -422,8 +331,3 @@ MIT License - see [LICENSE](LICENSE) file for details.
 - [react-table](https://github.com/TanStack/table)
 - [react-virtualized](https://github.com/bvaughn/react-virtualized)
 - [react-window](https://github.com/bvaughn/react-window)
-
-## Support
-- 📖 [Documentation](apps/docs)
-- 🐛 [Issue Tracker](https://github.com/vicentelyrio/virtual-grid/issues)
-- 💬 [Discussions](https://github.com/vicentelyrio/virtual-grid/discussions)

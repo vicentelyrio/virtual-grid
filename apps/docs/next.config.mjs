@@ -14,7 +14,6 @@ export default withNextra({
   images: {
     unoptimized: true
   },
-  // GitHub Pages deploys to /virtual-grid/
   basePath: isGitHubPages ? '/virtual-grid' : '',
-  assetPrefix: isGitHubPages ? '/virtual-grid/' : '',
+  assetPrefix: isGitHubPages ? '/virtual-grid' : '',
 })
