@@ -1,12 +1,12 @@
 import nextra from 'nextra'
 
+const basePath = process.env.BASE_PATH || ''
+
 const withNextra = nextra({
   theme: 'nextra-theme-docs',
   themeConfig: './theme.config.jsx',
   defaultShowCopyCode: true
 })
-
-const basePath = process.env.BASE_PATH || ''
 
 export default withNextra({
   reactStrictMode: true,
@@ -14,6 +14,6 @@ export default withNextra({
   images: {
     unoptimized: true
   },
-  basePath,
-  assetPrefix: basePath,
+  ...(basePath && { basePath }),
+  ...(basePath && { assetPrefix: basePath }),
 })
