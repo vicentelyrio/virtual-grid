@@ -17,6 +17,9 @@
   },
   "repository": "https://github.com/vicentelyrio/virtual-grid/tree/main/packages/lib",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc && vite build",
     "dev": "vite build --watch",
