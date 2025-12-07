@@ -58,9 +58,10 @@ jobs:
         run: rm -rf apps/docs/out apps/docs/.next
 
       - name: Build docs
+        run: yarn build --filter=@virtual-grid/docs
         env:
           BASE_PATH: '/virtual-grid'
-        run: yarn build --filter=@virtual-grid/docs
+          NODE_ENV: production
 
       - name: Add .nojekyll file
         run: |

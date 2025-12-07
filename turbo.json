@@ -12,6 +12,10 @@
         "dist/**",
         ".next/**",
         "cosmos-export/**"
+      ],
+      "env": [
+        "BASE_PATH",
+        "NODE_ENV"
       ]
     },
     "deploy": {

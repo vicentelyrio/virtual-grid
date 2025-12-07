@@ -14,11 +14,10 @@ const nextConfig = {
   images: {
     unoptimized: true
   },
-}
-
-if (basePath) {
-  nextConfig.basePath = basePath
-  nextConfig.assetPrefix = basePath
+  ...(basePath && {
+    basePath: basePath,
+    assetPrefix: basePath,
+  }),
 }
 
 export default withNextra(nextConfig)
