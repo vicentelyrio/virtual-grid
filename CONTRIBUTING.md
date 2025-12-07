@@ -156,7 +156,65 @@ For visual or behavior changes, screenshots or short descriptions of before/afte
 
 ---
 
-### 8. Running docs & playground
+### 8. CI/CD
+
+#### Continuous Integration
+
+Every pull request and push to `main` triggers the CI workflow, which runs:
+
+1. **Lint** (`yarn lint`) – ESLint checks across all packages
+2. **Typecheck** (`yarn typecheck`) – TypeScript compilation checks
+3. **Test** (`yarn test`) – Jest test suites
+
+**PRs must pass all CI checks before merging.**
+
+You can run these locally before pushing:
+
+```bash
+yarn lint
+yarn typecheck
+yarn test
+```
+
+#### Releases
+
+Releases are fully automated via **Changesets** and **GitHub Actions**.
+
+**For contributors – just remember to add a changeset:**
+
+```bash
+yarn cs:add
+```
+
+Commit the generated `.changeset/*.md` file with your PR. That's it!
+
+**How the automated release works:**
+
+1. PRs with changesets get merged to `main`
+2. The Changesets bot automatically creates/updates a **"Release packages"** PR
+3. This PR contains version bumps and changelog updates
+4. When a maintainer merges the release PR → packages are published to npm
+
+```
+Feature PR (with changeset) → merged to main
+                ↓
+    Bot creates "Release packages" PR
+                ↓
+    Maintainer merges release PR
+                ↓
+    Packages published to npm automatically
+```
+
+**Required secrets (for maintainers):**
+
+| Secret | Purpose |
+|--------|---------|
+| `NPM_TOKEN` | Authentication for npm publish |
+| `GITHUB_TOKEN` | Automatically provided by GitHub Actions |
+
+---
+
+### 9. Running docs & playground
 
 To work on docs:
 
@@ -176,7 +234,7 @@ These apps are intended for **local development** and are not published.
 
 ---
 
-### 9. Code style
+### 10. Code style
 
 - TypeScript-first, React hooks-based.
 - Prefer small, focused utilities and hooks.
@@ -191,7 +249,7 @@ Use them as references if you’re unsure about style or compiler options.
 
 ---
 
-### 10. Questions / help
+### 11. Questions / help
 
 If something is unclear or you’re not sure how to shape a change:
 

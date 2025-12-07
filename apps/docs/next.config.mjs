@@ -6,10 +6,15 @@ const withNextra = nextra({
   defaultShowCopyCode: true
 })
 
+const isGitHubPages = process.env.GITHUB_ACTIONS === 'true'
+
 export default withNextra({
   reactStrictMode: true,
   output: 'export',
   images: {
     unoptimized: true
   },
+  // GitHub Pages deploys to /virtual-grid/
+  basePath: isGitHubPages ? '/virtual-grid' : '',
+  assetPrefix: isGitHubPages ? '/virtual-grid/' : '',
 })

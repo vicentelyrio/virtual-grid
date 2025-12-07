@@ -285,9 +285,6 @@ describe('getLayout - Multi-item paging scenarios', () => {
         horizontal: false
       })
 
-      console.log(`2 items fully visible: viewport=${viewportHeight}, item=${ITEM_SIZE}, gap=${GAP}`)
-      console.log(`  ratio=${viewportHeight/ITEM_SIZE}, rowsOnViewport=${result.rowsOnViewport}, pages=${result.pages}`)
-
       expect(result.rowsOnViewport).toBe(2)
       expect(result.pages).toBe(500)
     })
@@ -306,9 +303,6 @@ describe('getLayout - Multi-item paging scenarios', () => {
         padding: [0, 0, 0, 0],
         horizontal: true
       })
-
-      console.log(`2 items fully visible (horizontal): viewport=${viewportWidth}, item=${ITEM_SIZE}, gap=${GAP}`)
-      console.log(`  ratio=${viewportWidth/ITEM_SIZE}, columnsOnViewport=${result.columnsOnViewport}, pages=${result.pages}`)
 
       expect(result.columnsOnViewport).toBe(2)
       expect(result.pages).toBe(500)
@@ -335,10 +329,6 @@ describe('getLayout - Multi-item paging scenarios', () => {
         horizontal: false
       })
 
-      console.log(`BUG SIMULATION: actualVisible=${actualVisibleHeight}, reportedBounds=${reportedBoundsHeight}`)
-      console.log(`  ratio=${reportedBoundsHeight/ITEM_SIZE}, rowsOnViewport=${result.rowsOnViewport}, pages=${result.pages}`)
-
-      // This would give rowsOnViewport=1 even though 2 items are visible!
       expect(result.rowsOnViewport).toBe(1)
       expect(result.pages).toBe(1000)
     })

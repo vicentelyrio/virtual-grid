@@ -10,18 +10,4 @@ export default {
       layout: 'raw',
     }
   },
-  docs: {
-    title: 'Documentation',
-    type: 'page',
-    theme: {
-      footer: false,
-    }
-  },
-  demos: {
-    title: 'Demos',
-    type: 'page',
-    theme: {
-      footer: false,
-    }
-  },
 }

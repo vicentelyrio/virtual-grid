@@ -4,9 +4,9 @@
     "name": "vicentelyrio",
     "email": "vicentelyrio@gmail.com"
   },
+  "version": "0.0.1",
   "repository": "https://github.com/vicentelyrio/virtual-grid",
   "license": "MIT",
-  "private": true,
   "scripts": {
     "postinstall": "manypkg check",
     "dev": "turbo run dev --continue --concurrency=100%",
