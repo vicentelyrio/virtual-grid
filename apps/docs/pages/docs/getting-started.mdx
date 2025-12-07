@@ -1,0 +1,119 @@
+# Getting Started
+
+A React virtualization library for rendering large datasets using CSS Grid. Virtual Grid only renders visible items on screen and automatically adapts to CSS Grid layout changes through ResizeObserver.
+
+## Installation
+
+```sh npm2yarn
+npm install @virtual-grid/lib
+```
+
+## Requirements
+
+- **Node.js**: `>=18`
+- **React**: `^19.0.0`
+- **Browser**: CSS Grid and ResizeObserver support
+
+For older browsers, you may need a ResizeObserver polyfill.
+
+## Quick Start
+
+### 1. Import the hook
+
+```tsx
+import { useVirtualGrid } from '@virtual-grid/lib'
+```
+
+### 2. Use it in your component
+
+```tsx
+function Grid() {
+  const data = Array(10000).fill(0).map((_, i) => ({
+    id: i,
+    name: `Item ${i}`
+  }))
+
+  const {
+    items,
+    styles,
+    gridRef,
+    scrollRef,
+  } = useVirtualGrid({
+    data,
+    gap: 20,
+    padding: [20, 20, 20, 20],
+    offScreenPages: 1,
+  })
+
+  return (
+    <div ref={scrollRef} className="container">
+      <div ref={gridRef} style={styles} className="grid">
+        {items?.map((item) => (
+          <div key={item.id} className="card">
+            {item.name}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+```
+
+### 3. Add CSS Grid styles
+
+```css
+.container {
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  align-content: start;
+}
+
+.card {
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 20px;
+  min-height: 120px;
+}
+```
+
+## Important Notes
+
+### Matching CSS Values
+
+The `gap` and `padding` values passed to `useVirtualGrid` **must match** your CSS:
+
+```tsx
+useVirtualGrid({
+  gap: 20,                    // Must match CSS gap
+  padding: [20, 20, 20, 20],  // Must match CSS padding
+})
+```
+
+```css
+.grid {
+  gap: 20px;                  /* Must match hook gap */
+  padding: 20px;              /* Must match hook padding */
+}
+```
+
+### Optional Chaining
+
+Some values may be `undefined` during initial mount. Use optional chaining:
+
+```tsx
+{items?.map((item) => (
+  <div key={item.id}>{item.name}</div>
+))}
+```
+
+## Next Steps
+
+- [API Reference](/docs/api-reference) - Complete API documentation
+- [Examples](/docs/examples) - Common usage patterns and recipes
+- [How it Works](/docs/how-it-works) - Understand the technical details

@@ -1,8 +1,9 @@
-import { getRect } from './getRect'
+import { getRect } from '@utils/getRect'
+import { isBrowser } from '@utils/isBrowser'
 
 export type GetBoundsProps = {
   gridElement: HTMLElement | null
-  scrollElement: HTMLElement | null
+  scrollElement: HTMLElement | Window | null
 }
 
 export type GetBoundsReturnType = {
@@ -22,7 +23,8 @@ export function getBounds({
     return scrollBounds
   }
 
-  const { innerHeight, innerWidth } = window ?? {}
+  const innerHeight = isBrowser ? window.innerHeight : 0
+  const innerWidth = isBrowser ? window.innerWidth : 0
   const { width, height } = containerBounds
 
   return {
@@ -31,4 +33,3 @@ export function getBounds({
     height: innerHeight < height ? innerHeight : height,
   }
 }
-

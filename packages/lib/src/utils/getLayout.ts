@@ -1,6 +1,7 @@
-import { Layout } from '../types'
-import { calculateGridSize } from './calculateGridSize'
-import { getRect } from './getRect'
+import { Layout } from '@/types'
+import { calculateGridSize } from '@utils/calculateGridSize'
+import { getRect } from '@utils/getRect'
+import { isWindow } from '@utils/isBrowser'
 
 export type Bounds = {
   width: number
@@ -9,12 +10,25 @@ export type Bounds = {
 
 export type GetLayoutProps = {
   gridElement: HTMLElement | null
-  scrollElement: HTMLElement | null
+  scrollElement: HTMLElement | Window | null
   total: number
   bounds: Bounds
   gap: number
   padding: number[]
   horizontal: boolean
+}
+
+function getDocumentOffset(element: HTMLElement | null): { top: number; left: number } {
+  if (!element) return { top: 0, left: 0 }
+
+  const rect = element.getBoundingClientRect()
+  const scrollTop = window.scrollY || document.documentElement.scrollTop
+  const scrollLeft = window.scrollX || document.documentElement.scrollLeft
+
+  return {
+    top: rect.top + scrollTop,
+    left: rect.left + scrollLeft,
+  }
 }
 
 export function getLayout({
@@ -28,6 +42,7 @@ export function getLayout({
 }: GetLayoutProps): Layout {
   try {
     const { width, height } = getRect(scrollElement)
+    const isWindowScroll = isWindow(scrollElement)
 
     const firstItem = gridElement?.children?.item(0)
 
@@ -37,18 +52,22 @@ export function getLayout({
     const itemHeight = item.height ?? 0
     const itemWidth = item.width ?? 0
 
-    const containerWidth = width - (padding[1] - padding[3] + gap)
-    const containerHeight = height - (padding[0] - padding[2] + gap)
+    const gridOffset = isWindowScroll ? getDocumentOffset(gridElement) : { top: 0, left: 0 }
 
-    const itemsPerRow = Math.max(Math.floor(containerWidth / (itemWidth + gap)), 1)
-    const itemsPerColumn = Math.max(Math.floor(containerHeight / (itemHeight + gap)), 1)
+    const effectiveBoundsHeight = Math.max(1, bounds?.height ?? 0)
+    const effectiveBoundsWidth = Math.max(1, bounds?.width ?? 0)
 
-    const rowsOnViewport = Math.max(Math.floor(bounds?.height / itemHeight) || 1, 1)
-    const columnsOnViewport = Math.max(Math.floor(bounds?.width / itemWidth) || 1, 1)
+    const rowsOnViewport = Math.max(Math.round(effectiveBoundsHeight / itemHeight) || 1, 1)
+    const columnsOnViewport = Math.max(Math.round(effectiveBoundsWidth / itemWidth) || 1, 1)
 
-    const itemsPerPage = horizontal
-      ? columnsOnViewport * itemsPerColumn
-      : rowsOnViewport * itemsPerRow
+    const itemsPerRow = Math.max(Math.floor((width + gap) / (itemWidth + gap)), 1)
+    const itemsPerColumn = Math.max(Math.floor((height + gap) / (itemHeight + gap)), 1)
+
+    const effectiveRowsPerColumn = horizontal ? itemsPerColumn : rowsOnViewport
+    const itemsPerPage = effectiveRowsPerColumn * columnsOnViewport
+
+    const safeItemsPerPage = Math.max(1, itemsPerPage)
+    const pages = Math.max(1, Math.ceil(total / safeItemsPerPage))
 
     const { height: gridHeight, width: gridWidth } = calculateGridSize({
       horizontal,
@@ -63,12 +82,11 @@ export function getLayout({
       gap,
     })
 
-    const rows = Math.ceil(gridHeight / (itemHeight + gap)) || 0
-    const columns = Math.floor(gridWidth / (itemWidth + gap)) || 0
-
-    const pages = horizontal
-      ? Math.ceil(columns / columnsOnViewport)
-      : Math.ceil(rows / rowsOnViewport)
+    const contentHeight = gridHeight - padding[0] - padding[2]
+    const rows = Math.ceil(contentHeight / (itemHeight + gap)) || 0
+    const columns = horizontal
+      ? Math.ceil(total / Math.max(1, itemsPerColumn))
+      : Math.floor(gridWidth / (itemWidth + gap)) || 0
 
     return {
       scrollWidth: bounds?.width ?? 0,
@@ -86,10 +104,11 @@ export function getLayout({
       itemWidth,
       gridHeight,
       gridWidth,
-      horizontal
+      horizontal,
+      gridOffsetTop: gridOffset.top,
+      gridOffsetLeft: gridOffset.left,
     }
-  } catch (e) {
+  } catch {
     return {} as Layout
   }
 }
-

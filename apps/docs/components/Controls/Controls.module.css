@@ -1,0 +1,44 @@
+.controls {
+  position: relative;
+}
+
+.sticky {
+  display: grid;
+  grid-auto-flow: column;
+  position: sticky;
+  z-index: 10;
+  gap: 20px;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  padding: 14px;
+}
+
+.sticky:before {
+  background: rgba(18 18 18 / .9);
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+}
+
+.fieldset {
+  flex: 1 1 auto;
+}
+
+.label {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.labelText {
+}
+
+.range {
+  width: 90%;
+}

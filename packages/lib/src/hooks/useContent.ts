@@ -1,6 +1,6 @@
 import { CSSProperties, useMemo } from 'react'
-import { computeGrid } from '../utils/computeGridProps'
-import { Layout } from '../types'
+import { computeGrid } from '@utils/computeGrid'
+import type { Layout, Styles } from '@types'
 
 export type UseContentProps<T> = {
   data: T[]
@@ -35,12 +35,13 @@ export function useContent<T>({
       end
     } = computeGrid({ layout, page, padding, offScreenPages, gap })
 
-    const styles = {
-      width,
-      paddingTop: `${paddingTop ?? 0}px`,
-      paddingRight: `${paddingRight ?? 0}px`,
-      paddingBottom: `${paddingBottom ?? 0}px`,
-      paddingLeft: `${paddingLeft ?? 0}px`,
+    const styles: Styles = {
+      width: typeof width === 'string' ? width : numWithFallback(width),
+      paddingTop: numWithFallback(paddingTop),
+      paddingRight: numWithFallback(paddingRight),
+      paddingBottom: numWithFallback(paddingBottom),
+      paddingLeft: numWithFallback(paddingLeft),
+      gap: numWithFallback(gap),
     }
 
     return {
@@ -51,6 +52,14 @@ export function useContent<T>({
 
   return {
     items,
-    styles,
+    styles: removeUndefined(styles),
   }
+}
+
+function numWithFallback(num: number) {
+  return isNaN(num) ? undefined : `${num}px`
+}
+
+function removeUndefined(obj: Styles): Styles {
+  return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined))
 }

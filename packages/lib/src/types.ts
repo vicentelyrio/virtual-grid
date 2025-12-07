@@ -1,24 +1,13 @@
 import { CSSProperties, RefObject } from 'react'
 
-export type VirtualGridProps<T> = {
-  data: T[],
-  offScreenPages?: number
-  padding?: number[]
-  gap?: number,
-  horizontal?: boolean
-}
-
-export type VirtualGrid<T> = Layout & {
-  items: T[]
-  styles: CSSProperties
+export type PageResult = {
   page: number
   pageRange: number[]
-  onScrollTo: (page: number) => void
-  scrolling: boolean
-  resizing: boolean
-  mounting: boolean
-  gridRef: RefObject<HTMLDivElement>
-  scrollRef: RefObject<HTMLDivElement>
+}
+
+export type ContentResult = {
+  items: unknown[]
+  styles: CSSProperties
 }
 
 export type Layout = {
@@ -38,4 +27,52 @@ export type Layout = {
   itemWidth: number
   gridHeight: number
   gridWidth: number
+  gridOffsetTop: number
+  gridOffsetLeft: number
+}
+
+export type Styles = {
+  width?: string | number
+  paddingTop?: string
+  paddingRight?: string
+  paddingBottom?: string
+  paddingLeft?: string
+  gap?: string
+}
+
+export type VirtualGridProps<T> = {
+  data: T[]
+  offScreenPages?: number
+  padding?: number[]
+  gap?: number
+  horizontal?: boolean
+}
+
+export type VirtualGrid<T> = {
+  gridRef: RefObject<HTMLDivElement | null>
+  scrollRef: RefObject<HTMLDivElement | null>
+  scrolling: boolean
+  resizing: boolean
+  mounting: boolean
+  horizontal: boolean
+  onScrollTo: (page: number) => void
+  items?: T[]
+  scrollWidth?: number
+  scrollHeight?: number
+  columns?: number
+  columnsOnViewport?: number
+  gridHeight?: number
+  gridWidth?: number
+  itemsPerColumn?: number
+  itemsPerPage?: number
+  itemsPerRow?: number
+  itemHeight?: number
+  itemWidth?: number
+  page: number
+  pages: number
+  pageRange: number[]
+  rows?: number
+  rowsOnViewport?: number
+  styles?: CSSProperties
+  total?: number
 }

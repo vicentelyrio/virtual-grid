@@ -1,0 +1,9 @@
+.container {
+  width: 100%;
+  position: relative;
+}
+
+.footer {
+  padding: 20px;
+  color: #666;
+}

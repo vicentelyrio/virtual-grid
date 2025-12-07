@@ -1,30 +1,109 @@
-# React + TypeScript + Vite
+## `@virtual-grid/lib`
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React virtualization library for rendering large datasets using CSS Grid.
 
-Currently, two official plugins are available:
+This package contains the core **Virtual Grid hook and utilities**. It only renders visible items on screen and automatically adapts to CSS Grid layout changes through `ResizeObserver`, making it suitable for responsive grids, image galleries, and carousels.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Installation
 
-## Expanding the ESLint configuration
+```bash
+npm install @virtual-grid/lib
+# or
+yarn add @virtual-grid/lib
+```
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### Quick Start
 
-- Configure the top-level `parserOptions` property like this:
+```tsx
+import { useVirtualGrid } from '@virtual-grid/lib'
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
+function Grid() {
+  const data = Array.from({ length: 10_000 }, (_, i) => ({ id: i, name: `Item ${i}` }))
+
+  const {
+    items,
+    styles,
+    gridRef,
+    scrollRef,
+  } = useVirtualGrid({
+    data,
+    gap: 20,
+    padding: [20, 20, 20, 20],
+    offScreenPages: 1,
+  })
+
+  return (
+    <div ref={scrollRef} style={{ height: '100vh', overflow: 'auto' }}>
+      <div ref={gridRef} style={styles} className="grid">
+        {items.map((item) => (
+          <div key={item.id}>{item.name}</div>
+        ))}
+      </div>
+    </div>
+  )
 }
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+### API Overview
+
+```ts
+import type { VirtualGrid, VirtualGridProps } from '@virtual-grid/lib'
+
+function useVirtualGrid<T>(props: VirtualGridProps<T>): VirtualGrid<T>
+```
+
+**`VirtualGridProps<T>`**
+
+- `data: T[]` – Items to virtualize (required)
+- `offScreenPages?: number` – Number of pages to render outside the viewport
+- `padding?: number[]` – `[top, right, bottom, left]` padding; must match your CSS padding
+- `gap?: number` – Gap between grid items; must match your CSS `gap`
+- `horizontal?: boolean` – Enable horizontal scrolling
+
+**`VirtualGrid<T>`**
+
+Core return shape (simplified):
+
+- `items: T[]` – Visible items to render
+- `styles: React.CSSProperties` – Styles to apply to the grid container
+- `gridRef: React.RefObject<HTMLDivElement | null>`
+- `scrollRef: React.RefObject<HTMLDivElement | null>`
+- `page: number`
+- `pageRange: number[]`
+- `onScrollTo(page: number): void`
+- Layout fields (scroll sizes, grid dimensions, etc.)
+
+For full details, see the exported types:
+
+```ts
+import { VirtualGrid, VirtualGridProps, Layout } from '@virtual-grid/lib'
+```
+
+### Key Concepts
+
+- **Padding-based positioning** – Uses dynamic padding instead of absolute positioning to maintain scroll position while letting CSS Grid handle layout.
+- **Resize-aware** – Uses `ResizeObserver` to react to container and layout changes.
+- **Page-based virtualization** – Renders only the current and surrounding pages, controlled by `offScreenPages`.
+
+### Limitations
+
+- Not designed for masonry layouts (requires predictable item height).
+- Works best when items have **uniform sizes**.
+- CSS `gap` and `padding` must match the values passed to the hook.
+
+### Development
+
+From the repo root:
+
+```bash
+yarn install
+yarn dev:lib
+```
+
+To run tests for this package:
+
+```bash
+cd packages/lib
+yarn test
+```
+

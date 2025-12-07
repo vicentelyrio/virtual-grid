@@ -1,0 +1,35 @@
+.container {
+  background: #000;
+  border-radius: 6px;
+  border: 1px solid #3f3f3f;
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+
+.grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 220px;
+  grid-template-rows: repeat(3, minmax(120px, 1fr));
+  align-content: start;
+  gap: 16px;
+  padding: 16px;
+}
+
+.card {
+  background: #191919;
+  border-radius: 6px;
+  font-size: 14px;
+  height: 100%;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

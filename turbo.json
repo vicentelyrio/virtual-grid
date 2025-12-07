@@ -10,6 +10,7 @@
       ],
       "outputs": [
         "dist/**",
+        ".next/**",
         "cosmos-export/**"
       ]
     },
@@ -32,7 +33,7 @@
     },
     "typecheck": {
       "dependsOn": [
-        "lint"
+        "^build"
       ]
     },
     "dev": {

@@ -1,0 +1,361 @@
+# How it Works
+
+Most virtualization libraries use `position: absolute` to position items in a virtual space. Virtual Grid takes a different approach by using **dynamic padding** with native CSS Grid.
+
+### Virtual Grid Approach (Padding-based)
+
+```tsx
+<div style={{
+  paddingTop: '2400px',
+  paddingBottom: '6800px',
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+  gap: '20px'
+}}>
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</div>
+```
+
+**Benefits of this approach:**
+- CSS Grid handles all layout calculations automatically
+- Items naturally reflow when viewport size changes
+- Works seamlessly with `auto-fit`, `auto-fill`, and `minmax()`
+- Media queries work as expected
+- Items remain in normal document flow
+- Simpler calculations (only need to track page offsets, not individual item positions)
+
+## SSR Considerations
+For SSR, you can rely on page hydration.
+Rendering the first set of items on the server and then hydrate the rest on the client.
+
+## Virtualization Explained
+
+At its core, Virtual Grid implements virtualization to efficiently render large lists of items. Instead of rendering every item in your dataset, it only renders the items that are currently visible in the viewport, plus a small overscan area.
+
+### The Virtualization Process
+
+#### 1. Initial Measurement
+
+When the component mounts, Virtual Grid:
+- Waits for both scroll and grid containers to be available
+- Uses ResizeObserver to measure the actual rendered grid
+- Calculates item dimensions from the first rendered items
+- Determines how many items fit per row/column
+- Calculates total pages based on viewport size
+
+#### 2. Page-based Rendering
+
+Instead of tracking individual items, Virtual Grid thinks in terms of "pages":
+
+```tsx
+// Example: 1000 items total, 50 items per page = 20 pages
+const itemsPerPage = rowsOnViewport * columnsOnViewport
+const totalPages = Math.ceil(totalItems / itemsPerPage)
+```
+
+#### 3. Scroll Position Tracking
+
+As the user scrolls:
+- Scroll events are captured and debounced
+- Current scroll position is compared to page boundaries
+- Visible page range is calculated based on `offScreenPages` setting
+- Items for visible pages are sliced from the data array
+
+```tsx
+// Example with offScreenPages: 1
+// If on page 5, render pages 4, 5, and 6
+const visiblePages = [page - 1, page, page + 1]
+const startIndex = (page - offScreenPages) * itemsPerPage
+const endIndex = (page + offScreenPages + 1) * itemsPerPage
+const visibleItems = data.slice(startIndex, endIndex)
+```
+
+#### 4. Padding Calculation
+
+To maintain the correct scroll position, Virtual Grid calculates padding offsets:
+
+```tsx
+// Vertical scrolling
+const itemsBeforeViewport = startIndex
+const itemsAfterViewport = totalItems - endIndex
+const paddingTop = (itemsBeforeViewport / columnsPerPage) * (itemHeight + gap)
+const paddingBottom = (itemsAfterViewport / columnsPerPage) * (itemHeight + gap)
+
+// Applied to grid container
+<div style={{ paddingTop, paddingBottom }}>
+  {visibleItems.map(...)}
+</div>
+```
+
+This creates the illusion of a complete list while only rendering a fraction of the items.
+
+## Hook-based Architecture
+
+Virtual Grid follows a hook-based architecture similar to libraries like react-table and react-hook-form. This approach provides several benefits:
+
+**1. Flexibility**
+You control the rendering completely:
+
+```tsx
+const { items, styles, gridRef, scrollRef } = useVirtualGrid({ data })
+
+// Use with any UI library
+return (
+  <div ref={scrollRef}>
+    <div ref={gridRef} style={styles}>
+      {items?.map(item => (
+        <MyCustomCard key={item.id} {...item} />
+      ))}
+    </div>
+  </div>
+)
+```
+
+**2. Composability**
+Easy to combine with other hooks:
+
+```tsx
+const { items, page, onScrollTo } = useVirtualGrid({ data })
+const [selectedItems, setSelectedItems] = useState([])
+const [sortedData, setSortedData] = useState(data)
+
+// Compose multiple behaviors
+return (
+  <VirtualizedSelectableGrid
+    items={items}
+    selected={selectedItems}
+    onSelect={setSelectedItems}
+  />
+)
+```
+
+**3. Separation of Concerns**
+Logic and presentation are separate:
+
+```tsx
+// Logic layer (hook)
+const gridState = useVirtualGrid({ data })
+
+// Presentation layer (component)
+return <Grid {...gridState} />
+```
+
+**4. No Component Lock-in**
+Unlike component-based virtualization libraries, you're not locked into specific components or styling approaches. Virtual Grid is just a hook that returns data and refs.
+
+## Layout Management
+
+Virtual Grid delegates layout calculations to CSS Grid while managing the virtual window.
+
+### How Layout Works
+
+#### 1. ResizeObserver Integration
+
+Virtual Grid uses ResizeObserver to detect layout changes:
+
+```tsx
+const resizeObserver = new ResizeObserver(() => {
+  // Measure grid dimensions
+  const gridRect = gridElement.getBoundingClientRect()
+  const scrollRect = scrollElement.getBoundingClientRect()
+
+  // Calculate layout
+  calculateLayout()
+})
+
+resizeObserver.observe(scrollElement)
+```
+
+This automatically detects:
+- Viewport size changes
+- CSS Grid reflow (e.g., when columns change due to media queries)
+- Container resizing
+
+#### 2. Grid Measurement
+
+After rendering initial items, Virtual Grid reads the computed layout:
+
+```tsx
+// Get first item to calculate dimensions
+const firstItem = gridElement.children[0]
+const itemRect = firstItem.getBoundingClientRect()
+
+// Calculate items per row/column
+const columns = Math.floor(gridWidth / itemRect.width)
+const rows = Math.ceil(totalItems / columns)
+```
+
+This works because CSS Grid has already positioned the items naturally.
+
+#### 3. Responsive Adaptation
+
+When the viewport changes:
+
+```css
+/* Mobile: 1 column */
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Tablet: 2-3 columns */
+@media (min-width: 641px) {
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+/* Desktop: 4+ columns */
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+}
+```
+
+1. CSS Grid automatically adjusts column count
+2. ResizeObserver detects the layout change
+3. Virtual Grid remeasures and updates item count per row
+4. Visible items are recalculated
+5. Padding is adjusted
+
+## Performance Optimizations
+
+Virtual Grid includes several built-in performance optimizations to ensure smooth scrolling and responsive behavior.
+
+### 1. Memoization
+
+Key calculations are memoized using React's `useMemo`.
+This prevents unnecessary recalculations when unrelated props change.
+
+### 2. RequestAnimationFrame
+
+Scroll updates are batched using requestAnimationFrame:
+
+```tsx
+const handleScroll = () => {
+  if (rafRef.current) {
+    cancelAnimationFrame(rafRef.current)
+  }
+
+  rafRef.current = requestAnimationFrame(() => {
+    updatePage()
+    // Schedule scroll end detection
+    setTimeout(() => setScrolling(false), 150)
+  })
+}
+```
+
+This ensures updates happen at optimal times aligned with browser repaints.
+
+### 3. Debounced Resize
+
+ResizeObserver updates are debounced to avoid excessive recalculations:
+
+```tsx
+const handleResize = useCallback(() => {
+  setResizing(true)
+
+  if (rafRef.current) {
+    cancelAnimationFrame(rafRef.current)
+  }
+
+  rafRef.current = requestAnimationFrame(() => {
+    calculateLayout()
+    setResizing(false)
+  })
+}, [calculateLayout])
+```
+
+This prevents layout thrashing during window resize.
+
+### 4. Efficient Comparison
+
+Layout changes use deep equality checks with `react-fast-compare`:
+
+```tsx
+import isEqual from 'react-fast-compare'
+
+if (!isEqual(newLayout, currentLayout)) {
+  setLayout(newLayout)
+}
+```
+
+This prevents unnecessary state updates when layout values haven't actually changed.
+
+### 5. State Flags
+
+Virtual Grid exposes state flags to help you optimize rendering:
+
+```tsx
+const { mounting, scrolling, resizing } = useVirtualGrid({ data })
+
+// Disable expensive animations during scroll/resize
+<div className={scrolling || resizing ? 'no-transitions' : ''}>
+  {items?.map(...)}
+</div>
+```
+
+## When to Use Virtual Grid
+
+### Ideal Use Cases
+
+Virtual Grid is perfect when:
+
+**✅ Responsive Grids**
+- Photo galleries that adapt to different screen sizes
+- Product catalogs that reflow based on viewport width
+- Card layouts with consistent item sizes
+
+**✅ Large Datasets**
+- 1,000+ items that would slow down the page if all rendered
+- Infinite scroll implementations
+- Data-heavy dashboards
+
+**✅ CSS Grid Layouts**
+- You want to use `auto-fit`, `auto-fill`, `minmax()`
+- Media queries control your layout
+- You need gap, align-items, justify-items, etc.
+
+**✅ Carousels & Sliders**
+- Horizontal scrolling with many items
+- Image carousels with navigation
+- Timeline components
+
+### When NOT to Use
+
+Consider alternatives when:
+
+**❌ Masonry Layouts**
+Virtual Grid requires predictable item heights. For Pinterest-style layouts with variable heights, use:
+- [react-masonry-css](https://github.com/paulcollett/react-masonry-css)
+- [react-virtuoso](https://virtuoso.dev/) (supports variable heights)
+
+**❌ Variable Item Sizes**
+If items have drastically different dimensions that can't be predicted:
+- Use a non-virtualized grid for smaller datasets
+- Consider [react-window](https://github.com/bvaughn/react-window) with dynamic size tracking
+
+**❌ Table Layouts**
+For data tables with headers, sorting, and filtering:
+- [TanStack Table](https://tanstack.com/table) (provides its own virtualization)
+- [ag-Grid](https://www.ag-grid.com/)
+
+**❌ List Views**
+For simple vertical lists (single column):
+- [react-window](https://github.com/bvaughn/react-window) (simpler, more optimized)
+- [react-virtual](https://tanstack.com/virtual)
+
+### Performance Considerations
+
+Virtual Grid shines with:
+- **1,000 to 100,000+ items** - Sweet spot for virtualization benefits
+- **Uniform item sizes** - Best performance with consistent dimensions
+- **Responsive layouts** - Automatically adapts without configuration
+
+You might not need virtualization if:
+- Your dataset is not that large
+- You need all items mounted for animations/interactions

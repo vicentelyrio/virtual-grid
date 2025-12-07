@@ -1,9 +1,9 @@
-import { useRef } from 'react'
-import { useLayout } from './useLayout'
-import { usePage } from './usePage'
-import { useContent } from './useContent'
+import { useEffect, useRef, useState } from 'react'
+import { useLayout } from '@hooks/useLayout'
+import { usePage } from '@hooks/usePage'
+import { useContent } from '@hooks/useContent'
 
-import { VirtualGrid, VirtualGridProps } from '../types'
+import type { VirtualGrid, VirtualGridProps } from '@types'
 
 export function useVirtualGrid<T>({
   data,
@@ -11,14 +11,27 @@ export function useVirtualGrid<T>({
   padding = [0, 0, 0, 0],
   gap = 20,
   horizontal = false,
-}: VirtualGridProps<T>): Partial<VirtualGrid<T>> {
+}: VirtualGridProps<T>): VirtualGrid<T> {
   const scrollRef = useRef<HTMLDivElement>(null)
   const gridRef = useRef<HTMLDivElement>(null)
-
-  const gridElement = gridRef.current
-  const scrollElement = scrollRef.current
+  const [gridElement, setGridElement] = useState<HTMLElement | null>(null)
+  const [scrollElement, setScrollElement] = useState<HTMLElement | Window | null>(null)
 
   const total = data?.length ?? 0
+
+  useEffect(() => {
+    if (gridRef.current) {
+      setGridElement(gridRef.current)
+    }
+
+    if (scrollRef.current) {
+      setScrollElement(scrollRef.current)
+    }
+
+    if (typeof window !== 'undefined' && !scrollRef.current) {
+      setScrollElement(window)
+    }
+  }, [])
 
   const { resizing, layout } = useLayout({
     gridElement,
@@ -48,15 +61,15 @@ export function useVirtualGrid<T>({
 
   return {
     ...layout,
+    page,
     gridRef,
     scrollRef,
     items,
     styles,
-    page,
     pageRange,
     onScrollTo,
     scrolling,
     resizing,
-    mounting: !items || !layout || !page,
+    mounting: !items || !layout?.pages || !page,
   }
 }

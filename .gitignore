@@ -44,3 +44,9 @@ yarn-error.log*
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# IA stuff
+openspec
+.cursor
+AGENTS.md
+CLOUD.md
