@@ -8,12 +8,17 @@ const withNextra = nextra({
   defaultShowCopyCode: true
 })
 
-export default withNextra({
+const nextConfig = {
   reactStrictMode: true,
   output: 'export',
   images: {
     unoptimized: true
   },
-  ...(basePath && { basePath }),
-  ...(basePath && { assetPrefix: basePath }),
-})
+}
+
+if (basePath) {
+  nextConfig.basePath = basePath
+  nextConfig.assetPrefix = basePath
+}
+
+export default withNextra(nextConfig)
