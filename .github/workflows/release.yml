@@ -70,10 +70,16 @@ jobs:
       - name: Run tests
         run: yarn test
 
+      - name: Configure npm authentication
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          npm whoami
+
       - name: Publish to npm
         if: ${{ github.event.inputs.dry_run != 'true' }}
         run: yarn cs:publish
         env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish (dry run)
