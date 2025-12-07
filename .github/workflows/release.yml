@@ -38,6 +38,8 @@ jobs:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
           always-auth: true
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Get yarn cache directory
         id: yarn-cache-dir
@@ -68,10 +70,6 @@ jobs:
       - name: Run tests
         run: yarn test
 
-      - name: Configure npm authentication
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
-
       - name: Publish to npm
         if: ${{ github.event.inputs.dry_run != 'true' }}
         run: yarn cs:publish
@@ -82,7 +80,6 @@ jobs:
         if: ${{ github.event.inputs.dry_run == 'true' }}
         run: yarn cs:publish --dry-run
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
