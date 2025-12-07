@@ -33,7 +33,7 @@
     },
     "typecheck": {
       "dependsOn": [
-        "lint"
+        "^build"
       ]
     },
     "dev": {
