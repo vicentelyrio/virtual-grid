@@ -1,3 +1,5 @@
+import { isWindow as isWindowCheck } from '@utils/isBrowser'
+
 export type GetRectReturnType = {
   height: number
   width: number
@@ -13,7 +15,7 @@ export function getRect(el: HTMLElement | Window | null): GetRectReturnType {
     }
   }
 
-  if (el === window) {
+  if (isWindowCheck(el)) {
     return {
       height: el.innerHeight,
       width: el.innerWidth,

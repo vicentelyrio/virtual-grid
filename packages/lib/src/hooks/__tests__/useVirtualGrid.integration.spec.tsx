@@ -87,7 +87,7 @@ function TestComponent<T>({
         }
       }) as typeof node.scroll
 
-      // Assign to the ref
+      // Assign to the scrollRef returned by useVirtualGrid
       ;(result.scrollRef as React.MutableRefObject<HTMLDivElement | null>).current = node
     }
   }, [viewportWidth, viewportHeight, horizontal, result.scrollRef])
@@ -436,7 +436,7 @@ describe('useVirtualGrid - Integration Tests', () => {
       /**
        * Tests for when items are partially visible at the viewport edge.
        * Example: 766px viewport with 275px items shows 2 full columns + ~73% of 3rd column
-       * 
+       *
        * The columnsOnViewport/rowsOnViewport uses Math.round, so:
        * - round(766/275) = round(2.78) = 3 (includes partial column)
        * - This means paging considers the partial item as part of the page

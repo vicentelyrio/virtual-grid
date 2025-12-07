@@ -15,7 +15,7 @@ export function useVirtualGrid<T>({
   const scrollRef = useRef<HTMLDivElement>(null)
   const gridRef = useRef<HTMLDivElement>(null)
   const [gridElement, setGridElement] = useState<HTMLElement | null>(null)
-  const [scrollElement, setScrollElement] = useState<HTMLElement | null>(null)
+  const [scrollElement, setScrollElement] = useState<HTMLElement | Window | null>(null)
 
   const total = data?.length ?? 0
 
@@ -23,8 +23,13 @@ export function useVirtualGrid<T>({
     if (gridRef.current) {
       setGridElement(gridRef.current)
     }
+
     if (scrollRef.current) {
       setScrollElement(scrollRef.current)
+    }
+
+    if (typeof window !== 'undefined' && !scrollRef.current) {
+      setScrollElement(window)
     }
   }, [])
 

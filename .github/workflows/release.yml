@@ -2,8 +2,15 @@ name: Release
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Run in dry-run mode (no publish)'
+        required: false
+        default: 'false'
+        type: boolean
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -11,12 +18,11 @@ concurrency:
 
 jobs:
   release:
-    name: Release
+    name: Build & Publish
     runs-on: ubuntu-latest
 
     permissions:
       contents: write
-      pull-requests: write
       id-token: write
 
     steps:
@@ -60,13 +66,18 @@ jobs:
       - name: Run tests
         run: yarn test
 
-      - name: Create Release PR or Publish
-        uses: changesets/action@v1
-        with:
-          version: yarn cs:version
-          publish: yarn cs:publish
-          title: 'chore: release packages'
-          commit: 'chore: release packages'
+      - name: Publish to npm
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: yarn cs:publish
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish (dry run)
+        if: ${{ github.event.inputs.dry_run == 'true' }}
+        run: yarn cs:publish --dry-run
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+

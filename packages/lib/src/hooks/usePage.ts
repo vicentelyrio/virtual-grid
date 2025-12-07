@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { computeScroll } from '@utils/computeScroll'
 import { GetPageReturnType, getPage } from '@utils/getPage'
+import { isWindow } from '@utils/isBrowser'
 import { Layout } from '@types'
 
 export type UsePageProps = {
-  scrollElement: HTMLElement | null
+  scrollElement: HTMLElement | Window | null
   layout: Layout
   gap: number
   padding: number[]
@@ -53,6 +54,8 @@ export function usePage({
     [horizontal, itemHeight, itemWidth, gap, rowsOnViewport, columnsOnViewport, padding]
   )
 
+  const isWindowScroll = isWindow(scrollElement)
+
   const onScrollTo = useCallback(
     (index: number, behavior: ScrollBehavior = 'smooth') => {
       if (!scrollElement) return
@@ -64,9 +67,14 @@ export function usePage({
         [horizontal ? 'top' : 'left']: 0
       }
 
-      scrollElement.scroll(scrollOptions)
+      if (isWindowScroll) {
+        window.scroll(scrollOptions)
+      }
+      else {
+        (scrollElement as HTMLElement).scroll(scrollOptions)
+      }
     },
-    [scrollElement, horizontal, computeScrollPosition]
+    [scrollElement, horizontal, computeScrollPosition, isWindowScroll]
   )
 
   const updatePage = useCallback(() => {
@@ -84,11 +92,19 @@ export function usePage({
       cancelAnimationFrame(rafRef.current)
     }
 
-    const currentPosition = horizontal
-      ? scrollElement.scrollLeft
-      : scrollElement.scrollTop
+    let currentPosition: number
+
+    if (isWindowScroll) {
+      currentPosition = horizontal ? window.scrollX : window.scrollY
+    }
+    else {
+      currentPosition = horizontal
+        ? (scrollElement as HTMLElement).scrollLeft
+        : (scrollElement as HTMLElement).scrollTop
+    }
 
     const scrollDelta = Math.abs(currentPosition - lastScrollPosition.current)
+
     if (scrollDelta < 1) return
 
     lastScrollPosition.current = currentPosition
@@ -104,7 +120,7 @@ export function usePage({
         scrollTimeoutRef.current = null
       }, 150)
     })
-  }, [scrollElement, layout, horizontal, updatePage])
+  }, [scrollElement, layout, horizontal, updatePage, isWindowScroll])
 
   useEffect(() => {
     if (scrollElement && layout) {
@@ -115,10 +131,11 @@ export function usePage({
   useEffect(() => {
     if (!scrollElement) return
 
-    scrollElement.addEventListener('scroll', handleScroll, { passive: true })
+    const scrollTarget = isWindowScroll ? window : scrollElement
+    scrollTarget.addEventListener('scroll', handleScroll, { passive: true })
 
     return () => {
-      scrollElement.removeEventListener('scroll', handleScroll)
+      scrollTarget.removeEventListener('scroll', handleScroll)
 
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current)
@@ -127,7 +144,7 @@ export function usePage({
         cancelAnimationFrame(rafRef.current)
       }
     }
-  }, [handleScroll, scrollElement])
+  }, [handleScroll, scrollElement, isWindowScroll])
 
   return {
     ...page,

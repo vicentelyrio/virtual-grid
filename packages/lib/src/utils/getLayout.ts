@@ -9,7 +9,7 @@ export type Bounds = {
 
 export type GetLayoutProps = {
   gridElement: HTMLElement | null
-  scrollElement: HTMLElement | null
+  scrollElement: HTMLElement | Window | null
   total: number
   bounds: Bounds
   gap: number

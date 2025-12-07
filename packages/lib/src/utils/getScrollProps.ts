@@ -1,17 +1,19 @@
+import { isWindow } from '@utils/isBrowser'
+
 export type GetScrollPropsProps = {
-  scrollElement: HTMLElement | null
+  scrollElement: HTMLElement | Window | null
 }
 
 export function getScrollProps({ scrollElement }: GetScrollPropsProps) {
-  if (scrollElement as unknown as Window === window) {
-    const { scrollY, scrollX } = (scrollElement as unknown as Window) ?? {}
+  if (isWindow(scrollElement)) {
+    const { scrollY, scrollX } = window
     return {
       scrollTop: scrollY,
       scrollLeft: scrollX,
     }
   }
 
-  const { scrollTop, scrollLeft } = scrollElement ?? {}
+  const { scrollTop, scrollLeft } = (scrollElement as HTMLElement) ?? {}
 
   return {
     scrollTop,

@@ -3,7 +3,7 @@ import { GetPageSizesReturnType, getPageSizes } from '@utils/getPageSizes'
 import { getScrollProps } from '@utils/getScrollProps'
 
 export type GetPageProps = {
-  scrollElement: HTMLElement | null
+  scrollElement: HTMLElement | Window | null
   layout: Layout
   gap: number
 }
