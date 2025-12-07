@@ -55,6 +55,8 @@ jobs:
         run: yarn build --filter=@virtual-grid/lib
 
       - name: Build docs
+        env:
+          GITHUB_ACTIONS: 'true'
         run: yarn build --filter=@virtual-grid/docs
 
       - name: Setup Pages
