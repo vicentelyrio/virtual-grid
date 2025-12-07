@@ -34,7 +34,9 @@ describe('useVirtualGrid', () => {
     itemHeight: 100,
     itemWidth: 250,
     gridHeight: 2000,
-    gridWidth: 1000
+    gridWidth: 1000,
+    gridOffsetTop: 0,
+    gridOffsetLeft: 0,
   }
 
   const mockLayoutHook = {

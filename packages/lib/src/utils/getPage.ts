@@ -1,6 +1,7 @@
 import { Layout } from '@types'
 import { GetPageSizesReturnType, getPageSizes } from '@utils/getPageSizes'
 import { getScrollProps } from '@utils/getScrollProps'
+import { isWindow } from '@utils/isBrowser'
 
 export type GetPageProps = {
   scrollElement: HTMLElement | Window | null
@@ -28,6 +29,8 @@ export function getPage({
       horizontal,
       scrollWidth,
       scrollHeight,
+      gridOffsetTop = 0,
+      gridOffsetLeft = 0,
     } = layout
 
     const missingRequired =
@@ -40,8 +43,18 @@ export function getPage({
 
     if (missingRequired) return { index: 0, page: 1, pageRange: [0, 0] }
 
+    const isWindowScroll = isWindow(scrollElement)
+
+    const effectiveScrollTop = isWindowScroll
+      ? Math.max(0, scrollTop - gridOffsetTop)
+      : scrollTop
+
+    const effectiveScrollLeft = isWindowScroll
+      ? Math.max(0, scrollLeft - gridOffsetLeft)
+      : scrollLeft
+
     const verticalProps = {
-      screenStart: scrollTop,
+      screenStart: effectiveScrollTop,
       itemSize: itemHeight,
       scrollSize: scrollHeight,
       itemsOnPage: rowsOnViewport,
@@ -49,7 +62,7 @@ export function getPage({
     }
 
     const horizontalProps = {
-      screenStart: scrollLeft,
+      screenStart: effectiveScrollLeft,
       itemSize: itemWidth,
       scrollSize: scrollWidth,
       itemsOnPage: columnsOnViewport,

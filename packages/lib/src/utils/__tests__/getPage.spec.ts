@@ -83,7 +83,9 @@ describe('getPage', () => {
       itemsPerColumn: 4,
       itemsPerPage: 12,
       gridHeight: 2200,
-      gridWidth: 800
+      gridWidth: 800,
+      gridOffsetTop: 0,
+      gridOffsetLeft: 0,
     }
 
     const result = getPage({
@@ -135,7 +137,9 @@ describe('getPage', () => {
       itemsPerColumn: 4,
       itemsPerPage: 12,
       gridHeight: 1000,
-      gridWidth: 1400
+      gridWidth: 1400,
+      gridOffsetTop: 0,
+      gridOffsetLeft: 0,
     }
 
     const result = getPage({
@@ -178,7 +182,9 @@ describe('getPage', () => {
       itemsPerColumn: 4,
       itemsPerPage: 12,
       gridHeight: 2200,
-      gridWidth: 800
+      gridWidth: 800,
+      gridOffsetTop: 0,
+      gridOffsetLeft: 0,
     }
 
     getPage({
@@ -217,7 +223,9 @@ describe('getPage', () => {
       itemsPerColumn: 4,
       itemsPerPage: 12,
       gridHeight: 2200,
-      gridWidth: 800
+      gridWidth: 800,
+      gridOffsetTop: 0,
+      gridOffsetLeft: 0,
     }
 
     const result = getPage({
@@ -226,7 +234,6 @@ describe('getPage', () => {
       gap: 10
     })
 
-    // Returns default values on error
     expect(result).toEqual({
       index: 0,
       page: 1,

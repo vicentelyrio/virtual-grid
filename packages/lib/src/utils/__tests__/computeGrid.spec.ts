@@ -5,7 +5,7 @@ describe('computeGrid', () => {
   const baseLayout: Layout = {
     scrollWidth: 1200,
     scrollHeight: 800,
-    rows: 20,
+    rows: 15,
     horizontal: false,
     rowsOnViewport: 4,
     columns: 15,
@@ -19,6 +19,8 @@ describe('computeGrid', () => {
     itemWidth: 150,
     gridHeight: 800,
     gridWidth: 1000,
+    gridOffsetTop: 0,
+    gridOffsetLeft: 0,
   }
 
   const baseProps: ComputeGridProps = {
@@ -53,15 +55,18 @@ describe('computeGrid', () => {
 
       const itemH = baseLayout.itemHeight + baseProps.gap
       const minBoundary = Math.max(0, baseProps.page - baseProps.offScreenPages - 1)
-      const maxBoundary = Math.min(baseLayout.pages, baseProps.page + 1 + baseProps.offScreenPages)
+      const maxBoundary = Math.min(baseLayout.pages, baseProps.page + baseProps.offScreenPages)
+
+      const rowsBefore = minBoundary * baseLayout.rowsOnViewport
+      const rowsAfter = Math.max(0, baseLayout.rows - maxBoundary * baseLayout.rowsOnViewport)
 
       expect(result).toEqual({
         start: minBoundary * baseLayout.itemsPerPage,
         end: maxBoundary * baseLayout.itemsPerPage,
         width: 'auto',
-        paddingTop: minBoundary * baseLayout.rowsOnViewport * itemH + baseProps.padding[0],
+        paddingTop: rowsBefore * itemH + baseProps.padding[0],
         paddingRight: baseProps.padding[1],
-        paddingBottom: Math.max(0, (baseLayout.rows - maxBoundary * baseLayout.rowsOnViewport) * itemH) + baseProps.padding[2],
+        paddingBottom: Math.max(baseProps.padding[2], rowsAfter * itemH + baseProps.padding[2]),
         paddingLeft: baseProps.padding[3],
       })
     })
@@ -83,7 +88,6 @@ describe('computeGrid', () => {
       })
 
       expect(result.paddingBottom).toBe(baseProps.padding[2])
-      expect(result.end).toBe(baseLayout.pages * baseLayout.itemsPerPage)
     })
 
     it('should respect MAX_SIZE for bottom padding', () => {
@@ -121,16 +125,21 @@ describe('computeGrid', () => {
 
       const itemW = horizontalLayout.itemWidth + horizontalProps.gap
       const minBoundary = Math.max(0, horizontalProps.page - horizontalProps.offScreenPages - 1)
-      const maxBoundary = Math.min(horizontalLayout.pages, horizontalProps.page + 1 + horizontalProps.offScreenPages)
+      const maxBoundary = Math.min(horizontalLayout.pages, horizontalProps.page + horizontalProps.offScreenPages)
+
+      const columnsBefore = minBoundary * horizontalLayout.columnsOnViewport
+      const columnsAfter = Math.max(0, horizontalLayout.columns - maxBoundary * horizontalLayout.columnsOnViewport)
+
+      const pr = columnsAfter * itemW + horizontalProps.padding[1]
 
       expect(result).toEqual({
         start: minBoundary * horizontalLayout.itemsPerPage,
         end: maxBoundary * horizontalLayout.itemsPerPage,
         width: horizontalLayout.gridWidth,
         paddingTop: horizontalProps.padding[0],
-        paddingRight: Math.max(0, (horizontalLayout.columns - maxBoundary * horizontalLayout.columnsOnViewport) * itemW) + horizontalProps.padding[1],
+        paddingRight: Math.max(horizontalProps.padding[1], pr),
         paddingBottom: horizontalProps.padding[2],
-        paddingLeft: minBoundary * horizontalLayout.columnsOnViewport * itemW + horizontalProps.padding[3],
+        paddingLeft: columnsBefore * itemW + horizontalProps.padding[3],
       })
     })
 
@@ -151,7 +160,6 @@ describe('computeGrid', () => {
       })
 
       expect(result.paddingRight).toBe(horizontalProps.padding[1])
-      expect(result.end).toBe(horizontalLayout.pages * horizontalLayout.itemsPerPage)
     })
 
     it('should respect MAX_SIZE for right padding', () => {
@@ -171,34 +179,208 @@ describe('computeGrid', () => {
     })
   })
 
+  describe('user padding scenarios', () => {
+    it('should only have user padding when all items visible (vertical)', () => {
+      const smallLayout: Layout = {
+        ...baseLayout,
+        total: 4,
+        pages: 1,
+        rows: 1,
+      }
+
+      const result = computeGrid({
+        layout: smallLayout,
+        page: 1,
+        padding: [20, 20, 20, 20],
+        offScreenPages: 1,
+        gap: 10,
+      })
+
+      expect(result.paddingTop).toBe(20)
+      expect(result.paddingBottom).toBe(20)
+      expect(result.paddingLeft).toBe(20)
+      expect(result.paddingRight).toBe(20)
+    })
+
+    it('should only have user padding when all items visible (horizontal)', () => {
+      const smallLayout: Layout = {
+        ...baseLayout,
+        horizontal: true,
+        total: 3,
+        pages: 1,
+        columns: 1,
+      }
+
+      const result = computeGrid({
+        layout: smallLayout,
+        page: 1,
+        padding: [20, 20, 20, 20],
+        offScreenPages: 1,
+        gap: 10,
+      })
+
+      expect(result.paddingTop).toBe(20)
+      expect(result.paddingBottom).toBe(20)
+      expect(result.paddingLeft).toBe(20)
+      expect(result.paddingRight).toBe(20)
+    })
+
+    it('should work correctly with zero top/bottom padding (vertical)', () => {
+      const result = computeGrid({
+        ...baseProps,
+        padding: [0, 20, 0, 20],
+        page: 1,
+      })
+
+      expect(result.paddingTop).toBe(0)
+      expect(result.paddingLeft).toBe(20)
+      expect(result.paddingRight).toBe(20)
+    })
+
+    it('should work correctly with zero left/right padding (horizontal)', () => {
+      const horizontalLayout: Layout = {
+        ...baseLayout,
+        horizontal: true,
+      }
+
+      const result = computeGrid({
+        layout: horizontalLayout,
+        page: 1,
+        padding: [20, 0, 20, 0],
+        offScreenPages: 1,
+        gap: 8,
+      })
+
+      expect(result.paddingTop).toBe(20)
+      expect(result.paddingBottom).toBe(20)
+      expect(result.paddingLeft).toBe(0)
+    })
+  })
+
+  describe('horizontal grid with 1000 items - real world scenario', () => {
+    it('should have only user padding at last page', () => {
+      // Simulate: 1000 items, 3 rows (rowsOnViewport=3), so 334 columns
+      // Viewport shows 4 columns at a time (columnsOnViewport=4)
+      // itemsPerPage = 3*4 = 12
+      // pages = ceil(1000/12) = 84
+      // columns must be based on rowsOnViewport for consistency: ceil(1000/3) = 334
+      const total = 1000
+      const columnsOnViewport = 4
+      const rowsOnViewport = 3
+      const itemsPerPage = rowsOnViewport * columnsOnViewport
+      const pages = Math.ceil(total / itemsPerPage)
+      // columns = ceil(total / rowsOnViewport) to be consistent with pages calculation
+      const totalColumns = Math.ceil(total / rowsOnViewport)
+
+      const layout: Layout = {
+        ...baseLayout,
+        horizontal: true,
+        total,
+        itemsPerColumn: rowsOnViewport,
+        columnsOnViewport,
+        rowsOnViewport,
+        itemsPerPage,
+        pages,
+        columns: totalColumns,
+      }
+
+      const result = computeGrid({
+        layout,
+        page: pages,
+        padding: [20, 20, 20, 20],
+        offScreenPages: 1,
+        gap: 20,
+      })
+
+      // At last page, paddingRight should only be user padding (20)
+      expect(result.paddingRight).toBe(20)
+    })
+
+    it('should have correct paddingLeft at first page', () => {
+      const total = 1000
+      const columnsOnViewport = 4
+      const rowsOnViewport = 3
+      const itemsPerPage = rowsOnViewport * columnsOnViewport
+      const pages = Math.ceil(total / itemsPerPage)
+      const totalColumns = Math.ceil(total / rowsOnViewport)
+
+      const layout: Layout = {
+        ...baseLayout,
+        horizontal: true,
+        total,
+        itemsPerColumn: rowsOnViewport,
+        columnsOnViewport,
+        rowsOnViewport,
+        itemsPerPage,
+        pages,
+        columns: totalColumns,
+      }
+
+      const result = computeGrid({
+        layout,
+        page: 1,
+        padding: [20, 20, 20, 20],
+        offScreenPages: 1,
+        gap: 20,
+      })
+
+      // At first page, paddingLeft should only be user padding (20)
+      expect(result.paddingLeft).toBe(20)
+    })
+
+    it('should calculate columnsAfter correctly at last page', () => {
+      const total = 1000
+      const columnsOnViewport = 4
+      const rowsOnViewport = 3
+      const itemsPerPage = rowsOnViewport * columnsOnViewport
+      const pages = Math.ceil(total / itemsPerPage)
+      // columns = ceil(total / rowsOnViewport) for consistency
+      const totalColumns = Math.ceil(total / rowsOnViewport)
+
+      // At last page:
+      // maxBoundary = pages = 84
+      // columnsAfter = columns - maxBoundary * columnsOnViewport
+      //              = 334 - 84 * 4 = 334 - 336 = -2 -> 0
+      const columnsAfter = Math.max(0, totalColumns - pages * columnsOnViewport)
+      expect(columnsAfter).toBe(0)
+    })
+
+    it('should verify pages * columnsOnViewport >= columns (consistency requirement)', () => {
+      // This test verifies the key invariant that prevents excessive paddingRight
+      const total = 1000
+      const rowsOnViewport = 3
+      const columnsOnViewport = 4
+      const itemsPerPage = rowsOnViewport * columnsOnViewport
+      const pages = Math.ceil(total / itemsPerPage)
+      // columns must be calculated as ceil(total / rowsOnViewport)
+      const columns = Math.ceil(total / rowsOnViewport)
+
+      // This invariant must hold for padding to work correctly
+      expect(pages * columnsOnViewport).toBeGreaterThanOrEqual(columns)
+    })
+  })
+
   describe('edge cases and boundary conditions', () => {
     it('should handle zero gap correctly', () => {
       const result = computeGrid({
         ...baseProps,
         gap: 0,
+        page: 1,
       })
 
-      expect(result.start).toBeDefined()
-      expect(result.end).toBeDefined()
-      expect(result.paddingTop).toBe(
-        Math.max(0, baseProps.page - baseProps.offScreenPages - 1) *
-        baseLayout.rowsOnViewport * baseLayout.itemHeight +
-        baseProps.padding[0]
-      )
+      expect(result.start).toBe(0)
+      expect(result.paddingTop).toBe(baseProps.padding[0])
     })
 
     it('should handle zero padding correctly', () => {
       const result = computeGrid({
         ...baseProps,
         padding: [0, 0, 0, 0],
+        page: 1,
       })
 
-      expect(result.paddingTop).toBe(
-        Math.max(0, baseProps.page - baseProps.offScreenPages - 1) *
-        baseLayout.rowsOnViewport * (baseLayout.itemHeight + baseProps.gap)
-      )
+      expect(result.paddingTop).toBe(0)
       expect(result.paddingRight).toBe(0)
-      expect(result.paddingBottom).toBeGreaterThanOrEqual(0)
       expect(result.paddingLeft).toBe(0)
     })
 

@@ -64,20 +64,22 @@ describe('getLayout', () => {
     expect(result).toEqual({
       scrollWidth: 1000,
       scrollHeight: 800,
-      rowsOnViewport: 5, // round(800/150) = round(5.33) = 5
-      rows: 10, // 1600/(150+10) rounded up
-      columnsOnViewport: 5, // round(1000/200) = 5
-      columns: 4, // 1000/(200+10) rounded down
+      rowsOnViewport: 5,
+      rows: 10,
+      columnsOnViewport: 5,
+      columns: 4,
       total: 20,
-      pages: 1, // ceil(total/itemsPerPage)
-      itemsPerRow: 4, // floor((1000+10)/(200+10)) = 4 (for grid sizing)
-      itemsPerColumn: 5, // floor((800+10)/(150+10)) = 5 (for grid sizing)
-      itemsPerPage: 25, // rowsOnViewport * columnsOnViewport = 5 * 5 (for paging)
+      pages: 1,
+      itemsPerRow: 4,
+      itemsPerColumn: 5,
+      itemsPerPage: 25,
       itemHeight: 150,
       itemWidth: 200,
       gridHeight: 1600,
       gridWidth: 1000,
-      horizontal: false
+      horizontal: false,
+      gridOffsetTop: 0,
+      gridOffsetLeft: 0,
     })
   })
 
@@ -105,23 +107,26 @@ describe('getLayout', () => {
       horizontal: true
     })
 
+    // For horizontal, columns = ceil(total / rowsOnViewport) = ceil(20 / 5) = 4
     expect(result).toEqual({
       scrollWidth: 1000,
       scrollHeight: 800,
-      rowsOnViewport: 5, // round(800/150) = round(5.33) = 5
+      rowsOnViewport: 5,
       rows: 5,
-      columnsOnViewport: 5, // round(1000/200) = 5
-      columns: 9, // 2000/(200+10) rounded down
+      columnsOnViewport: 5,
+      columns: 4,
       total: 20,
-      pages: 1, // ceil(total/itemsPerPage)
-      itemsPerRow: 4, // floor((1000+10)/(200+10)) = 4 (for grid sizing)
-      itemsPerColumn: 5, // floor((800+10)/(150+10)) = 5 (for grid sizing)
-      itemsPerPage: 25, // rowsOnViewport * columnsOnViewport = 5 * 5 (for paging)
+      pages: 1,
+      itemsPerRow: 4,
+      itemsPerColumn: 5,
+      itemsPerPage: 25,
       itemHeight: 150,
       itemWidth: 200,
       gridHeight: 800,
       gridWidth: 2000,
-      horizontal: true
+      horizontal: true,
+      gridOffsetTop: 0,
+      gridOffsetLeft: 0,
     })
   })
 

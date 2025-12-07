@@ -45,7 +45,7 @@ export function computeGrid({
   } = layout
 
   const minBoundary = Math.max(0, page - offScreenPages - 1)
-  const maxBoundary = Math.min(pages, page + 1 + offScreenPages)
+  const maxBoundary = Math.min(pages, page + offScreenPages)
 
   const itemW = itemWidth + gap
   const itemH = itemHeight + gap
@@ -58,39 +58,38 @@ export function computeGrid({
   const start = itemsPerPage * minBoundary
   const end = itemsPerPage * maxBoundary
 
-  const visibleHeight = (maxBoundary - minBoundary) * itemH
-  const visibleWidth = (maxBoundary - minBoundary + 1) * itemW
+  if (horizontal) {
+    const columnsBefore = minBoundary * columnsOnViewport
+    const columnsAfter = Math.max(0, columns - maxBoundary * columnsOnViewport)
 
-  // padding top
-  const ptTotal = minBoundary * rowsOnViewport * itemH
-  const ptLimit = Math.max(0, ptTotal)
-  const pt = horizontal ? padT : ptLimit + padT
+    const pl = columnsBefore * itemW + padL
+    const pr = columnsAfter * itemW + padR
 
-  // padding bottom
-  const pbTotal = (rows - maxBoundary * rowsOnViewport) * itemH
-  const pbLimit = Math.max(0, pbTotal)
-  const pbMax = Math.min(pbLimit, MAX_SIZE - pt - visibleHeight)
-  const pb = horizontal ? padB : pbMax + padB
+    return {
+      start,
+      end,
+      width: gridWidth,
+      paddingTop: padT,
+      paddingRight: Math.max(padR, Math.min(pr, MAX_SIZE - pl)),
+      paddingBottom: padB,
+      paddingLeft: Math.min(pl, MAX_SIZE),
+    }
+  }
 
-  // padding left
-  const plTotal = minBoundary * columnsOnViewport * itemW
-  const plLimit = Math.max(0, plTotal)
-  const pl = horizontal ? plLimit + padL : padL
+  const rowsBefore = minBoundary * rowsOnViewport
+  const rowsAfter = Math.max(0, rows - maxBoundary * rowsOnViewport)
 
-  // padding right
-  const prTotal = (columns - maxBoundary * columnsOnViewport) * itemW
-  const prLimit = Math.max(0, prTotal)
-  const prMax = Math.min(prLimit, MAX_SIZE - pl - visibleWidth)
-  const pr = horizontal ? prMax + padR : padR
+  const pt = rowsBefore * itemH + padT
+  const pb = rowsAfter * itemH + padB
 
   return {
     start,
     end,
-    width: horizontal ? gridWidth : 'auto',
-    paddingTop: pt ?? padT,
-    paddingRight: pr ?? padR,
-    paddingBottom: pb ?? padB,
-    paddingLeft: pl ?? padL,
+    width: 'auto',
+    paddingTop: Math.min(pt, MAX_SIZE),
+    paddingRight: padR,
+    paddingBottom: Math.max(padB, Math.min(pb, MAX_SIZE - pt)),
+    paddingLeft: padL,
   }
 }
 

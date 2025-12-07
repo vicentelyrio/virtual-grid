@@ -27,6 +27,8 @@ export type Layout = {
   itemWidth: number
   gridHeight: number
   gridWidth: number
+  gridOffsetTop: number
+  gridOffsetLeft: number
 }
 
 export type Styles = {

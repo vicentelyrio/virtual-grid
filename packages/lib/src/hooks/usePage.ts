@@ -34,14 +34,18 @@ export function usePage({
     itemWidth = 0,
     rowsOnViewport = 1,
     columnsOnViewport = 1,
+    gridOffsetTop = 0,
+    gridOffsetLeft = 0,
   } = layout || {}
+
+  const isWindowScroll = isWindow(scrollElement)
 
   const computeScrollPosition = useCallback(
     (index: number) => {
       const size = horizontal ? itemWidth : itemHeight
       const paddingStart = horizontal ? padding[2] : padding[0]
 
-      return computeScroll({
+      const baseScroll = computeScroll({
         index,
         gap,
         rowsOnViewport,
@@ -50,11 +54,27 @@ export function usePage({
         itemSize: size,
         padding: paddingStart,
       })
-    },
-    [horizontal, itemHeight, itemWidth, gap, rowsOnViewport, columnsOnViewport, padding]
-  )
 
-  const isWindowScroll = isWindow(scrollElement)
+      if (isWindowScroll) {
+        const offset = horizontal ? gridOffsetLeft : gridOffsetTop
+        return baseScroll + offset
+      }
+
+      return baseScroll
+    },
+    [
+      horizontal,
+      itemHeight,
+      itemWidth,
+      gap,
+      rowsOnViewport,
+      columnsOnViewport,
+      padding,
+      isWindowScroll,
+      gridOffsetTop,
+      gridOffsetLeft
+    ]
+  )
 
   const onScrollTo = useCallback(
     (index: number, behavior: ScrollBehavior = 'smooth') => {

@@ -60,7 +60,9 @@ describe('usePage', () => {
         itemHeight: 100,
         itemWidth: 250,
         gridHeight: 2000,
-        gridWidth: 1000
+        gridWidth: 1000,
+        gridOffsetTop: 0,
+        gridOffsetLeft: 0,
       },
       gap: 10,
       padding: [20, 20, 20, 20],

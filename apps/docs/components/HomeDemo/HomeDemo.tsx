@@ -12,7 +12,7 @@ export function HomeDemo() {
   } = useVirtualGrid<number>({
     data,
     gap: 20,
-    padding: [0, 20, 0, 20],
+    padding: [20, 20, 20, 20],
     offScreenPages: 1,
   })
 
