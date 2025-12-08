@@ -1,5 +1,5 @@
 {
-  "name": "@virtual-grid/lib",
+  "name": "virtual-grid",
   "version": "0.0.1",
   "type": "module",
   "main": "dist/main.js",
@@ -63,5 +63,15 @@
   },
   "dependencies": {
     "react-fast-compare": "^3.2.2"
-  }
+  },
+  "keywords": [
+    "react",
+    "virtual",
+    "virtualization",
+    "grid",
+    "table",
+    "performance",
+    "hooks"
+  ],
+  "description": "A React hook-based library for efficient grid virtualization"
 }

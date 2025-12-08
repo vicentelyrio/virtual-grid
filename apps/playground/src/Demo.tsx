@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useVirtualGrid } from '@virtual-grid/lib'
+import { useVirtualGrid } from 'virtual-grid'
 
 import './style.css'
 
@@ -50,4 +50,3 @@ function Card({ index = 0, src }: { index?: number, src?: string }) {
     </div>
   )
 }
-
