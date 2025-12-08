@@ -1,6 +1,9 @@
 name: Release
 
 on:
+  pull_request:
+    types: [closed]
+    branches: [main]
   push:
     branches: [main]
   workflow_dispatch:
@@ -66,25 +69,42 @@ jobs:
       - name: Run tests
         run: yarn test
 
+      - name: Check for unversioned changesets
+        if: github.event.inputs.dry_run != 'true' && github.event_name == 'push'
+        id: check-changesets
+        run: |
+          if [ -d ".changeset" ] && [ "$(ls -A .changeset/*.md 2>/dev/null | grep -v 'README.md' | wc -l)" -gt 0 ]; then
+            echo "has_changesets=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changesets=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Version packages
-        if: github.event.inputs.dry_run != 'true'
+        if: github.event.inputs.dry_run != 'true' && github.event_name == 'push' && steps.check-changesets.outputs.has_changesets == 'true'
         run: yarn cs:version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Commit version changes
-        if: github.event.inputs.dry_run != 'true'
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add -A
-          git diff --staged --quiet || git commit -m "chore: version packages [skip ci]"
-          git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create version bump PR
+        if: github.event.inputs.dry_run != 'true' && github.event_name == 'push' && steps.check-changesets.outputs.has_changesets == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: version packages [skip ci]"
+          title: "chore: version packages"
+          body: |
+            This PR contains version bumps and changelog updates from changesets.
+            
+            Once merged, the packages will be published to npm automatically.
+          branch: chore/version-packages
+          delete-branch: true
+          labels: |
+            dependencies
+            skip-ci
+          draft: false
 
       - name: Publish to npm (with provenance)
-        if: github.event.inputs.dry_run != 'true'
+        if: github.event.inputs.dry_run != 'true' && (github.event_name == 'pull_request' || steps.check-changesets.outputs.has_changesets != 'true')
         run: yarn cs:publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || secrets.NPM_TOKEN }}
