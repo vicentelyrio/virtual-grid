@@ -63,10 +63,17 @@ jobs:
           BASE_PATH: '/virtual-grid'
           NODE_ENV: production
 
-      - name: Add .nojekyll file
+      - name: Prepare GitHub Pages deployment
         run: |
-          mkdir -p apps/docs/out
+          # Add .nojekyll file to prevent Jekyll processing
           touch apps/docs/out/.nojekyll
+          
+          # Create 404.html for GitHub Pages SPA routing
+          # When GitHub Pages can't find a file, it serves 404.html
+          # This allows the React app to handle routing client-side
+          if [ -f apps/docs/out/index.html ]; then
+            cp apps/docs/out/index.html apps/docs/out/404.html
+          fi
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
