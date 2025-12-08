@@ -1,6 +1,6 @@
 import { useVirtualGrid } from 'virtual-grid'
-import { Card } from '@components/Card/Card'
-import classes from './HomeDemo.module.css'
+import { Card } from '@components'
+import classes from './home-demo.module.css'
 
 const data = Array(1000).fill(true).map((_, index) => index)
 

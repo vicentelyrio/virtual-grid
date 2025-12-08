@@ -9,14 +9,17 @@ const withNextra = nextra({
 })
 
 const nextConfig = {
-  reactStrictMode: true,
   output: 'export',
+  reactStrictMode: true,
+  trailingSlash: true,
+  experimental: {
+    typedRoutes: true,
+  },
   images: {
     unoptimized: true
   },
-  trailingSlash: true,
   ...(basePath && {
-    basePath: basePath,
+    basePath,
     assetPrefix: basePath,
   }),
 }
