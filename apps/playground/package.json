@@ -1,7 +1,7 @@
 {
   "name": "@virtualgrid/playground",
   "private": true,
-  "version": "0.0.1",
+  "version": "1.0.0",
   "type": "module",
   "repository": "https://github.com/vicentelyrio/virtual-grid/tree/main/apps/playground",
   "scripts": {
