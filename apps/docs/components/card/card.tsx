@@ -1,15 +1,5 @@
-import type { CSSProperties, RefObject } from 'react'
-
-import classes from './Card.module.css'
-
-export type GridProps = {
-  animation: number
-  horizontal: boolean
-  scrollRef?: RefObject<HTMLDivElement | null>
-  gridRef?: RefObject<HTMLDivElement | null>
-  styles?: CSSProperties
-  data: number[]
-}
+import type { CSSProperties } from 'react'
+import classes from './card.module.css'
 
 type CardProps = {
   index?: number

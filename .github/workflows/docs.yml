@@ -71,9 +71,6 @@ jobs:
             exit 1
           fi
 
-          # Add .nojekyll file to prevent Jekyll processing
-          touch apps/docs/out/.nojekyll
-
           # Create 404.html for GitHub Pages SPA routing
           # When GitHub Pages can't find a file, it serves 404.html
           # This allows the React app to handle routing client-side
