@@ -52,13 +52,13 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Build library
-        run: yarn build --filter=virtual-grid
+        run: yarn build --filter=@virtualgrid/lib
 
       - name: Clean docs build
         run: rm -rf apps/docs/out apps/docs/.next
 
       - name: Build docs
-        run: yarn build --filter=@virtual-grid/docs
+        run: yarn build --filter=@virtualgrid/docs
         env:
           BASE_PATH: '/virtual-grid'
           NODE_ENV: production
