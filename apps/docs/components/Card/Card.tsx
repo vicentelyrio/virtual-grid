@@ -42,23 +42,23 @@ const nouns = [
   'Grid', 'Pulse', 'Wave', 'Beam', 'Hub', 'Mesh'
 ]
 
-export const getRobotName = (index: number): string => {
+const getRobotName = (index: number): string => {
   const adjIndex = index % adjectives.length
   const nounIndex = Math.floor(index / adjectives.length) % nouns.length
   return `${adjectives[adjIndex]} ${nouns[nounIndex]}`
 }
 
-export const getRobotImageUrl = (index: number): string => {
+const getRobotImageUrl = (index: number): string => {
   const name = getRobotName(index)
   return `https://robohash.org/${encodeURIComponent(name)}`
 }
 
-const PICSUM_SEED_WORDS = [
-  'alpha', 'beta', 'gamma', 'delta', 'epsilon',
-  'zeta', 'eta', 'theta', 'iota', 'kappa'
-]
-
-export const getPicsumImageUrl = (index: number, width = 400, height = 300): string => {
-  const seed = PICSUM_SEED_WORDS[index % PICSUM_SEED_WORDS.length]
-  return `https://picsum.photos/seed/${seed}-${index}/${width}/${height}`
-}
+// const PICSUM_SEED_WORDS = [
+//   'alpha', 'beta', 'gamma', 'delta', 'epsilon',
+//   'zeta', 'eta', 'theta', 'iota', 'kappa'
+// ]
+//
+// const getPicsumImageUrl = (index: number, width = 400, height = 300): string => {
+//   const seed = PICSUM_SEED_WORDS[index % PICSUM_SEED_WORDS.length]
+//   return `https://picsum.photos/seed/${seed}-${index}/${width}/${height}`
+// }

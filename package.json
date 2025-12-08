@@ -13,7 +13,7 @@
     "postinstall": "manypkg check",
     "dev": "turbo run dev --continue --concurrency=100%",
     "dev:playground": "turbo run dev --filter=@virtual-grid/playground",
-    "dev:lib": "turbo run dev --filter=@virtual-grid/lib",
+    "dev:lib": "turbo run dev --filter=virtual-grid",
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
     "validate": "yarn build && yarn lint && yarn typecheck && yarn test",
