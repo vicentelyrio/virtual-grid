@@ -1,65 +1,34 @@
 name: Release
 
 on:
-  pull_request:
-    types: [closed]
-    branches: [main]
   push:
     branches: [main]
   workflow_dispatch:
-    inputs:
-      dry_run:
-        description: 'Run in dry-run mode (no publish)'
-        required: false
-        default: false
-        type: boolean
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: release-${{ github.ref }}
   cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
 
 jobs:
   release:
-    name: Build & Publish
+    name: Release
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: write
-      pull-requests: write
-      id-token: write  # Required for provenance and trusted publishing
-
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
-
-      - name: Get yarn cache directory
-        id: yarn-cache-dir
-        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache yarn dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.yarn-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
-      - name: Cache turbo
-        uses: actions/cache@v4
-        with:
-          path: .turbo
-          key: ${{ runner.os }}-turbo-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-turbo-
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
@@ -70,88 +39,30 @@ jobs:
       - name: Run tests
         run: yarn test
 
-      - name: Check for unversioned changesets
-        if: github.event.inputs.dry_run != 'true' && github.event_name == 'push'
-        id: check-changesets
-        run: |
-          if [ -d ".changeset" ] && [ "$(ls -A .changeset/*.md 2>/dev/null | grep -v 'README.md' | wc -l)" -gt 0 ]; then
-            echo "has_changesets=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_changesets=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Version packages
-        if: github.event.inputs.dry_run != 'true' && github.event_name == 'push' && steps.check-changesets.outputs.has_changesets == 'true'
-        run: yarn cs:version
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create version bump PR
-        if: github.event.inputs.dry_run != 'true' && github.event_name == 'push' && steps.check-changesets.outputs.has_changesets == 'true'
-        uses: peter-evans/create-pull-request@v5
+      - name: Create Release Pull Request or Publish
+        id: changesets
+        uses: changesets/action@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore: version packages [skip ci]"
-          title: "chore: version packages"
-          body: |
-            This PR contains version bumps and changelog updates from changesets.
-            
-            Once merged, the packages will be published to npm automatically.
-          branch: chore/version-packages
-          delete-branch: true
-          labels: |
-            dependencies
-            skip-ci
-          draft: false
-
-      - name: Publish to npm (with provenance)
-        if: github.event.inputs.dry_run != 'true' && (github.event_name == 'pull_request' || steps.check-changesets.outputs.has_changesets != 'true')
-        run: yarn cs:publish --provenance
+          version: yarn cs:version
+          publish: yarn cs:publish --provenance
+          title: 'chore: version packages'
+          commit: 'chore: version packages'
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Get published version
-        if: github.event.inputs.dry_run != 'true'
-        id: get-version
-        run: |
-          VERSION=$(node -p "require('./packages/lib/package.json').version")
-          echo "version=v$VERSION" >> $GITHUB_OUTPUT
-          echo "Published version: $VERSION"
-
-      - name: Get changelog
-        if: github.event.inputs.dry_run != 'true'
-        id: get-changelog
-        run: |
-          CHANGELOG_FILE="packages/lib/CHANGELOG.md"
-          VERSION=$(node -p "require('./packages/lib/package.json').version")
-          if [ -f "$CHANGELOG_FILE" ]; then
-            # Extract the latest version section from changelog
-            awk "/^## $VERSION/,/^## /{if (!/^## / || /^## $VERSION/) print}" "$CHANGELOG_FILE" | head -n -1 > /tmp/release-notes.md 2>/dev/null || \
-            awk "/^## $VERSION/,/^## /{print}" "$CHANGELOG_FILE" > /tmp/release-notes.md 2>/dev/null || \
-            printf "## %s\n\nSee [CHANGELOG.md](https://github.com/%s/blob/main/packages/lib/CHANGELOG.md) for details.\n" "$VERSION" "${{ github.repository }}" > /tmp/release-notes.md
-            echo "path=/tmp/release-notes.md" >> $GITHUB_OUTPUT
-          else
-            printf "## %s\n\nInitial release of @virtualgrid/lib\n" "$VERSION" > /tmp/release-notes.md
-            echo "path=/tmp/release-notes.md" >> $GITHUB_OUTPUT
-          fi
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub Release
-        if: github.event.inputs.dry_run != 'true'
+        if: steps.changesets.outputs.published == 'true'
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.get-version.outputs.version }}
-          name: Release ${{ steps.get-version.outputs.version }}
-          body_path: ${{ steps.get-changelog.outputs.path }}
+          tag_name: v${{ fromJson(steps.changesets.outputs.publishedPackages)[0].version }}
+          name: v${{ fromJson(steps.changesets.outputs.publishedPackages)[0].version }}
+          body: |
+            Release v${{ fromJson(steps.changesets.outputs.publishedPackages)[0].version }}
+            
+            See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/packages/lib/CHANGELOG.md) for details.
           draft: false
           prerelease: false
-          fail_on_unmatched_files: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true
-
-      - name: Publish (dry run)
-        if: ${{ github.event.inputs.dry_run == 'true' }}
-        run: yarn cs:publish --dry-run
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
