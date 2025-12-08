@@ -1,5 +1,5 @@
 {
-  "name": "@virtual-grid/playground",
+  "name": "@virtualgrid/playground",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -11,16 +11,16 @@
     "lint": "eslint \"src/**/*.ts\""
   },
   "dependencies": {
+    "@virtualgrid/lib": "*",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "virtual-grid": "*"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.12.12",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
-    "@virtual-grid/eslint-config": "*",
-    "@virtual-grid/typescript-config": "*",
+    "@virtualgrid/eslint-config": "*",
+    "@virtualgrid/typescript-config": "*",
     "@vitejs/plugin-react": "^4.2.1",
     "eslint": "^8.57.0",
     "react-cosmos": "^6.2.3",

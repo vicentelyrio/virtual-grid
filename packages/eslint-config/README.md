@@ -1,4 +1,4 @@
-## `@virtual-grid/eslint-config`
+## `@virtualgrid/eslint-config`
 
 Shared ESLint configuration for the Virtual Grid monorepo.
 
@@ -11,9 +11,9 @@ Shared ESLint configuration for the Virtual Grid monorepo.
 ### Installation
 
 ```bash
-npm install --save-dev @virtual-grid/eslint-config
+npm install --save-dev @virtualgrid/eslint-config
 # or
-yarn add -D @virtual-grid/eslint-config
+yarn add -D @virtualgrid/eslint-config
 ```
 
 ### Usage
@@ -22,7 +22,7 @@ In your `.eslintrc.cjs` or `.eslintrc.js`:
 
 ```js
 module.exports = {
-  extends: ['@virtual-grid/eslint-config'],
+  extends: ['@virtualgrid/eslint-config'],
 }
 ```
 

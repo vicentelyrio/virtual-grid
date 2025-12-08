@@ -2,5 +2,5 @@
 module.exports = {
   root: true,
   plugins: ['@next/next'],
-  extends: ['@virtual-grid/eslint-config/index.cjs'],
+  extends: ['@virtualgrid/eslint-config/index.cjs'],
 }

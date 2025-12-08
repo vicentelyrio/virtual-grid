@@ -1,5 +1,5 @@
 {
-  "name": "@virtual-grid/eslint-config",
+  "name": "@virtualgrid/eslint-config",
   "version": "0.0.0",
   "main": "index.cjs",
   "repository": "https://github.com/vicentelyrio/virtual-grid/tree/main/packages/eslint-config",

@@ -1,5 +1,5 @@
 {
-  "extends": "@virtual-grid/typescript-config/vite.json",
+  "extends": "@virtualgrid/typescript-config/vite.json",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {

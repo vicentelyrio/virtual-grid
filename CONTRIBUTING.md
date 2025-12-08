@@ -4,11 +4,11 @@ Thanks for taking the time to contribute!
 
 This project is a **Yarn + Turborepo monorepo** with multiple packages:
 
-- `@virtual-grid/lib` – main library
-- `@virtual-grid/docs` – documentation site (Next.js + Nextra)
-- `@virtual-grid/playground` – React Cosmos playground
-- `@virtual-grid/eslint-config` – shared ESLint config
-- `@virtual-grid/typescript-config` – shared TypeScript configs
+- `@virtualgrid/lib` – main library
+- `@virtualgrid/docs` – documentation site (Next.js + Nextra)
+- `@virtualgrid/playground` – React Cosmos playground
+- `@virtualgrid/eslint-config` – shared ESLint config
+- `@virtualgrid/typescript-config` – shared TypeScript configs
 
 Please read this document before opening a pull request.
 
@@ -30,12 +30,12 @@ yarn install
 ### 2. Project layout
 
 ```text
-virtual-grid/
+virtualgrid/
 ├── apps/
 │   ├── docs/          # Next.js docs site
 │   └── playground/    # React Cosmos playground
 ├── packages/
-│   ├── lib/           # Main virtual-grid library
+│   ├── lib/           # Main virtualgrid library
 │   ├── eslint-config/ # Shared ESLint configuration
 │   └── typescript-config/ # Shared TS configurations
 └── openspec/          # Project specs and change proposals
@@ -90,7 +90,7 @@ For package-specific work, you can `cd` into the package and use its local scrip
    git checkout -b feat/my-change
    ```
 2. **Implement** your changes, keeping them focused and small.
-3. **Add tests** for new behavior (especially for `@virtual-grid/lib`):
+3. **Add tests** for new behavior (especially for `@virtualgrid/lib`):
    - Unit tests for utils
    - Hook tests for `useVirtualGrid` and related hooks
 4. **Run checks** before committing:
@@ -106,7 +106,7 @@ For package-specific work, you can `cd` into the package and use its local scrip
 
 This repo uses **Changesets** to manage versions and changelogs.
 
-When you make a change that affects a published package (for now, primarily `@virtual-grid/lib`):
+When you make a change that affects a published package (for now, primarily `@virtualgrid/lib`):
 
 ```bash
 yarn cs:add
@@ -238,12 +238,12 @@ These apps are intended for **local development** and are not published.
 
 - TypeScript-first, React hooks-based.
 - Prefer small, focused utilities and hooks.
-- Keep exports stable and explicit in `@virtual-grid/lib` – they define the public API.
+- Keep exports stable and explicit in `@virtualgrid/lib` – they define the public API.
 
 Linting and TypeScript configs are centralized in:
 
-- `@virtual-grid/eslint-config`
-- `@virtual-grid/typescript-config`
+- `@virtualgrid/eslint-config`
+- `@virtualgrid/typescript-config`
 
 Use them as references if you’re unsure about style or compiler options.
 

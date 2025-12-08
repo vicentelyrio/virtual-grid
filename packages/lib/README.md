@@ -1,4 +1,4 @@
-## `virtual-grid`
+## `@virtualgrid/lib`
 
 React virtualization library for rendering large datasets using CSS Grid.
 
@@ -7,15 +7,15 @@ This package contains the core **Virtual Grid hook and utilities**. It only rend
 ### Installation
 
 ```bash
-npm install virtual-grid
+npm install @virtualgrid/lib
 # or
-yarn add virtual-grid
+yarn add @virtualgrid/lib
 ```
 
 ### Quick Start
 
 ```tsx
-import { useVirtualGrid } from 'virtual-grid'
+import { useVirtualGrid } from '@virtualgrid/lib'
 
 function Grid() {
   const data = Array.from({ length: 10_000 }, (_, i) => ({ id: i, name: `Item ${i}` }))
@@ -47,7 +47,7 @@ function Grid() {
 ### API Overview
 
 ```ts
-import type { VirtualGrid, VirtualGridProps } from 'virtual-grid'
+import type { VirtualGrid, VirtualGridProps } from '@virtualgrid/lib'
 
 function useVirtualGrid<T>(props: VirtualGridProps<T>): VirtualGrid<T>
 ```
@@ -76,7 +76,7 @@ Core return shape (simplified):
 For full details, see the exported types:
 
 ```ts
-import { VirtualGrid, VirtualGridProps, Layout } from 'virtual-grid'
+import { VirtualGrid, VirtualGridProps, Layout } from '@virtualgrid/lib'
 ```
 
 ### Key Concepts

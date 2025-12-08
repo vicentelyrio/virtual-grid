@@ -1,4 +1,4 @@
-import { useVirtualGrid } from 'virtual-grid'
+import { useVirtualGrid } from '@virtualgrid/lib'
 
 import classes from './horizontal-grid.module.css'
 
