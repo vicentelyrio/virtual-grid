@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import clsx from 'clsx'
-import { useVirtualGrid } from '@virtual-grid/lib'
+import { useVirtualGrid } from 'virtual-grid'
 
 import classes from './carousel.module.css'
 

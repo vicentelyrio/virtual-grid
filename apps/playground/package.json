@@ -11,7 +11,7 @@
     "lint": "eslint \"src/**/*.ts\""
   },
   "dependencies": {
-    "@virtual-grid/lib": "*",
+    "virtual-grid": "*",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

@@ -41,14 +41,14 @@ Instead of absolutely positioning items, Virtual Grid adjusts the container's pa
 
 ## Installation
 ```bash
-npm install @virtual-grid/lib
+npm install virtual-grid
 # or
-yarn add @virtual-grid/lib
+yarn add virtual-grid
 ```
 
 ## Quick Start
 ```tsx
-import { useVirtualGrid } from '@virtual-grid/lib'
+import { useVirtualGrid } from 'virtual-grid'
 
 function Grid() {
   const data = Array(10000).fill(0).map((_, i) => ({ id: i, name: `Item ${i}` }))
