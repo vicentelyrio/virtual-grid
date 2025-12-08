@@ -1,4 +1,4 @@
-## `@virtual-grid/typescript-config`
+## `@virtualgrid/typescript-config`
 
 Shared TypeScript configuration presets for the Virtual Grid monorepo.
 
@@ -15,16 +15,16 @@ Shared TypeScript configuration presets for the Virtual Grid monorepo.
 Install (if used outside this monorepo):
 
 ```bash
-npm install --save-dev @virtual-grid/typescript-config
+npm install --save-dev @virtualgrid/typescript-config
 # or
-yarn add -D @virtual-grid/typescript-config
+yarn add -D @virtualgrid/typescript-config
 ```
 
 In your `tsconfig.json`:
 
 ```json
 {
-  "extends": "@virtual-grid/typescript-config/base.json",
+  "extends": "@virtualgrid/typescript-config/base.json",
   "include": ["src"]
 }
 ```
@@ -33,7 +33,7 @@ For a Next.js app:
 
 ```json
 {
-  "extends": "@virtual-grid/typescript-config/next.json",
+  "extends": "@virtualgrid/typescript-config/next.json",
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
 }
@@ -43,7 +43,7 @@ For a Vite app or library:
 
 ```json
 {
-  "extends": "@virtual-grid/typescript-config/vite.json",
+  "extends": "@virtualgrid/typescript-config/vite.json",
   "include": ["src"]
 }
 ```

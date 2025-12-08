@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useVirtualGrid } from 'virtual-grid'
+import { useVirtualGrid } from '@virtualgrid/lib'
 
 import './style.css'
 

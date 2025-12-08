@@ -1,10 +1,10 @@
-## `@virtual-grid/playground`
+## `@virtualgrid/playground`
 
 Playground app for the Virtual Grid library, powered by React Cosmos.
 
 ### What this package does
 
-- Provides an **interactive environment** to try `virtual-grid`
+- Provides an **interactive environment** to try `virtualgrid`
 - Contains **fixtures and examples** for exploring different grid configurations
 - Is intended for **local development only** (not published)
 
@@ -36,6 +36,6 @@ This will start the Cosmos UI where you can browse and tweak fixtures.
 ### Notes
 
 - This package is **private** and not published to npm.
-- It imports `virtual-grid` to showcase and test the library API.
+- It imports `virtualgrid` to showcase and test the library API.
 
 

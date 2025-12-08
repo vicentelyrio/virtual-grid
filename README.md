@@ -41,14 +41,14 @@ Instead of absolutely positioning items, Virtual Grid adjusts the container's pa
 
 ## Installation
 ```bash
-npm install virtual-grid
+npm install @virtualgrid/lib
 # or
-yarn add virtual-grid
+yarn add @virtualgrid/lib
 ```
 
 ## Quick Start
 ```tsx
-import { useVirtualGrid } from 'virtual-grid'
+import { useVirtualGrid } from '@virtualgrid/lib'
 
 function Grid() {
   const data = Array(10000).fill(0).map((_, i) => ({ id: i, name: `Item ${i}` }))
@@ -237,7 +237,7 @@ virtual-grid/
 │   ├── docs/               # Next.js documentation site
 │   └── playground/         # React Cosmos development environment
 ├── packages/
-│   ├── lib/                # Main virtual-grid library
+│   ├── lib/                # Main virtualgrid library
 │   ├── eslint-config/      # Shared ESLint configuration
 │   └── typescript-config/  # Shared TypeScript configuration
 ```

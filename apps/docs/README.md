@@ -1,10 +1,10 @@
-## `@virtual-grid/docs`
+## `@virtualgrid/docs`
 
 Documentation site for the Virtual Grid library, built with Next.js and Nextra.
 
 ### What this package does
 
-- **Hosts the docs site** for `virtual-grid`
+- **Hosts the docs site** for `@virtualgrid`
 - Includes **guides, API reference, and examples**
 - Is intended for **local development and deployment as a static site**
 
@@ -33,6 +33,6 @@ yarn dev
 ### Notes
 
 - This package is **private** and not published to npm.
-- It depends on `virtual-grid` to render live examples.
+- It depends on `@virtualgrid` to render live examples.
 
 

@@ -1,5 +1,5 @@
 {
-  "extends": "@virtual-grid/typescript-config/next.json",
+  "extends": "@virtualgrid/typescript-config/next.json",
   "include": [
     "next-env.d.ts",
     "**/*.ts",

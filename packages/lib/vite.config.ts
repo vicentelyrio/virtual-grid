@@ -25,7 +25,7 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, 'src/main.ts'),
       formats: ['es'],
-      name: 'virtual-grid',
+      name: '@virtualgrid/lib',
       fileName: 'main',
     },
     rollupOptions: {

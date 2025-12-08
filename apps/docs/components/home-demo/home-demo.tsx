@@ -1,4 +1,4 @@
-import { useVirtualGrid } from 'virtual-grid'
+import { useVirtualGrid } from '@virtualgrid/lib'
 import { Card } from '@components'
 import classes from './home-demo.module.css'
 
