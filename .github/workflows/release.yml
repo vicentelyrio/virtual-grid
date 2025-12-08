@@ -3,8 +3,6 @@ name: Release
 on:
   push:
     branches: [main]
-    tags:
-      - 'v*'
   workflow_dispatch:
     inputs:
       dry_run:
@@ -67,8 +65,14 @@ jobs:
       - name: Run tests
         run: yarn test
 
+      - name: Version packages
+        if: github.event.inputs.dry_run != 'true'
+        run: yarn cs:version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Publish to npm (with provenance)
-        if: ${{ github.event.inputs.dry_run != 'true' }}
+        if: github.event.inputs.dry_run != 'true'
         run: yarn cs:publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || secrets.NPM_TOKEN }}

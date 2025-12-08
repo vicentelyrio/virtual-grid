@@ -1,9 +1,10 @@
 {
   "name": "@virtualgrid/eslint-config",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "main": "index.cjs",
   "repository": "https://github.com/vicentelyrio/virtual-grid/tree/main/packages/eslint-config",
   "license": "MIT",
+  "private": true,
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
