@@ -65,6 +65,12 @@ jobs:
 
       - name: Prepare GitHub Pages deployment
         run: |
+          # Verify out directory exists
+          if [ ! -d "apps/docs/out" ]; then
+            echo "Error: apps/docs/out directory does not exist"
+            exit 1
+          fi
+          
           # Add .nojekyll file to prevent Jekyll processing
           touch apps/docs/out/.nojekyll
           
@@ -96,4 +102,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
